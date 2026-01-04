@@ -17,5 +17,8 @@ dist
 .DS_Store
 *.log
 
+# Development artifacts
+explore.html
+
 # Claude Code local settings (keep .claude/ committed, but not local overrides)
 .claude/settings.local.json
