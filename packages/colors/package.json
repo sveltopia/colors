@@ -1,0 +1,59 @@
+{
+  "name": "@sveltopia/colors",
+  "version": "0.0.1",
+  "description": "Algorithmic color palette generation from sparse brand colors using OKLCH + APCA",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "apca-w3": "^0.1.9",
+    "culori": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1",
+    "@types/node": "^22.10.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "keywords": [
+    "color",
+    "palette",
+    "oklch",
+    "apca",
+    "accessibility",
+    "design-system",
+    "color-generation"
+  ],
+  "author": "Sveltopia",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sveltopia/colors.git",
+    "directory": "packages/colors"
+  },
+  "homepage": "https://colors.sveltopia.dev",
+  "bugs": {
+    "url": "https://github.com/sveltopia/colors/issues"
+  }
+}

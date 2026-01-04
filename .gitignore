@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.svelte-kit
+build
+dist
+.turbo
+*.tgz
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Misc
+.DS_Store
+*.log
+
+# Claude Code local settings (keep .claude/ committed, but not local overrides)
+.claude/settings.local.json
