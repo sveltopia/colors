@@ -11,7 +11,9 @@ export type {
 	TuningProfile,
 	Palette,
 	ContrastResult,
-	ValidationReport
+	ValidationReport,
+	GeneratedScale,
+	GeneratedScaleStep
 } from './types.js';
 
 // OKLCH utilities
@@ -39,3 +41,14 @@ export {
 	getAnalysisReport
 } from './core/analyze.js';
 export type { ColorAnalysis } from './core/analyze.js';
+
+// Scale generation
+export {
+	generateScale,
+	generateScaleAPCA,
+	validateScale,
+	RADIX_APCA_TARGETS,
+	RADIX_LIGHTNESS_TARGETS,
+	CHROMA_CURVE
+} from './core/generate.js';
+export type { GenerateScaleOptions } from './core/generate.js';
