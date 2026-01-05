@@ -23,7 +23,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "explore": "npx tsx scripts/explore.ts && open ../../explore.html"
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
