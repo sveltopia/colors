@@ -98,3 +98,31 @@ export interface ValidationReport {
 	/** Any issues found */
 	issues: string[];
 }
+
+/**
+ * A single step in a generated scale with full OKLCH data
+ */
+export interface GeneratedScaleStep {
+	/** Step number (1-12) */
+	step: number;
+	/** OKLCH color values */
+	oklch: OklchColor;
+	/** Hex color string */
+	hex: string;
+	/** Actual APCA contrast against white */
+	apca: number;
+	/** Target APCA contrast */
+	targetApca: number;
+}
+
+/**
+ * A generated 12-step scale with full metadata
+ */
+export interface GeneratedScale {
+	/** Original parent color hex */
+	parent: string;
+	/** Parent color in OKLCH */
+	parentOklch: OklchColor;
+	/** All 12 steps with OKLCH and contrast data */
+	steps: GeneratedScaleStep[];
+}
