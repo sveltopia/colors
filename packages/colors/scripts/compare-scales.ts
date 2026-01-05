@@ -27,14 +27,33 @@ const RADIX_ORANGE = [
 	'#582d1d'
 ];
 
-const SVELTOPIA_ORANGE = '#FF6A00';
+const RADIX_GREEN = [
+	'#fbfefc',
+	'#f4fbf6',
+	'#e6f6eb',
+	'#d6f1df',
+	'#c4e8d1',
+	'#adddc0',
+	'#8eceaa',
+	'#5bb98b',
+	'#30a46c',
+	'#2b9a66',
+	'#218358',
+	'#193b2d'
+];
 
-// Generate our scale
+const SVELTOPIA_ORANGE = '#FF6A00';
+const SVELTOPIA_GREEN = '#43A047';
+
+// Generate orange scales
 const ourScale = generateScale({ parentColor: SVELTOPIA_ORANGE });
 const ourScaleAPCA = generateScaleAPCA({ parentColor: SVELTOPIA_ORANGE });
-
-// Also generate from Radix orange step 9 for direct comparison
 const radixOrangeScale = generateScale({ parentColor: RADIX_ORANGE[8] });
+
+// Generate green scales
+const ourGreenScale = generateScale({ parentColor: SVELTOPIA_GREEN });
+const ourGreenScaleAPCA = generateScaleAPCA({ parentColor: SVELTOPIA_GREEN });
+const radixGreenScale = generateScale({ parentColor: RADIX_GREEN[8] });
 
 const WHITE = '#ffffff';
 
@@ -231,22 +250,150 @@ for (let i = 0; i < 12; i++) {
 html += `
   </table>
 
+  <h2>Green Scale Comparison</h2>
+  <div class="comparison">
+    <div>
+      <div class="scale-title">Radix Green (Reference)</div>
+      <div class="scale">
+`;
+
+// Radix green reference
+for (let i = 0; i < 12; i++) {
+	const hex = RADIX_GREEN[i];
+	const oklch = toOklch(hex);
+	const apca = getAPCA(hex);
+	html += `
+        <div class="step">
+          <span class="step-num">${i + 1}</span>
+          <div class="swatch" style="background: ${hex}"></div>
+          <span class="info">${hex} L:${oklch?.l.toFixed(2)} APCA:${apca.toFixed(0)}</span>
+        </div>`;
+}
+
+html += `
+      </div>
+    </div>
+
+    <div>
+      <div class="scale-title">Our Scale (Simple) - ${SVELTOPIA_GREEN}</div>
+      <div class="scale">
+`;
+
+// Our simple green scale
+for (const step of ourGreenScale.steps) {
+	html += `
+        <div class="step">
+          <span class="step-num">${step.step}</span>
+          <div class="swatch" style="background: ${step.hex}"></div>
+          <span class="info">${step.hex} L:${step.oklch.l.toFixed(2)} APCA:${step.apca.toFixed(0)}</span>
+        </div>`;
+}
+
+html += `
+      </div>
+    </div>
+
+    <div>
+      <div class="scale-title">Our Scale (APCA) - ${SVELTOPIA_GREEN}</div>
+      <div class="scale">
+`;
+
+// Our APCA green scale
+for (const step of ourGreenScaleAPCA.steps) {
+	html += `
+        <div class="step">
+          <span class="step-num">${step.step}</span>
+          <div class="swatch" style="background: ${step.hex}"></div>
+          <span class="info">${step.hex} L:${step.oklch.l.toFixed(2)} APCA:${step.apca.toFixed(0)}</span>
+        </div>`;
+}
+
+html += `
+      </div>
+    </div>
+
+    <div>
+      <div class="scale-title">From Radix Step 9 - ${RADIX_GREEN[8]}</div>
+      <div class="scale">
+`;
+
+// Scale generated from Radix green
+for (const step of radixGreenScale.steps) {
+	html += `
+        <div class="step">
+          <span class="step-num">${step.step}</span>
+          <div class="swatch" style="background: ${step.hex}"></div>
+          <span class="info">${step.hex} L:${step.oklch.l.toFixed(2)} APCA:${step.apca.toFixed(0)}</span>
+        </div>`;
+}
+
+html += `
+      </div>
+    </div>
+  </div>
+
+  <h2>Green APCA Comparison Table</h2>
+  <table>
+    <tr>
+      <th>Step</th>
+      <th>Target</th>
+      <th>Radix</th>
+      <th>Our Simple</th>
+      <th>Our APCA</th>
+    </tr>
+`;
+
+for (let i = 0; i < 12; i++) {
+	const target = RADIX_APCA_TARGETS[i];
+	const radix = getAPCA(RADIX_GREEN[i]);
+	const simple = ourGreenScale.steps[i].apca;
+	const apca = ourGreenScaleAPCA.steps[i].apca;
+
+	const getDiffClass = (actual: number, target: number) => {
+		if (target < 5) return ''; // Skip near-zero targets
+		const diff = Math.abs(actual - target);
+		if (diff <= 2) return 'good';
+		if (diff <= 5) return 'warn';
+		return 'bad';
+	};
+
+	html += `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${target.toFixed(1)}</td>
+      <td>${radix.toFixed(1)}</td>
+      <td class="${getDiffClass(simple, target)}">${simple.toFixed(1)}</td>
+      <td class="${getDiffClass(apca, target)}">${apca.toFixed(1)}</td>
+    </tr>`;
+}
+
+html += `
+  </table>
+
   <h2>Parent Colors</h2>
   <div style="display: flex; gap: 20px; margin-top: 20px;">
     <div>
       <div style="width: 100px; height: 60px; background: ${SVELTOPIA_ORANGE}; border-radius: 8px;"></div>
-      <div class="info" style="margin-top: 8px;">Sveltopia: ${SVELTOPIA_ORANGE}</div>
+      <div class="info" style="margin-top: 8px;">Sveltopia Orange: ${SVELTOPIA_ORANGE}</div>
     </div>
     <div>
       <div style="width: 100px; height: 60px; background: ${RADIX_ORANGE[8]}; border-radius: 8px;"></div>
-      <div class="info" style="margin-top: 8px;">Radix Step 9: ${RADIX_ORANGE[8]}</div>
+      <div class="info" style="margin-top: 8px;">Radix Orange 9: ${RADIX_ORANGE[8]}</div>
+    </div>
+    <div>
+      <div style="width: 100px; height: 60px; background: ${SVELTOPIA_GREEN}; border-radius: 8px;"></div>
+      <div class="info" style="margin-top: 8px;">Sveltopia Green: ${SVELTOPIA_GREEN}</div>
+    </div>
+    <div>
+      <div style="width: 100px; height: 60px; background: ${RADIX_GREEN[8]}; border-radius: 8px;"></div>
+      <div class="info" style="margin-top: 8px;">Radix Green 9: ${RADIX_GREEN[8]}</div>
     </div>
   </div>
 </body>
 </html>`;
 
-// Write to file
-const outputPath = path.join(process.cwd(), '../../compare-scales.html');
+// Write to file (outputs to repo root when run from repo root)
+const outputPath = path.join(process.cwd(), 'compare-scales.html');
 fs.writeFileSync(outputPath, html);
 console.log(`Generated: ${outputPath}`);
-console.log('Open with: open ../../compare-scales.html');
+console.log('Open with: open compare-scales.html');
