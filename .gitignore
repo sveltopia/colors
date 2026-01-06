@@ -20,6 +20,7 @@ dist
 # Development artifacts
 explore.html
 compare-scales.html
+palette-grid.html
 
 # Claude Code local settings (keep .claude/ committed, but not local overrides)
 .claude/settings.local.json
