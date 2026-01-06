@@ -1,15 +1,17 @@
 /**
- * Generate a visual HTML grid of the full palette.
+ * Generate a visual HTML grid of the full palette with Radix comparison.
  * Outputs palette-grid.html for visual inspection.
  *
- * Layout matches Radix Colors for easy comparison:
- * - Neutrals grouped at top
- * - Chromatic colors in Radix order
- * - Semantic column headers
+ * Features:
+ * - Toggle to show/hide Radix reference scales
+ * - Toggle to show/hide generated scales
+ * - Side-by-side comparison when both visible
+ * - Radix-style layout with semantic headers
  */
 
 import { generateLightPalette, getPaletteStats } from '../src/core/palette.js';
 import { BASELINE_HUES } from '../src/core/hues.js';
+import { RADIX_SCALES, RADIX_SCALE_ORDER } from '../src/reference/radix-scales.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -25,54 +27,10 @@ const palette = generateLightPalette({
 
 const stats = getPaletteStats(palette);
 
-// Radix-style ordering: neutrals first, then chromatic colors
-// This matches the exact order shown on radix-ui.com/colors
-const RADIX_ORDER = [
-	// Neutrals
-	'gray',
-	'mauve',
-	'slate',
-	'sage',
-	'olive',
-	'sand',
-	// Reds/Oranges (warm)
-	'tomato',
-	'red',
-	'ruby',
-	'crimson',
-	// Pinks/Purples
-	'pink',
-	'plum',
-	'purple',
-	'violet',
-	// Blues
-	'iris',
-	'indigo',
-	'blue',
-	'cyan',
-	// Teals/Greens
-	'teal',
-	'jade',
-	'green',
-	'grass',
-	// Warm neutrals
-	'bronze',
-	'gold',
-	'brown',
-	// Oranges/Yellows
-	'orange',
-	'amber',
-	'yellow',
-	'lime',
-	// Cyans
-	'mint',
-	'sky',
-];
-
-// Build ordered hue list (filter to only hues we have)
-const orderedHues = RADIX_ORDER
-	.filter(key => palette.scales[key])
-	.map(key => [key, BASELINE_HUES[key]] as const);
+// Build ordered hue list (filter to only hues we have in both)
+const orderedHues = RADIX_SCALE_ORDER.filter(
+	(key) => palette.scales[key] && RADIX_SCALES[key]
+).map((key) => [key, BASELINE_HUES[key]] as const);
 
 // Build HTML
 let html = `<!DOCTYPE html>
@@ -90,6 +48,24 @@ let html = `<!DOCTYPE html>
     }
     h1 { margin-bottom: 10px; }
     .subtitle { color: #666; margin-bottom: 30px; }
+    .controls {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e5e5e5;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .control-group label {
+      cursor: pointer;
+      user-select: none;
+    }
     .stats {
       display: flex;
       gap: 30px;
@@ -163,6 +139,10 @@ let html = `<!DOCTYPE html>
       color: #f76b15;
       font-weight: 600;
     }
+    .hue-label.radix {
+      color: #0090ff;
+      font-style: italic;
+    }
     .swatch {
       height: 32px;
       border-radius: 3px;
@@ -178,6 +158,11 @@ let html = `<!DOCTYPE html>
     .section-divider {
       grid-column: 1 / -1;
       height: 12px;
+    }
+    .row-radix { }
+    .row-generated { }
+    .row-radix.hidden, .row-generated.hidden {
+      display: none;
     }
     .legend {
       margin-top: 30px;
@@ -211,6 +196,17 @@ let html = `<!DOCTYPE html>
   <h1>Sveltopia Colors</h1>
   <p class="subtitle">Full light-mode palette generated from brand colors</p>
 
+  <div class="controls">
+    <div class="control-group">
+      <input type="checkbox" id="showRadix" checked>
+      <label for="showRadix">Show Radix Reference</label>
+    </div>
+    <div class="control-group">
+      <input type="checkbox" id="showGenerated" checked>
+      <label for="showGenerated">Show Generated</label>
+    </div>
+  </div>
+
   <div class="stats">
     <div class="stat">
       <div class="stat-value">${stats.totalHues}</div>
@@ -242,7 +238,7 @@ let html = `<!DOCTYPE html>
     </div>
   </div>
 
-  <h3 style="color: #888; margin-bottom: 12px;">Generated Palette (${orderedHues.length} × 12 = ${orderedHues.length * 12} colors)</h3>
+  <h3 style="color: #888; margin-bottom: 12px;">Palette Comparison (${orderedHues.length} hues × 12 steps)</h3>
 
   <!-- Semantic column headers (like Radix) -->
   <div class="semantic-headers">
@@ -267,9 +263,10 @@ for (let step = 1; step <= 12; step++) {
 const neutrals = ['gray', 'mauve', 'slate', 'sage', 'olive', 'sand'];
 let lastWasNeutral = false;
 
-// Rows for each hue
+// Rows for each hue - interleaved Radix and Generated
 for (const [hueKey, hueDef] of orderedHues) {
-	const scale = palette.scales[hueKey];
+	const generatedScale = palette.scales[hueKey];
+	const radixScale = RADIX_SCALES[hueKey];
 	const isAnchored = palette.meta.anchoredSlots.includes(hueKey);
 	const isNeutral = neutrals.includes(hueKey);
 
@@ -279,11 +276,18 @@ for (const [hueKey, hueDef] of orderedHues) {
 	}
 	lastWasNeutral = isNeutral;
 
-	html += `    <div class="hue-label${isAnchored ? ' anchored' : ''}">${hueDef.name}${isAnchored ? ' ★' : ''}</div>\n`;
-
+	// Radix reference row
+	html += `    <div class="hue-label radix row-radix">${hueDef.name} (Radix)</div>\n`;
 	for (let step = 1; step <= 12; step++) {
-		const hex = scale[step as keyof typeof scale];
-		html += `    <div class="swatch" style="background: ${hex}" title="${hueKey}-${step}: ${hex}"></div>\n`;
+		const hex = radixScale[step as keyof typeof radixScale];
+		html += `    <div class="swatch row-radix" style="background: ${hex}" title="Radix ${hueKey}-${step}: ${hex}"></div>\n`;
+	}
+
+	// Generated row
+	html += `    <div class="hue-label${isAnchored ? ' anchored' : ''} row-generated">${hueDef.name}${isAnchored ? ' ★' : ''}</div>\n`;
+	for (let step = 1; step <= 12; step++) {
+		const hex = generatedScale[step as keyof typeof generatedScale];
+		html += `    <div class="swatch row-generated" style="background: ${hex}" title="Generated ${hueKey}-${step}: ${hex}"></div>\n`;
 	}
 }
 
@@ -291,7 +295,11 @@ html += `  </div>
 
   <div class="legend">
     <span class="legend-item">
-      <span class="legend-dot" style="background: #fbbf24"></span>
+      <span class="legend-dot" style="background: #0090ff"></span>
+      <span>Radix Reference</span>
+    </span>
+    <span class="legend-item">
+      <span class="legend-dot" style="background: #f76b15"></span>
       <span>★ Anchored to brand color</span>
     </span>
   </div>
@@ -304,6 +312,25 @@ html += `  </div>
     <p>Anchored Slots: <span class="tuning-value">${palette.meta.anchoredSlots.join(', ') || 'none'}</span></p>
     <p>Generated: <span class="tuning-value">${palette.meta.generatedAt}</span></p>
   </div>
+
+  <script>
+    const showRadix = document.getElementById('showRadix');
+    const showGenerated = document.getElementById('showGenerated');
+    const radixRows = document.querySelectorAll('.row-radix');
+    const generatedRows = document.querySelectorAll('.row-generated');
+
+    function updateVisibility() {
+      radixRows.forEach(el => {
+        el.classList.toggle('hidden', !showRadix.checked);
+      });
+      generatedRows.forEach(el => {
+        el.classList.toggle('hidden', !showGenerated.checked);
+      });
+    }
+
+    showRadix.addEventListener('change', updateVisibility);
+    showGenerated.addEventListener('change', updateVisibility);
+  </script>
 
 </body>
 </html>`;

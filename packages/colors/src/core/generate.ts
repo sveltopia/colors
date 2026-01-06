@@ -36,6 +36,35 @@ export const RADIX_APCA_TARGETS = [
 ];
 
 /**
+ * APCA targets for "bright" hues (yellow, lime, amber, mint, sky).
+ * These hues have naturally high lightness at peak saturation,
+ * so step 9-10 (the "hero" solid colors) are LIGHTER than step 8.
+ *
+ * Key insight: Radix intentionally makes step 9 brighter for these
+ * hues because a vibrant yellow/lime needs to be light to be saturated.
+ */
+export const RADIX_APCA_TARGETS_BRIGHT = [
+	0.0, // Step 1: Near-white background
+	0.0, // Step 2: Subtle background
+	0.0, // Step 3: UI element background
+	9.0, // Step 4: Hovered UI element
+	15.0, // Step 5: Active/selected element
+	22.0, // Step 6: Subtle borders
+	32.0, // Step 7: UI element border
+	44.0, // Step 8: Hovered borders (DARKER than step 9!)
+	18.0, // Step 9: Solid backgrounds - LIGHT for bright hues
+	24.0, // Step 10: Hovered solid - also light
+	73.0, // Step 11: Low-contrast text (big jump)
+	96.0 // Step 12: High-contrast text
+];
+
+/**
+ * Hues that are considered "bright" and need non-monotonic lightness curves.
+ * These are hues where the saturated version is naturally very light.
+ */
+export const BRIGHT_HUES = new Set(['yellow', 'lime', 'amber', 'mint', 'sky']);
+
+/**
  * Lightness targets derived from Radix Colors analysis.
  * Used as starting points for binary search.
  */
@@ -77,8 +106,12 @@ const WHITE = '#ffffff';
 const TOLERANCE = 2; // APCA tolerance in Lc units
 
 export interface GenerateScaleOptions {
-	/** Parent color hex (becomes step 9) */
+	/** Parent/anchor color hex */
 	parentColor: string;
+	/** Which step to anchor the parent color at (default: 9) */
+	anchorStep?: number;
+	/** Hue key for bright hue detection (e.g., 'yellow', 'lime') */
+	hueKey?: string;
 	/** Override APCA targets */
 	apcaTargets?: number[];
 	/** Override chroma curve */
@@ -162,12 +195,21 @@ export function generateScale(options: GenerateScaleOptions): GeneratedScale {
  * @returns 12-step scale with precise APCA targeting
  */
 export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale {
-	const { parentColor, apcaTargets = RADIX_APCA_TARGETS, chromaCurve = CHROMA_CURVE } = options;
+	const { parentColor, anchorStep = 9, hueKey, chromaCurve = CHROMA_CURVE } = options;
+
+	// Auto-select APCA targets based on hue type
+	const isBrightHue = hueKey && BRIGHT_HUES.has(hueKey);
+	const apcaTargets = options.apcaTargets ?? (isBrightHue ? RADIX_APCA_TARGETS_BRIGHT : RADIX_APCA_TARGETS);
 
 	const parent = toOklch(parentColor);
 	if (!parent) {
 		throw new Error(`Invalid parent color: ${parentColor}`);
 	}
+
+	// When anchoring at a different step, we need to adjust the chroma curve
+	// so the parent's full chroma is at the anchor step
+	const anchorChromaMultiplier = chromaCurve[anchorStep - 1];
+	const adjustedChromaCurve = chromaCurve.map((c) => c / anchorChromaMultiplier);
 
 	const steps: GeneratedScaleStep[] = [];
 
@@ -175,8 +217,8 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 		const stepNum = i + 1;
 		const targetApca = apcaTargets[i];
 
-		// Apply chroma curve
-		const chroma = parent.c * chromaCurve[i];
+		// Apply adjusted chroma curve (now relative to anchor step)
+		const chroma = parent.c * adjustedChromaCurve[i];
 
 		// Hue with slight drift for dark steps
 		let hue = parent.h;
@@ -189,8 +231,8 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 		let lightness: number;
 		if (targetApca < 5) {
 			lightness = RADIX_LIGHTNESS_TARGETS[i];
-		} else if (stepNum === 9) {
-			// Step 9 uses parent lightness
+		} else if (stepNum === anchorStep) {
+			// Anchor step uses parent lightness
 			lightness = parent.l;
 		} else {
 			// Binary search for lightness that achieves target APCA

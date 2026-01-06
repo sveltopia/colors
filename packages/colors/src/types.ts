@@ -39,6 +39,16 @@ export interface Scale {
 export type ScaleStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
 /**
+ * Information about an anchored brand color
+ */
+export interface AnchorInfo {
+	/** Baseline hue slot this color anchors to */
+	slot: string;
+	/** Which step in the scale this color should anchor (1-12) */
+	step: number;
+}
+
+/**
  * Tuning profile extracted from brand colors
  * Describes how the brand's colors deviate from baseline
  */
@@ -49,8 +59,8 @@ export interface TuningProfile {
 	chromaMultiplier: number;
 	/** Brand lightness preference shift */
 	lightnessShift: number;
-	/** Mapping of brand input colors (hex) to baseline hue slot names */
-	anchors: Record<string, string>;
+	/** Mapping of brand input colors (hex) to anchor info */
+	anchors: Record<string, AnchorInfo>;
 }
 
 /**

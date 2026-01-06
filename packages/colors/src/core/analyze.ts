@@ -11,8 +11,41 @@
  */
 
 import { toOklch } from '../utils/oklch.js';
-import type { OklchColor, TuningProfile } from '../types.js';
+import type { OklchColor, TuningProfile, AnchorInfo } from '../types.js';
 import { BASELINE_HUES, findClosestHueWithDistance, SNAP_THRESHOLD } from './hues.js';
+
+/**
+ * Lightness thresholds for smart step placement.
+ * Based on Radix Colors analysis:
+ * - Step 9 (normal anchor): L ≈ 0.55-0.70
+ * - Step 12 (dark text): L ≈ 0.25-0.40
+ * - Step 1-3 (light bg): L ≈ 0.95-0.99
+ */
+const LIGHTNESS_THRESHOLDS = {
+	/** Below this = dark color → anchor at step 12 */
+	darkMax: 0.45,
+	/** Above this = light color → anchor at step 1-3 */
+	lightMin: 0.85
+};
+
+/**
+ * Determine the best anchor step for a color based on its lightness.
+ *
+ * @param lightness - OKLCH lightness value (0-1)
+ * @returns Suggested step number (1, 2, 3, 9, or 12)
+ */
+export function suggestAnchorStep(lightness: number): number {
+	if (lightness < LIGHTNESS_THRESHOLDS.darkMax) {
+		return 12; // Dark color → text/dark end
+	}
+	if (lightness > LIGHTNESS_THRESHOLDS.lightMin) {
+		// Map light colors to steps 1-3 based on how light they are
+		if (lightness > 0.97) return 1;
+		if (lightness > 0.92) return 2;
+		return 3;
+	}
+	return 9; // Normal range → solid/primary step
+}
 
 /** Result of analyzing a single brand color */
 export interface ColorAnalysis {
@@ -30,6 +63,8 @@ export interface ColorAnalysis {
 	hueOffset: number;
 	/** Chroma relative to slot's reference (1.0 = same) */
 	chromaRatio: number;
+	/** Suggested anchor step based on lightness (9 for normal, 12 for dark, 1-3 for light) */
+	suggestedAnchorStep: number;
 }
 
 /**
@@ -65,7 +100,8 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 		distance,
 		snaps,
 		hueOffset,
-		chromaRatio
+		chromaRatio,
+		suggestedAnchorStep: suggestAnchorStep(oklch.l)
 	};
 }
 
@@ -113,10 +149,13 @@ export function analyzeBrandColors(colors: string[]): TuningProfile {
 	const actualAvgLightness = average(analyses.map((a) => a.oklch.l));
 	const lightnessShift = actualAvgLightness - expectedMidLightness;
 
-	// Build anchors map: input hex -> baseline slot name
-	const anchors: Record<string, string> = {};
+	// Build anchors map: input hex -> { slot, step }
+	const anchors: Record<string, AnchorInfo> = {};
 	for (const analysis of analyses) {
-		anchors[analysis.input] = analysis.slot;
+		anchors[analysis.input] = {
+			slot: analysis.slot,
+			step: analysis.suggestedAnchorStep
+		};
 	}
 
 	return {

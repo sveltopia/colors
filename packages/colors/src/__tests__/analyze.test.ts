@@ -3,7 +3,8 @@ import {
 	analyzeColor,
 	analyzeBrandColors,
 	createDefaultProfile,
-	getAnalysisReport
+	getAnalysisReport,
+	suggestAnchorStep
 } from '../core/analyze.js';
 import { SNAP_THRESHOLD } from '../core/hues.js';
 
@@ -79,9 +80,12 @@ describe('Brand Analysis', () => {
 		it('creates profile from Sveltopia brand colors', () => {
 			const profile = analyzeBrandColors([SVELTOPIA_ORANGE, SVELTOPIA_GREEN, SVELTOPIA_DARK]);
 
-			expect(profile.anchors[SVELTOPIA_ORANGE]).toBe('orange');
-			expect(profile.anchors[SVELTOPIA_GREEN]).toBe('grass');
+			expect(profile.anchors[SVELTOPIA_ORANGE].slot).toBe('orange');
+			expect(profile.anchors[SVELTOPIA_ORANGE].step).toBe(9); // Normal lightness
+			expect(profile.anchors[SVELTOPIA_GREEN].slot).toBe('grass');
+			expect(profile.anchors[SVELTOPIA_GREEN].step).toBe(9); // Normal lightness
 			expect(profile.anchors[SVELTOPIA_DARK]).toBeDefined();
+			expect(profile.anchors[SVELTOPIA_DARK].step).toBe(12); // Dark color → step 12
 		});
 
 		it('calculates reasonable hue shift', () => {
@@ -119,7 +123,8 @@ describe('Brand Analysis', () => {
 		it('handles single color input', () => {
 			const profile = analyzeBrandColors([SVELTOPIA_ORANGE]);
 
-			expect(profile.anchors[SVELTOPIA_ORANGE]).toBe('orange');
+			expect(profile.anchors[SVELTOPIA_ORANGE].slot).toBe('orange');
+			expect(profile.anchors[SVELTOPIA_ORANGE].step).toBe(9);
 			expect(Object.keys(profile.anchors)).toHaveLength(1);
 		});
 
@@ -135,8 +140,8 @@ describe('Brand Analysis', () => {
 			const profile = analyzeBrandColors([SVELTOPIA_ORANGE, 'invalid', SVELTOPIA_GREEN]);
 
 			expect(Object.keys(profile.anchors)).toHaveLength(2);
-			expect(profile.anchors[SVELTOPIA_ORANGE]).toBe('orange');
-			expect(profile.anchors[SVELTOPIA_GREEN]).toBe('grass');
+			expect(profile.anchors[SVELTOPIA_ORANGE].slot).toBe('orange');
+			expect(profile.anchors[SVELTOPIA_GREEN].slot).toBe('grass');
 		});
 	});
 
@@ -184,6 +189,39 @@ describe('Brand Analysis', () => {
 		});
 	});
 
+	describe('suggestAnchorStep', () => {
+		it('returns step 12 for dark colors (L < 0.45)', () => {
+			expect(suggestAnchorStep(0.12)).toBe(12); // #1A1A1A has L ~0.12
+			expect(suggestAnchorStep(0.25)).toBe(12);
+			expect(suggestAnchorStep(0.40)).toBe(12);
+		});
+
+		it('returns step 9 for normal lightness (0.45 <= L <= 0.85)', () => {
+			expect(suggestAnchorStep(0.45)).toBe(9); // Boundary
+			expect(suggestAnchorStep(0.55)).toBe(9);
+			expect(suggestAnchorStep(0.65)).toBe(9);
+			expect(suggestAnchorStep(0.75)).toBe(9);
+			expect(suggestAnchorStep(0.85)).toBe(9); // Boundary
+		});
+
+		it('returns step 1-3 for very light colors (L > 0.85)', () => {
+			expect(suggestAnchorStep(0.86)).toBe(3); // Just over 0.85
+			expect(suggestAnchorStep(0.92)).toBe(3); // Still step 3
+			expect(suggestAnchorStep(0.93)).toBe(2); // Above 0.92 → step 2
+			expect(suggestAnchorStep(0.97)).toBe(2); // Still step 2
+			expect(suggestAnchorStep(0.98)).toBe(1); // Above 0.97 → step 1
+			expect(suggestAnchorStep(0.99)).toBe(1);
+		});
+
+		it('includes anchor step in ColorAnalysis', () => {
+			const darkResult = analyzeColor('#1A1A1A');
+			expect(darkResult!.suggestedAnchorStep).toBe(12);
+
+			const normalResult = analyzeColor('#FF6A00');
+			expect(normalResult!.suggestedAnchorStep).toBe(9);
+		});
+	});
+
 	describe('real-world scenarios', () => {
 		it('handles a full brand palette (7 colors)', () => {
 			const colors = [
@@ -208,7 +246,7 @@ describe('Brand Analysis', () => {
 			const profile = analyzeBrandColors(warmColors);
 
 			// All slots should be in warm family
-			const slots = Object.values(profile.anchors);
+			const slots = Object.values(profile.anchors).map((a) => a.slot);
 			const warmSlots = [
 				'red',
 				'ruby',
@@ -232,7 +270,7 @@ describe('Brand Analysis', () => {
 			const profile = analyzeBrandColors(coolColors);
 
 			// All slots should be in cool family
-			const slots = Object.values(profile.anchors);
+			const slots = Object.values(profile.anchors).map((a) => a.slot);
 			const coolSlots = [
 				'blue',
 				'indigo',

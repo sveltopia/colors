@@ -59,6 +59,11 @@ function toScale(steps: Array<{ step: number; hex: string }>): Scale {
  * Create a synthetic parent color for a non-anchored hue.
  * Applies tuning profile adjustments to the baseline.
  *
+ * Key insight: We apply hueShift to ALL hues (not just anchored ones).
+ * This is the "retuning the whole guitar" concept - if your brand orange
+ * is 2° warmer than Radix, your entire palette should be 2° warmer.
+ * This creates cohesive brand temperature across all colors.
+ *
  * @param baselineHue - The baseline hue definition
  * @param tuning - The tuning profile to apply
  * @returns Hex color to use as parent for scale generation
@@ -68,7 +73,7 @@ function createTunedParent(
 	baselineChroma: number,
 	tuning: TuningProfile
 ): string {
-	// Apply tuning adjustments
+	// Apply tuning adjustments - hueShift applies globally for brand cohesion
 	const tunedHue = (baselineHue + tuning.hueShift + 360) % 360;
 	const tunedChroma = baselineChroma * tuning.chromaMultiplier;
 
@@ -105,10 +110,10 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 	// Get or calculate tuning profile
 	const tuningProfile = options.tuningProfile ?? analyzeBrandColors(brandColors);
 
-	// Invert anchors map: slot -> hex (for lookup during generation)
-	const slotToAnchor: Record<string, string> = {};
-	for (const [hex, slot] of Object.entries(tuningProfile.anchors)) {
-		slotToAnchor[slot] = hex;
+	// Invert anchors map: slot -> { hex, step }
+	const slotToAnchor: Record<string, { hex: string; step: number }> = {};
+	for (const [hex, info] of Object.entries(tuningProfile.anchors)) {
+		slotToAnchor[info.slot] = { hex, step: info.step };
 	}
 
 	const scales: Record<string, Scale> = {};
@@ -118,18 +123,22 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 	for (const hueKey of HUE_KEYS) {
 		const baseline = BASELINE_HUES[hueKey];
 		let parentColor: string;
+		let anchorStep: number | undefined;
 
 		if (slotToAnchor[hueKey]) {
-			// This slot is anchored to a brand color - use it directly
-			parentColor = slotToAnchor[hueKey];
+			// This slot is anchored to a brand color - use it with smart step placement
+			const anchor = slotToAnchor[hueKey];
+			parentColor = anchor.hex;
+			anchorStep = anchor.step;
 			anchoredSlots.push(hueKey);
 		} else {
 			// Not anchored - create tuned parent from baseline
 			parentColor = createTunedParent(baseline.hue, baseline.referenceChroma, tuningProfile);
+			anchorStep = 9; // Default anchor step for tuned colors
 		}
 
-		// Generate the 12-step scale
-		const generatedScale = generateScaleAPCA({ parentColor });
+		// Generate the 12-step scale with appropriate anchor step and hue type
+		const generatedScale = generateScaleAPCA({ parentColor, anchorStep, hueKey });
 		scales[hueKey] = toScale(generatedScale.steps);
 	}
 
