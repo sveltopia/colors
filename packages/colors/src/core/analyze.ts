@@ -15,36 +15,55 @@ import type { OklchColor, TuningProfile, AnchorInfo } from '../types.js';
 import { BASELINE_HUES, findClosestHueWithDistance, SNAP_THRESHOLD } from './hues.js';
 
 /**
- * Lightness thresholds for smart step placement.
- * Based on Radix Colors analysis:
- * - Step 9 (normal anchor): L ≈ 0.55-0.70
- * - Step 12 (dark text): L ≈ 0.25-0.40
- * - Step 1-3 (light bg): L ≈ 0.95-0.99
+ * Radix lightness targets for each step (1-12).
+ * Used to find best-fit anchor step for any input color.
+ * These are the same values from generate.ts.
  */
-const LIGHTNESS_THRESHOLDS = {
-	/** Below this = dark color → anchor at step 12 */
-	darkMax: 0.45,
-	/** Above this = light color → anchor at step 1-3 */
-	lightMin: 0.85
-};
+const RADIX_LIGHTNESS_TARGETS = [
+	0.993, // Step 1
+	0.981, // Step 2
+	0.959, // Step 3
+	0.931, // Step 4
+	0.897, // Step 5
+	0.858, // Step 6
+	0.805, // Step 7
+	0.732, // Step 8
+	0.66, // Step 9 (typical hero position)
+	0.632, // Step 10
+	0.561, // Step 11
+	0.332 // Step 12
+];
 
 /**
  * Determine the best anchor step for a color based on its lightness.
+ * Uses best-fit matching against Radix lightness targets.
+ *
+ * This allows anchoring at ANY step (1-12), not just 9 or 12.
+ * For example:
+ * - L ≈ 0.66 → Step 9 (standard hero)
+ * - L ≈ 0.73 → Step 8 (lighter hero)
+ * - L ≈ 0.56 → Step 11 (dark accent)
+ * - L ≈ 0.33 → Step 12 (text color)
+ * - L < 0.25 → Step 12 (clamped, darker than any target)
  *
  * @param lightness - OKLCH lightness value (0-1)
- * @returns Suggested step number (1, 2, 3, 9, or 12)
+ * @returns Best-fit step number (1-12)
  */
 export function suggestAnchorStep(lightness: number): number {
-	if (lightness < LIGHTNESS_THRESHOLDS.darkMax) {
-		return 12; // Dark color → text/dark end
+	let bestStep = 9;
+	let bestDiff = Infinity;
+
+	for (let i = 0; i < RADIX_LIGHTNESS_TARGETS.length; i++) {
+		const target = RADIX_LIGHTNESS_TARGETS[i];
+		const diff = Math.abs(lightness - target);
+
+		if (diff < bestDiff) {
+			bestDiff = diff;
+			bestStep = i + 1; // Steps are 1-indexed
+		}
 	}
-	if (lightness > LIGHTNESS_THRESHOLDS.lightMin) {
-		// Map light colors to steps 1-3 based on how light they are
-		if (lightness > 0.97) return 1;
-		if (lightness > 0.92) return 2;
-		return 3;
-	}
-	return 9; // Normal range → solid/primary step
+
+	return bestStep;
 }
 
 /** Result of analyzing a single brand color */
