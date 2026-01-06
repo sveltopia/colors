@@ -52,3 +52,7 @@ export {
 	CHROMA_CURVE
 } from './core/generate.js';
 export type { GenerateScaleOptions } from './core/generate.js';
+
+// Full palette generation
+export { generateLightPalette, getPaletteStats } from './core/palette.js';
+export type { GeneratePaletteOptions, LightPalette } from './core/palette.js';
