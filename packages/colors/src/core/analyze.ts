@@ -11,8 +11,66 @@
  */
 
 import { toOklch } from '../utils/oklch.js';
-import type { OklchColor, TuningProfile } from '../types.js';
+import type { OklchColor, TuningProfile, AnchorInfo } from '../types.js';
 import { BASELINE_HUES, findClosestHueWithDistance, SNAP_THRESHOLD } from './hues.js';
+import { RADIX_LIGHTNESS_CURVES } from './generate.js';
+
+/**
+ * Radix lightness targets for each step (1-12).
+ * Used to find best-fit anchor step for any input color.
+ * These are the same values from generate.ts.
+ */
+const RADIX_LIGHTNESS_TARGETS = [
+	0.993, // Step 1
+	0.981, // Step 2
+	0.959, // Step 3
+	0.931, // Step 4
+	0.897, // Step 5
+	0.858, // Step 6
+	0.805, // Step 7
+	0.732, // Step 8
+	0.66, // Step 9 (typical hero position)
+	0.632, // Step 10
+	0.561, // Step 11
+	0.332 // Step 12
+];
+
+/**
+ * Determine the best anchor step for a color based on its lightness.
+ * Uses best-fit matching against per-hue Radix lightness curves.
+ *
+ * This allows anchoring at ANY step (1-12), not just 9 or 12.
+ * For example:
+ * - L ≈ 0.66 → Step 9 (standard hero)
+ * - L ≈ 0.73 → Step 8 (lighter hero)
+ * - L ≈ 0.56 → Step 11 (dark accent)
+ * - L ≈ 0.33 → Step 12 (text color)
+ * - L < 0.25 → Step 12 (clamped, darker than any target)
+ *
+ * @param lightness - OKLCH lightness value (0-1)
+ * @param slot - Hue slot name for per-hue curve lookup (optional)
+ * @returns Best-fit step number (1-12)
+ */
+export function suggestAnchorStep(lightness: number, slot?: string): number {
+	// Use per-hue lightness curve if available, otherwise fall back to generic
+	const lightnessCurve = slot ? RADIX_LIGHTNESS_CURVES[slot] : null;
+	const targets = lightnessCurve || RADIX_LIGHTNESS_TARGETS;
+
+	let bestStep = 9;
+	let bestDiff = Infinity;
+
+	for (let i = 0; i < targets.length; i++) {
+		const target = targets[i];
+		const diff = Math.abs(lightness - target);
+
+		if (diff < bestDiff) {
+			bestDiff = diff;
+			bestStep = i + 1; // Steps are 1-indexed
+		}
+	}
+
+	return bestStep;
+}
 
 /** Result of analyzing a single brand color */
 export interface ColorAnalysis {
@@ -30,6 +88,8 @@ export interface ColorAnalysis {
 	hueOffset: number;
 	/** Chroma relative to slot's reference (1.0 = same) */
 	chromaRatio: number;
+	/** Suggested anchor step based on lightness (9 for normal, 12 for dark, 1-3 for light) */
+	suggestedAnchorStep: number;
 }
 
 /**
@@ -65,7 +125,9 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 		distance,
 		snaps,
 		hueOffset,
-		chromaRatio
+		chromaRatio,
+		// Use per-hue lightness curve for accurate step matching
+		suggestedAnchorStep: suggestAnchorStep(oklch.l, slot)
 	};
 }
 
@@ -113,10 +175,13 @@ export function analyzeBrandColors(colors: string[]): TuningProfile {
 	const actualAvgLightness = average(analyses.map((a) => a.oklch.l));
 	const lightnessShift = actualAvgLightness - expectedMidLightness;
 
-	// Build anchors map: input hex -> baseline slot name
-	const anchors: Record<string, string> = {};
+	// Build anchors map: input hex -> { slot, step }
+	const anchors: Record<string, AnchorInfo> = {};
 	for (const analysis of analyses) {
-		anchors[analysis.input] = analysis.slot;
+		anchors[analysis.input] = {
+			slot: analysis.slot,
+			step: analysis.suggestedAnchorStep
+		};
 	}
 
 	return {

@@ -12,7 +12,11 @@
 
 import { toOklch, toHex, clampOklch } from '../utils/oklch.js';
 import { BASELINE_HUES, HUE_KEYS } from './hues.js';
-import { generateScaleAPCA } from './generate.js';
+import {
+	generateScaleAPCA,
+	RADIX_REFERENCE_CHROMAS,
+	RADIX_LIGHTNESS_CURVES
+} from './generate.js';
 import { analyzeBrandColors } from './analyze.js';
 import type { Scale, TuningProfile, OklchColor } from '../types.js';
 
@@ -57,28 +61,40 @@ function toScale(steps: Array<{ step: number; hex: string }>): Scale {
 
 /**
  * Create a synthetic parent color for a non-anchored hue.
- * Applies tuning profile adjustments to the baseline.
+ * Uses Radix reference values as baseline, with brand tuning applied as deltas.
  *
- * @param baselineHue - The baseline hue definition
+ * Key insight: We apply hueShift to ALL hues (not just anchored ones).
+ * This is the "retuning the whole guitar" concept - if your brand orange
+ * is 2° warmer than Radix, your entire palette should be 2° warmer.
+ * This creates cohesive brand temperature across all colors.
+ *
+ * @param hueKey - The hue name (e.g., 'yellow', 'cyan')
+ * @param baselineHue - The baseline hue angle
  * @param tuning - The tuning profile to apply
  * @returns Hex color to use as parent for scale generation
  */
 function createTunedParent(
+	hueKey: string,
 	baselineHue: number,
-	baselineChroma: number,
 	tuning: TuningProfile
 ): string {
-	// Apply tuning adjustments
-	const tunedHue = (baselineHue + tuning.hueShift + 360) % 360;
-	const tunedChroma = baselineChroma * tuning.chromaMultiplier;
+	// Use Radix reference chroma as baseline (this is the "trust Radix" approach)
+	// Brand tuning applies chromaMultiplier as a delta on top
+	const radixChroma = RADIX_REFERENCE_CHROMAS[hueKey] ?? 0.15;
+	const tunedChroma = radixChroma * tuning.chromaMultiplier;
 
-	// Step 9 lightness is around 0.62-0.68 for most Radix colors
-	// Apply lightness shift from tuning
-	const baseLightness = 0.65;
-	const tunedLightness = Math.max(0.3, Math.min(0.8, baseLightness + tuning.lightnessShift));
+	// Apply hueShift globally for brand cohesion
+	const tunedHue = (baselineHue + tuning.hueShift + 360) % 360;
+
+	// CRITICAL: Use Radix step 9 lightness for this hue to avoid gamut clipping!
+	// Yellow at L=0.65 loses 30% chroma when converted to sRGB.
+	// Yellow at L=0.918 (Radix step 9) preserves full chroma.
+	// This ensures the parent color has the correct chroma after sRGB conversion.
+	const lightnessCurve = RADIX_LIGHTNESS_CURVES[hueKey];
+	const radixStep9Lightness = lightnessCurve ? lightnessCurve[8] : 0.65; // index 8 = step 9
 
 	const oklch = clampOklch({
-		l: tunedLightness,
+		l: radixStep9Lightness,
 		c: tunedChroma,
 		h: tunedHue
 	});
@@ -105,10 +121,10 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 	// Get or calculate tuning profile
 	const tuningProfile = options.tuningProfile ?? analyzeBrandColors(brandColors);
 
-	// Invert anchors map: slot -> hex (for lookup during generation)
-	const slotToAnchor: Record<string, string> = {};
-	for (const [hex, slot] of Object.entries(tuningProfile.anchors)) {
-		slotToAnchor[slot] = hex;
+	// Invert anchors map: slot -> { hex, step }
+	const slotToAnchor: Record<string, { hex: string; step: number }> = {};
+	for (const [hex, info] of Object.entries(tuningProfile.anchors)) {
+		slotToAnchor[info.slot] = { hex, step: info.step };
 	}
 
 	const scales: Record<string, Scale> = {};
@@ -118,19 +134,62 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 	for (const hueKey of HUE_KEYS) {
 		const baseline = BASELINE_HUES[hueKey];
 		let parentColor: string;
+		let anchorStep: number | undefined;
+
+		// Track whether this is a real brand anchor or synthetic parent
+		let useFullCurve = false;
 
 		if (slotToAnchor[hueKey]) {
-			// This slot is anchored to a brand color - use it directly
-			parentColor = slotToAnchor[hueKey];
+			// This slot is anchored to a brand color - use it with smart step placement
+			const anchor = slotToAnchor[hueKey];
+			parentColor = anchor.hex;
+			anchorStep = anchor.step;
 			anchoredSlots.push(hueKey);
+			// Brand anchor: use parent's actual lightness at anchor step
+			useFullCurve = false;
 		} else {
-			// Not anchored - create tuned parent from baseline
-			parentColor = createTunedParent(baseline.hue, baseline.referenceChroma, tuningProfile);
+			// Not anchored - create tuned parent from Radix baseline
+			// Parent provides hue and chroma (from Radix reference); lightness comes from Radix curve
+			parentColor = createTunedParent(hueKey, baseline.hue, tuningProfile);
+			anchorStep = 9;
+			// Synthetic parent: use Radix lightness curve for ALL steps
+			// This is critical for bright hues (yellow/lime) where step 9 should be LIGHTER
+			useFullCurve = true;
 		}
 
-		// Generate the 12-step scale
-		const generatedScale = generateScaleAPCA({ parentColor });
-		scales[hueKey] = toScale(generatedScale.steps);
+		// Generate the 12-step scale with appropriate anchor step and hue type
+		const generatedScale = generateScaleAPCA({ parentColor, anchorStep, hueKey, useFullCurve });
+		const scale = toScale(generatedScale.steps);
+
+		// For anchored slots: replace generated anchor step with exact brand hex
+		// This ensures brand colors appear exactly as provided, not approximated
+		if (slotToAnchor[hueKey]) {
+			const anchor = slotToAnchor[hueKey];
+			const generatedHex = scale[anchor.step as keyof Scale];
+			const brandHex = anchor.hex;
+
+			// Validate the algorithm produced something close (within tolerance)
+			// If wildly different, it indicates an algorithm problem
+			const generated = toOklch(generatedHex);
+			const brand = toOklch(brandHex);
+			if (generated && brand) {
+				const deltaL = Math.abs(generated.l - brand.l);
+				const deltaC = Math.abs(generated.c - brand.c);
+				// Allow small differences from rounding, but flag large ones
+				if (deltaL > 0.05 || deltaC > 0.05) {
+					console.warn(
+						`Anchor validation warning: ${hueKey} step ${anchor.step} ` +
+							`differs significantly from brand color. ` +
+							`Generated: ${generatedHex}, Brand: ${brandHex}`
+					);
+				}
+			}
+
+			// Always use exact brand hex for anchor step
+			scale[anchor.step as keyof Scale] = brandHex;
+		}
+
+		scales[hueKey] = scale;
 	}
 
 	return {
