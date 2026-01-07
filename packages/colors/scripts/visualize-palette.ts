@@ -148,12 +148,25 @@ let html = `<!DOCTYPE html>
       border-radius: 3px;
       cursor: pointer;
       transition: transform 0.1s;
+      position: relative;
     }
     .swatch:hover {
       transform: scale(1.15);
       z-index: 10;
-      position: relative;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .swatch.brand-anchor::after {
+      content: '★';
+      position: absolute;
+      top: 2px;
+      right: 3px;
+      font-size: 10px;
+      color: white;
+      text-shadow:
+        -1px -1px 0 rgba(0,0,0,0.5),
+        1px -1px 0 rgba(0,0,0,0.5),
+        -1px 1px 0 rgba(0,0,0,0.5),
+        1px 1px 0 rgba(0,0,0,0.5);
     }
     .section-divider {
       grid-column: 1 / -1;
@@ -263,11 +276,18 @@ for (let step = 1; step <= 12; step++) {
 const neutrals = ['gray', 'mauve', 'slate', 'sage', 'olive', 'sand'];
 let lastWasNeutral = false;
 
+// Build anchor map: slot → step (for marking exact anchor swatches)
+const anchorStepMap: Record<string, number> = {};
+for (const [hex, info] of Object.entries(palette.meta.tuningProfile.anchors)) {
+	anchorStepMap[info.slot] = info.step;
+}
+
 // Rows for each hue - interleaved Radix and Generated
 for (const [hueKey, hueDef] of orderedHues) {
 	const generatedScale = palette.scales[hueKey];
 	const radixScale = RADIX_SCALES[hueKey];
 	const isAnchored = palette.meta.anchoredSlots.includes(hueKey);
+	const anchorStep = anchorStepMap[hueKey];
 	const isNeutral = neutrals.includes(hueKey);
 
 	// Add divider after neutrals section
@@ -287,7 +307,9 @@ for (const [hueKey, hueDef] of orderedHues) {
 	html += `    <div class="hue-label${isAnchored ? ' anchored' : ''} row-generated">${hueDef.name}${isAnchored ? ' ★' : ''}</div>\n`;
 	for (let step = 1; step <= 12; step++) {
 		const hex = generatedScale[step as keyof typeof generatedScale];
-		html += `    <div class="swatch row-generated" style="background: ${hex}" title="Generated ${hueKey}-${step}: ${hex}"></div>\n`;
+		const isAnchorSwatch = isAnchored && step === anchorStep;
+		const anchorClass = isAnchorSwatch ? ' brand-anchor' : '';
+		html += `    <div class="swatch row-generated${anchorClass}" style="background: ${hex}" title="Generated ${hueKey}-${step}: ${hex}${isAnchorSwatch ? ' (BRAND ANCHOR)' : ''}"></div>\n`;
 	}
 }
 

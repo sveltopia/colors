@@ -81,8 +81,8 @@ describe('Brand Analysis', () => {
 			const profile = analyzeBrandColors([SVELTOPIA_ORANGE, SVELTOPIA_GREEN, SVELTOPIA_DARK]);
 
 			expect(profile.anchors[SVELTOPIA_ORANGE].slot).toBe('orange');
-			// Orange L ~0.70, closest to step 8 (0.732) - best-fit matching
-			expect(profile.anchors[SVELTOPIA_ORANGE].step).toBe(8);
+			// Orange L ~0.70, closest to Radix Orange step 9 (0.691) with per-hue curve
+			expect(profile.anchors[SVELTOPIA_ORANGE].step).toBe(9);
 			expect(profile.anchors[SVELTOPIA_GREEN].slot).toBe('grass');
 			// Green L ~0.59, closest to step 10 (0.632) or step 11 (0.561)
 			expect(profile.anchors[SVELTOPIA_GREEN].step).toBeGreaterThanOrEqual(10);
@@ -127,8 +127,8 @@ describe('Brand Analysis', () => {
 			const profile = analyzeBrandColors([SVELTOPIA_ORANGE]);
 
 			expect(profile.anchors[SVELTOPIA_ORANGE].slot).toBe('orange');
-			// Orange L ~0.70, closest to step 8 (0.732) - best-fit matching
-			expect(profile.anchors[SVELTOPIA_ORANGE].step).toBe(8);
+			// Orange L ~0.70, closest to Radix Orange step 9 (0.691) with per-hue curve
+			expect(profile.anchors[SVELTOPIA_ORANGE].step).toBe(9);
 			expect(Object.keys(profile.anchors)).toHaveLength(1);
 		});
 

@@ -13,6 +13,7 @@
 import { toOklch } from '../utils/oklch.js';
 import type { OklchColor, TuningProfile, AnchorInfo } from '../types.js';
 import { BASELINE_HUES, findClosestHueWithDistance, SNAP_THRESHOLD } from './hues.js';
+import { RADIX_LIGHTNESS_CURVES } from './generate.js';
 
 /**
  * Radix lightness targets for each step (1-12).
@@ -36,7 +37,7 @@ const RADIX_LIGHTNESS_TARGETS = [
 
 /**
  * Determine the best anchor step for a color based on its lightness.
- * Uses best-fit matching against Radix lightness targets.
+ * Uses best-fit matching against per-hue Radix lightness curves.
  *
  * This allows anchoring at ANY step (1-12), not just 9 or 12.
  * For example:
@@ -47,14 +48,19 @@ const RADIX_LIGHTNESS_TARGETS = [
  * - L < 0.25 → Step 12 (clamped, darker than any target)
  *
  * @param lightness - OKLCH lightness value (0-1)
+ * @param slot - Hue slot name for per-hue curve lookup (optional)
  * @returns Best-fit step number (1-12)
  */
-export function suggestAnchorStep(lightness: number): number {
+export function suggestAnchorStep(lightness: number, slot?: string): number {
+	// Use per-hue lightness curve if available, otherwise fall back to generic
+	const lightnessCurve = slot ? RADIX_LIGHTNESS_CURVES[slot] : null;
+	const targets = lightnessCurve || RADIX_LIGHTNESS_TARGETS;
+
 	let bestStep = 9;
 	let bestDiff = Infinity;
 
-	for (let i = 0; i < RADIX_LIGHTNESS_TARGETS.length; i++) {
-		const target = RADIX_LIGHTNESS_TARGETS[i];
+	for (let i = 0; i < targets.length; i++) {
+		const target = targets[i];
 		const diff = Math.abs(lightness - target);
 
 		if (diff < bestDiff) {
@@ -120,7 +126,8 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 		snaps,
 		hueOffset,
 		chromaRatio,
-		suggestedAnchorStep: suggestAnchorStep(oklch.l)
+		// Use per-hue lightness curve for accurate step matching
+		suggestedAnchorStep: suggestAnchorStep(oklch.l, slot)
 	};
 }
 
