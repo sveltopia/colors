@@ -303,13 +303,13 @@ export const RADIX_REFERENCE_CHROMAS: Record<string, number> = {
  * Brand tuning applies hueShift as a delta on top of these curves.
  */
 export const RADIX_HUE_CURVES: Record<string, number[]> = {
-	// Neutrals (hue varies due to low chroma - less meaningful)
+	// Neutrals (hue varies due to low chroma - extracted from actual Radix colors)
 	gray: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-	mauve: [325.6, 308.4, 317.8, 308.4, 308.3, 310.5, 304.8, 305.5, 292.9, 303.2, 295.0, 298.5],
-	slate: [286.4, 286.4, 286.3, 286.3, 295.4, 295.4, 296.3, 291.2, 277.7, 278.8, 280.8, 276.7],
-	sage: [165.1, 165.1, 165.1, 165.1, 145.5, 145.5, 145.5, 145.5, 171.6, 158.6, 174.1, 164.3],
-	olive: [145.6, 128.5, 121.6, 115.7, 114.2, 114.2, 118.1, 115.9, 136.6, 133.4, 140.5, 128.8],
-	sand: [106.4, 106.4, 67.8, 84.6, 67.8, 78.3, 84.6, 78.3, 106.7, 106.7, 106.7, 95.4],
+	mauve: [325.6, 308.4, 317.8, 312.3, 311.2, 303.1, 299.8, 293.0, 292.9, 293.5, 295.0, 298.5],
+	slate: [286.4, 286.4, 286.3, 286.3, 277.2, 286.2, 280.4, 277.8, 277.7, 277.7, 264.4, 248.2],
+	sage: [165.1, 165.1, 174.5, 174.5, 157.2, 174.5, 165.0, 165.0, 171.6, 171.6, 174.1, 167.6],
+	olive: [145.6, 145.6, 145.5, 145.5, 145.5, 145.5, 145.5, 137.8, 136.6, 136.6, 140.5, 139.4],
+	sand: [106.4, 106.4, 67.8, 84.6, 91.4, 91.5, 95.1, 98.9, 106.7, 106.7, 106.7, 95.4],
 
 	// Warm reds/pinks
 	tomato: [17.2, 27.2, 31.8, 34.8, 32.6, 32.6, 32.2, 32.3, 33.3, 33.2, 32.7, 30.4],
@@ -479,27 +479,49 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 	const hueHueCurve = hueKey ? RADIX_HUE_CURVES[hueKey] : null;
 
 	// Calculate hue offset: difference between parent hue and Radix anchor step hue
-	// This offset is applied to the entire curve so brand tuning works:
-	// - Non-anchored hues: parent has hueShift baked in, offset propagates it
-	// - Anchored hues: parent is brand color, offset preserves brand hue at anchor
+	// This offset preserves brand hue at anchor step while following Radix curve shape.
+	// IMPORTANT: Handle wraparound at 0°/360° boundary (e.g., 359° vs 1° should be -2°, not +358°)
 	const radixAnchorHue = hueHueCurve ? hueHueCurve[anchorStep - 1] : parent.h;
-	const hueOffset = parent.h - radixAnchorHue;
+	let hueOffset = parent.h - radixAnchorHue;
+	if (hueOffset > 180) hueOffset -= 360;
+	if (hueOffset < -180) hueOffset += 360;
+
+	// Calculate max distance from anchor step (for dampening calculation)
+	const maxDistanceFromAnchor = Math.max(anchorStep - 1, 12 - anchorStep);
 
 	const steps: GeneratedScaleStep[] = [];
+
+	// Calculate chroma departure for dampening
+	// If parent has significantly more chroma than Radix reference, we dampen it at edges
+	const radixRefChroma = RADIX_REFERENCE_CHROMAS[hueKey] ?? parent.c;
+	const chromaDeparture = parent.c / radixRefChroma; // e.g., 1.42 means +42% more chroma
 
 	for (let i = 0; i < 12; i++) {
 		const stepNum = i + 1;
 
-		// Apply adjusted chroma curve (now relative to anchor step)
-		const chroma = parent.c * adjustedChromaCurve[i];
+		// Calculate dampening factor (same as for hue and chroma)
+		// minDampening controls how much brand influence remains at edges (step 1 or 12)
+		// Lower values = edges closer to pure Radix, higher = more brand propagation
+		const distanceFromAnchor = Math.abs(stepNum - anchorStep);
+		const normalizedDistance = maxDistanceFromAnchor > 0 ? distanceFromAnchor / maxDistanceFromAnchor : 0;
+		const minDampening = 0.3;
+		const dampeningFactor = 1.0 - Math.pow(normalizedDistance, 1.5) * (1.0 - minDampening);
 
-		// Calculate hue for this step using Radix curve + brand offset
+		// Apply chroma with dampening toward Radix reference at edges
+		// At anchor: use full parent chroma (chromaDeparture)
+		// At edges: blend toward 1.0 (Radix reference level)
+		const dampenedChromaDeparture = 1.0 + (chromaDeparture - 1.0) * dampeningFactor;
+		const chroma = radixRefChroma * dampenedChromaDeparture * adjustedChromaCurve[i];
+
+		// Calculate hue for this step using Radix curve + dampened brand offset
+		// Dampening prevents large brand hue departures from over-propagating to edges.
+		// At anchor step: 100% of brand offset applied
+		// At edges (step 1 or 12): reduced offset (closer to pure Radix curve)
 		let hue: number;
 		if (hueHueCurve) {
-			// Use Radix hue curve + brand delta
-			// This preserves Radix's natural hue shift (warmer darks, etc.)
-			// while respecting brand hue preference
-			hue = (hueHueCurve[i] + hueOffset + 360) % 360;
+			// Reuse dampening factor calculated above for chroma
+			const dampenedOffset = hueOffset * dampeningFactor;
+			hue = (hueHueCurve[i] + dampenedOffset + 360) % 360;
 		} else {
 			// Fallback: constant parent hue with slight drift for dark steps
 			hue = parent.h;

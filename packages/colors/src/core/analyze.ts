@@ -110,6 +110,13 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 	// Determine if we should snap to this slot
 	const snaps = distance <= SNAP_THRESHOLD;
 
+	// Warn if color is far from any hue slot (potential custom row candidate)
+	if (!snaps && isChromatic) {
+		console.warn(
+			`⚠️ ${hex} is ${distance.toFixed(1)}° from nearest hue (${slot}). Consider custom row.`
+		);
+	}
+
 	// Calculate hue offset (signed, accounting for wrap-around)
 	let hueOffset = oklch.h - baseline.hue;
 	if (hueOffset > 180) hueOffset -= 360;
@@ -131,6 +138,9 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 	};
 }
 
+/** Maximum number of brand colors we accept */
+export const MAX_BRAND_COLORS = 7;
+
 /**
  * Analyze multiple brand colors and extract a tuning profile.
  *
@@ -145,6 +155,14 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 export function analyzeBrandColors(colors: string[]): TuningProfile {
 	if (colors.length === 0) {
 		return createDefaultProfile();
+	}
+
+	// Enforce 7-color limit
+	if (colors.length > MAX_BRAND_COLORS) {
+		console.warn(
+			`Brand color limit is ${MAX_BRAND_COLORS}, received ${colors.length}. Using first ${MAX_BRAND_COLORS}.`
+		);
+		colors = colors.slice(0, MAX_BRAND_COLORS);
 	}
 
 	// Analyze each color

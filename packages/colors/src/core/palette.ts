@@ -60,6 +60,28 @@ function toScale(steps: Array<{ step: number; hex: string }>): Scale {
 }
 
 /**
+ * Maximum chroma multiplier for non-anchored rows.
+ * Higher values cause gamut clipping in saturated hues (orange, red),
+ * which results in unwanted hue shifts (e.g., orange → red).
+ * 1.15x provides subtle brand influence without clipping artifacts.
+ */
+const MAX_NON_ANCHORED_CHROMA_MULTIPLIER = 1.15;
+
+/**
+ * Maximum chroma multiplier for neutral/tinted-neutral rows.
+ * Neutrals have very low chroma (~0.01-0.02), so even small boosts
+ * cause disproportionate hue shifts. Using 1.0 (no boost) preserves
+ * the subtle tint character of Slate, Mauve, Olive, etc.
+ */
+const MAX_NEUTRAL_CHROMA_MULTIPLIER = 1.0;
+
+/**
+ * Neutral hue keys that get special chroma handling.
+ * These have very low reference chroma and irregular hue curves.
+ */
+const NEUTRAL_HUES = new Set(['gray', 'mauve', 'slate', 'sage', 'olive', 'sand']);
+
+/**
  * Create a synthetic parent color for a non-anchored hue.
  * Uses Radix reference values as baseline, with brand tuning applied as deltas.
  *
@@ -67,6 +89,10 @@ function toScale(steps: Array<{ step: number; hex: string }>): Scale {
  * This is the "retuning the whole guitar" concept - if your brand orange
  * is 2° warmer than Radix, your entire palette should be 2° warmer.
  * This creates cohesive brand temperature across all colors.
+ *
+ * IMPORTANT: chromaMultiplier is capped to prevent gamut clipping artifacts.
+ * High chroma values (e.g., 1.35x) cause sRGB clipping in saturated hues,
+ * resulting in unwanted hue shifts (orange becomes redder).
  *
  * @param hueKey - The hue name (e.g., 'yellow', 'cyan')
  * @param baselineHue - The baseline hue angle
@@ -79,12 +105,18 @@ function createTunedParent(
 	tuning: TuningProfile
 ): string {
 	// Use Radix reference chroma as baseline (this is the "trust Radix" approach)
-	// Brand tuning applies chromaMultiplier as a delta on top
+	// Apply different caps for neutrals vs chromatic hues
+	const isNeutral = NEUTRAL_HUES.has(hueKey);
+	const maxMultiplier = isNeutral ? MAX_NEUTRAL_CHROMA_MULTIPLIER : MAX_NON_ANCHORED_CHROMA_MULTIPLIER;
+	const cappedChromaMultiplier = Math.min(tuning.chromaMultiplier, maxMultiplier);
 	const radixChroma = RADIX_REFERENCE_CHROMAS[hueKey] ?? 0.15;
-	const tunedChroma = radixChroma * tuning.chromaMultiplier;
+	const tunedChroma = radixChroma * cappedChromaMultiplier;
 
-	// Apply hueShift globally for brand cohesion
-	const tunedHue = (baselineHue + tuning.hueShift + 360) % 360;
+	// Apply hueShift for brand cohesion - but NOT to neutrals
+	// At very low chroma (~0.01-0.02), even small hue shifts change
+	// the perceived tint disproportionately (e.g., Slate becomes Mauve-like)
+	const effectiveHueShift = isNeutral ? 0 : tuning.hueShift;
+	const tunedHue = (baselineHue + effectiveHueShift + 360) % 360;
 
 	// CRITICAL: Use Radix step 9 lightness for this hue to avoid gamut clipping!
 	// Yellow at L=0.65 loses 30% chroma when converted to sRGB.
