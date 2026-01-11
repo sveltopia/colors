@@ -102,9 +102,14 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 	const oklch = toOklch(hex);
 	if (!oklch) return null;
 
-	// Find closest baseline hue (skip neutrals for chromatic colors)
+	// Find closest baseline hue based on chroma level
+	// Chromatic colors (c > 0.03): search chromatic hues only (exclude neutrals)
+	// Non-chromatic colors (c ≤ 0.03): search neutrals only (prevents near-blacks routing to Ruby)
 	const isChromatic = oklch.c > 0.03;
-	const { slot, distance } = findClosestHueWithDistance(oklch.h, isChromatic);
+	const { slot, distance } = findClosestHueWithDistance(
+		oklch.h,
+		isChromatic ? { excludeNeutrals: true } : { neutralsOnly: true }
+	);
 	const baseline = BASELINE_HUES[slot];
 
 	// Determine if we should snap to this slot

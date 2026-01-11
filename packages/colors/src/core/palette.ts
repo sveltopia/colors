@@ -60,12 +60,18 @@ function toScale(steps: Array<{ step: number; hex: string }>): Scale {
 }
 
 /**
- * Maximum chroma multiplier for non-anchored rows.
- * Higher values cause gamut clipping in saturated hues (orange, red),
- * which results in unwanted hue shifts (e.g., orange → red).
- * 1.15x provides subtle brand influence without clipping artifacts.
+ * Chroma multiplier bounds for non-anchored rows.
+ *
+ * Floor (0.5x): Prevents palette destruction from very low chroma brands.
+ * Saddle Brown (0.59x) and Muddy Olive (0.51x) produced beautiful palettes,
+ * so 0.5x is the sweet spot where adaptation is intentional, not destructive.
+ *
+ * Ceiling (1.3x): Allows more brand adaptation while preventing gamut clipping.
+ * Higher values cause sRGB clipping in saturated hues (orange, red),
+ * resulting in unwanted hue shifts (e.g., orange → red).
  */
-const MAX_NON_ANCHORED_CHROMA_MULTIPLIER = 1.15;
+const MIN_CHROMA_MULTIPLIER = 0.5;
+const MAX_CHROMA_MULTIPLIER = 1.3;
 
 /**
  * Maximum chroma multiplier for neutral/tinted-neutral rows.
@@ -105,12 +111,24 @@ function createTunedParent(
 	tuning: TuningProfile
 ): string {
 	// Use Radix reference chroma as baseline (this is the "trust Radix" approach)
-	// Apply different caps for neutrals vs chromatic hues
+	// Apply different bounds for neutrals vs chromatic hues
 	const isNeutral = NEUTRAL_HUES.has(hueKey);
-	const maxMultiplier = isNeutral ? MAX_NEUTRAL_CHROMA_MULTIPLIER : MAX_NON_ANCHORED_CHROMA_MULTIPLIER;
-	const cappedChromaMultiplier = Math.min(tuning.chromaMultiplier, maxMultiplier);
+
+	// Clamp chroma multiplier to safe range
+	// Neutrals: no boost (1.0x cap) - they're too sensitive to chroma changes
+	// Chromatic: [0.5x, 1.3x] - allows meaningful adaptation without extremes
+	let clampedMultiplier: number;
+	if (isNeutral) {
+		clampedMultiplier = Math.min(tuning.chromaMultiplier, MAX_NEUTRAL_CHROMA_MULTIPLIER);
+	} else {
+		clampedMultiplier = Math.max(
+			MIN_CHROMA_MULTIPLIER,
+			Math.min(tuning.chromaMultiplier, MAX_CHROMA_MULTIPLIER)
+		);
+	}
+
 	const radixChroma = RADIX_REFERENCE_CHROMAS[hueKey] ?? 0.15;
-	const tunedChroma = radixChroma * cappedChromaMultiplier;
+	const tunedChroma = radixChroma * clampedMultiplier;
 
 	// Apply hueShift for brand cohesion - but NOT to neutrals
 	// At very low chroma (~0.01-0.02), even small hue shifts change

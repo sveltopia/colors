@@ -217,18 +217,29 @@ export function findClosestHue(hue: number, excludeNeutrals = true): string {
  * Used to decide whether to snap or create a custom slot.
  *
  * @param hue - OKLCH hue angle (0-360)
- * @param excludeNeutrals - Skip neutral hues
+ * @param options - Search options
+ * @param options.excludeNeutrals - Skip neutral hues (for chromatic colors)
+ * @param options.neutralsOnly - Only search neutral hues (for non-chromatic colors)
  * @returns Object with slot key and distance in degrees
  */
 export function findClosestHueWithDistance(
 	hue: number,
-	excludeNeutrals = true
+	options: { excludeNeutrals?: boolean; neutralsOnly?: boolean } | boolean = true
 ): { slot: string; distance: number } {
+	// Support legacy boolean parameter for backwards compatibility
+	const opts =
+		typeof options === 'boolean' ? { excludeNeutrals: options, neutralsOnly: false } : options;
+
+	const { excludeNeutrals = false, neutralsOnly = false } = opts;
+
 	let closestKey = 'gray';
 	let closestDistance = Infinity;
 
 	for (const [key, def] of Object.entries(BASELINE_HUES)) {
+		// Skip neutrals if excluding them
 		if (excludeNeutrals && def.category === 'neutral') continue;
+		// Skip non-neutrals if only searching neutrals
+		if (neutralsOnly && def.category !== 'neutral') continue;
 
 		const distance = Math.min(Math.abs(hue - def.hue), 360 - Math.abs(hue - def.hue));
 
