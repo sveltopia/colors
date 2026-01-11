@@ -214,4 +214,127 @@ describe('Full Palette Generation', () => {
 			expect(b).toBeLessThan(100); // Low blue
 		});
 	});
+
+	describe('custom row generation', () => {
+		it('generates custom row for pastel pink', () => {
+			const palette = generateLightPalette({ brandColors: ['#FFD1DC'] });
+
+			expect(palette.meta.customSlots.length).toBeGreaterThan(0);
+			expect(palette.meta.customSlots[0]).toContain('pastel');
+
+			// Custom row should exist in scales
+			const customKey = palette.meta.customSlots[0];
+			expect(palette.scales[customKey]).toBeDefined();
+			expect(Object.keys(palette.scales[customKey])).toHaveLength(12);
+		});
+
+		it('generates custom row for neon green', () => {
+			const palette = generateLightPalette({ brandColors: ['#39FF14'] });
+
+			expect(palette.meta.customSlots.length).toBeGreaterThan(0);
+			expect(palette.meta.customSlots[0]).toContain('neon');
+
+			// Custom row should exist in scales
+			const customKey = palette.meta.customSlots[0];
+			expect(palette.scales[customKey]).toBeDefined();
+		});
+
+		it('preserves exact brand color at anchor step in custom row', () => {
+			const pastelPink = '#ffd1dc';
+			const palette = generateLightPalette({ brandColors: [pastelPink] });
+			const customKey = palette.meta.customSlots[0];
+			const scale = palette.scales[customKey];
+
+			// Pastel pink should appear at its anchor step (exact match)
+			const hasExactColor = Object.values(scale).some(
+				(hex) => hex.toLowerCase() === pastelPink.toLowerCase()
+			);
+			expect(hasExactColor).toBe(true);
+		});
+
+		it('custom row is tracked in anchoredSlots', () => {
+			const palette = generateLightPalette({ brandColors: ['#FFD1DC'] });
+			const customKey = palette.meta.customSlots[0];
+
+			// Custom rows should also be tracked as anchored
+			expect(palette.meta.anchoredSlots).toContain(customKey);
+		});
+
+		it('getPaletteStats counts custom hues', () => {
+			const palette = generateLightPalette({ brandColors: ['#FFD1DC'] });
+			const stats = getPaletteStats(palette);
+
+			expect(stats.customHues).toBe(1);
+			expect(stats.totalHues).toBe(HUE_COUNT + 1); // 31 baseline + 1 custom
+		});
+
+		it('standard hues still use clamped chroma multiplier with neon input', () => {
+			// When we have a neon input, non-anchored hues should still use
+			// clamped chroma (not be influenced by the extreme chroma)
+			const palette = generateLightPalette({ brandColors: ['#39FF14'] });
+
+			// The neon creates a custom row, standard hues use default profile
+			expect(palette.meta.customSlots.length).toBe(1);
+
+			// Blue row should still be present and reasonable
+			expect(palette.scales.blue).toBeDefined();
+			expect(palette.scales.blue[9]).toBeDefined();
+		});
+	});
+
+	describe('hue-gap custom row generation', () => {
+		// Test cases from CC Handoff: colors that are >10° from nearest Radix slot
+		const FIGMA_BLUE = '#1ABCFE';
+		const CANVA_TEAL = '#00C4CC';
+
+		it('generates custom row for Figma blue (hue-gap)', () => {
+			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+
+			expect(palette.meta.customSlots.length).toBe(1);
+			expect(palette.meta.customSlots[0]).toContain('custom-');
+
+			// Custom row should exist in scales
+			const customKey = palette.meta.customSlots[0];
+			expect(palette.scales[customKey]).toBeDefined();
+			expect(Object.keys(palette.scales[customKey])).toHaveLength(12);
+		});
+
+		it('generates custom row for Canva teal (hue-gap)', () => {
+			const palette = generateLightPalette({ brandColors: [CANVA_TEAL] });
+
+			expect(palette.meta.customSlots.length).toBe(1);
+			expect(palette.meta.customSlots[0]).toContain('custom-');
+
+			// Custom row should exist in scales
+			const customKey = palette.meta.customSlots[0];
+			expect(palette.scales[customKey]).toBeDefined();
+		});
+
+		it('preserves exact brand color at anchor step in hue-gap row', () => {
+			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+			const customKey = palette.meta.customSlots[0];
+			const scale = palette.scales[customKey];
+
+			// Brand color should appear at its anchor step (exact match)
+			const hasExactColor = Object.values(scale).some(
+				(hex) => hex.toLowerCase() === FIGMA_BLUE.toLowerCase()
+			);
+			expect(hasExactColor).toBe(true);
+		});
+
+		it('hue-gap row is tracked in anchoredSlots', () => {
+			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+			const customKey = palette.meta.customSlots[0];
+
+			expect(palette.meta.anchoredSlots).toContain(customKey);
+		});
+
+		it('getPaletteStats counts hue-gap custom hues', () => {
+			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+			const stats = getPaletteStats(palette);
+
+			expect(stats.customHues).toBe(1);
+			expect(stats.totalHues).toBe(HUE_COUNT + 1);
+		});
+	});
 });

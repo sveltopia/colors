@@ -27,7 +27,14 @@ interface SerializedPalette {
 	brandColors: string[];
 	scales: Record<string, Record<number, string>>;
 	anchoredSlots: string[];
+	customSlots: string[];
 	anchorStepMap: Record<string, number>;
+	customRowInfo: Array<{
+		rowKey: string;
+		reason: 'low-chroma' | 'high-chroma';
+		chromaRatio: number;
+		nearestSlot: string;
+	}>;
 	tuningProfile: {
 		hueShift: number;
 		chromaMultiplier: number;
@@ -37,6 +44,7 @@ interface SerializedPalette {
 		totalHues: number;
 		totalColors: number;
 		anchoredHues: number;
+		customHues: number;
 	};
 }
 
@@ -55,6 +63,14 @@ for (const testPalette of TEST_PALETTES) {
 			anchorStepMap[info.slot] = info.step;
 		}
 
+		// Build custom row info
+		const customRowInfo = (palette.meta.tuningProfile.customRows || []).map((cr) => ({
+			rowKey: cr.rowKey,
+			reason: cr.reason,
+			chromaRatio: cr.chromaRatio,
+			nearestSlot: cr.nearestSlot
+		}));
+
 		allPalettes.push({
 			id: testPalette.id,
 			name: testPalette.name,
@@ -63,7 +79,9 @@ for (const testPalette of TEST_PALETTES) {
 			brandColors: testPalette.colors,
 			scales: palette.scales as Record<string, Record<number, string>>,
 			anchoredSlots: palette.meta.anchoredSlots,
+			customSlots: palette.meta.customSlots,
 			anchorStepMap,
+			customRowInfo,
 			tuningProfile: {
 				hueShift: palette.meta.tuningProfile.hueShift,
 				chromaMultiplier: palette.meta.tuningProfile.chromaMultiplier,
@@ -72,10 +90,12 @@ for (const testPalette of TEST_PALETTES) {
 			stats: {
 				totalHues: stats.totalHues,
 				totalColors: stats.totalColors,
-				anchoredHues: stats.anchoredHues
+				anchoredHues: stats.anchoredHues,
+				customHues: stats.customHues
 			}
 		});
-		console.log(`  ${testPalette.id}: ${stats.anchoredHues} anchored`);
+		const customInfo = stats.customHues > 0 ? `, ${stats.customHues} custom` : '';
+		console.log(`  ${testPalette.id}: ${stats.anchoredHues} anchored${customInfo}`);
 	} catch (e) {
 		console.error(`  ERROR generating ${testPalette.id}:`, e);
 	}
@@ -262,10 +282,26 @@ const html = `<!DOCTYPE html>
       color: #f76b15;
       font-weight: 600;
     }
+    .hue-label.custom-row {
+      color: #8e4ec6;
+      font-weight: 600;
+    }
     .hue-label.radix {
       color: #0090ff;
       font-style: italic;
     }
+    .custom-badge {
+      display: inline-block;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 500;
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+    .custom-badge.pastel { background: #fce7f3; color: #9d174d; }
+    .custom-badge.neon { background: #d9f99d; color: #3f6212; }
+    .custom-badge.hue-gap { background: #cffafe; color: #164e63; }
     .swatch {
       height: 32px;
       border-radius: 3px;
@@ -363,6 +399,10 @@ ${buildSelectorOptions()}      </select>
       <div class="stat-value" id="statAnchored">3</div>
       <div class="stat-label">Anchored</div>
     </div>
+    <div class="stat" id="statCustomContainer" style="display: none;">
+      <div class="stat-value" id="statCustom">0</div>
+      <div class="stat-label">Custom Rows</div>
+    </div>
   </div>
 
   <h3 style="color: #888; margin-bottom: 12px;">Brand Input Colors</h3>
@@ -405,6 +445,10 @@ ${buildSelectorOptions()}      </select>
       <span class="legend-dot" style="background: #f76b15"></span>
       <span>\u2605 Anchored to brand color</span>
     </span>
+    <span class="legend-item">
+      <span class="legend-dot" style="background: #8e4ec6"></span>
+      <span>Custom Row (out-of-bounds chroma)</span>
+    </span>
   </div>
 
   <div class="tuning-info">
@@ -436,6 +480,8 @@ ${buildSelectorOptions()}      </select>
     const statHues = document.getElementById('statHues');
     const statColors = document.getElementById('statColors');
     const statAnchored = document.getElementById('statAnchored');
+    const statCustom = document.getElementById('statCustom');
+    const statCustomContainer = document.getElementById('statCustomContainer');
     const hueCount = document.getElementById('hueCount');
 
     // Tuning elements
@@ -457,7 +503,9 @@ ${buildSelectorOptions()}      </select>
       statHues.textContent = palette.stats.totalHues;
       statColors.textContent = palette.stats.totalColors;
       statAnchored.textContent = palette.stats.anchoredHues;
-      hueCount.textContent = ORDERED_HUE_KEYS.length;
+      statCustom.textContent = palette.stats.customHues || 0;
+      statCustomContainer.style.display = palette.stats.customHues > 0 ? 'block' : 'none';
+      hueCount.textContent = ORDERED_HUE_KEYS.length + (palette.customSlots?.length || 0);
 
       // Update category badge
       const categoryLabels = {
@@ -518,6 +566,49 @@ ${buildSelectorOptions()}      </select>
           const anchorClass = isAnchorSwatch ? ' brand-anchor' : '';
           const title = 'Generated ' + hueKey + '-' + step + ': ' + hex + (isAnchorSwatch ? ' (BRAND ANCHOR)' : '');
           gridHtml += '<div class="swatch row-generated' + anchorClass + genHidden + '" style="background: ' + hex + '" title="' + title + '"></div>';
+        }
+      }
+
+      // Render custom rows (no Radix counterpart)
+      if (palette.customSlots && palette.customSlots.length > 0) {
+        gridHtml += '<div class="section-divider"></div>';
+
+        for (const customKey of palette.customSlots) {
+          const customScale = palette.scales[customKey];
+          const customInfo = palette.customRowInfo.find(c => c.rowKey === customKey);
+          const anchorStep = palette.anchorStepMap[customKey];
+          // Badge type based on reason: low-chroma=pastel, high-chroma=neon, hue-gap=custom
+          var badgeType, badgeLabel;
+          switch (customInfo?.reason) {
+            case 'low-chroma':
+              badgeType = 'pastel';
+              badgeLabel = 'Pastel';
+              break;
+            case 'high-chroma':
+              badgeType = 'neon';
+              badgeLabel = 'Neon';
+              break;
+            case 'hue-gap':
+              badgeType = 'hue-gap';
+              badgeLabel = 'Custom';
+              break;
+            default:
+              badgeType = 'custom';
+              badgeLabel = 'Custom';
+          }
+
+          // Custom row (no Radix reference)
+          const genHidden = showGenerated.checked ? '' : ' hidden';
+          gridHtml += '<div class="hue-label custom-row row-generated' + genHidden + '">' +
+            customKey + ' <span class="custom-badge ' + badgeType + '">' + badgeLabel + '</span></div>';
+
+          for (let step = 1; step <= 12; step++) {
+            const hex = customScale[step];
+            const isAnchorSwatch = step === anchorStep;
+            const anchorClass = isAnchorSwatch ? ' brand-anchor' : '';
+            const title = 'Custom ' + customKey + '-' + step + ': ' + hex + (isAnchorSwatch ? ' (BRAND ANCHOR)' : '');
+            gridHtml += '<div class="swatch row-generated' + anchorClass + genHidden + '" style="background: ' + hex + '" title="' + title + '"></div>';
+          }
         }
       }
 

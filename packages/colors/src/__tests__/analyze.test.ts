@@ -266,8 +266,7 @@ describe('Brand Analysis', () => {
 			const warmColors = ['#FF6A00', '#F59E0B', '#DC2626'];
 			const profile = analyzeBrandColors(warmColors);
 
-			// All slots should be in warm family
-			const slots = Object.values(profile.anchors).map((a) => a.slot);
+			// All slots (or custom row nearest slots) should be in warm family
 			const warmSlots = [
 				'red',
 				'ruby',
@@ -280,8 +279,19 @@ describe('Brand Analysis', () => {
 				'yellow',
 				'gold'
 			];
-			for (const slot of slots) {
-				expect(warmSlots).toContain(slot);
+
+			// Check standard anchors
+			for (const anchor of Object.values(profile.anchors)) {
+				if (!anchor.isCustomRow) {
+					expect(warmSlots).toContain(anchor.slot);
+				}
+			}
+
+			// Check custom rows are based on warm hues
+			if (profile.customRows) {
+				for (const row of profile.customRows) {
+					expect(warmSlots).toContain(row.nearestSlot);
+				}
 			}
 		});
 
@@ -290,8 +300,7 @@ describe('Brand Analysis', () => {
 			const coolColors = ['#2563EB', '#7C3AED', '#06B6D4'];
 			const profile = analyzeBrandColors(coolColors);
 
-			// All slots should be in cool family
-			const slots = Object.values(profile.anchors).map((a) => a.slot);
+			// All slots (or custom row nearest slots) should be in cool family
 			const coolSlots = [
 				'blue',
 				'indigo',
@@ -303,9 +312,142 @@ describe('Brand Analysis', () => {
 				'teal',
 				'plum'
 			];
-			for (const slot of slots) {
-				expect(coolSlots).toContain(slot);
+
+			// Check standard anchors
+			for (const anchor of Object.values(profile.anchors)) {
+				if (!anchor.isCustomRow) {
+					expect(coolSlots).toContain(anchor.slot);
+				}
 			}
+
+			// Check custom rows are based on cool hues
+			if (profile.customRows) {
+				for (const row of profile.customRows) {
+					expect(coolSlots).toContain(row.nearestSlot);
+				}
+			}
+		});
+	});
+
+	describe('out-of-bounds chroma detection', () => {
+		it('detects pastel pink as out of bounds (low chroma)', () => {
+			const result = analyzeColor('#FFD1DC');
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('low-chroma');
+			expect(result!.chromaRatio).toBeLessThan(0.5);
+		});
+
+		it('detects neon green as out of bounds (high chroma)', () => {
+			const result = analyzeColor('#39FF14');
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('high-chroma');
+			expect(result!.chromaRatio).toBeGreaterThan(1.3);
+		});
+
+		it('marks standard colors as in bounds', () => {
+			const result = analyzeColor('#FF6A00'); // Sveltopia orange
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(false);
+			expect(result!.outOfBoundsReason).toBeUndefined();
+		});
+
+		it('creates customRows for pastel input', () => {
+			const profile = analyzeBrandColors(['#FFD1DC']);
+			expect(profile.customRows).toBeDefined();
+			expect(profile.customRows).toHaveLength(1);
+			expect(profile.customRows![0].reason).toBe('low-chroma');
+			expect(profile.customRows![0].rowKey).toContain('pastel');
+		});
+
+		it('creates customRows for neon input', () => {
+			const profile = analyzeBrandColors(['#39FF14']);
+			expect(profile.customRows).toBeDefined();
+			expect(profile.customRows).toHaveLength(1);
+			expect(profile.customRows![0].reason).toBe('high-chroma');
+			expect(profile.customRows![0].rowKey).toContain('neon');
+		});
+
+		it('separates standard and custom anchors correctly', () => {
+			const profile = analyzeBrandColors(['#FF6A00', '#FFD1DC', '#39FF14']);
+
+			// Orange should be standard anchor
+			expect(profile.anchors['#FF6A00'].isCustomRow).toBe(false);
+
+			// Pastel and neon should be custom rows
+			expect(profile.customRows).toHaveLength(2);
+
+			// One should be pastel, one should be neon
+			const reasons = profile.customRows!.map((r) => r.reason).sort();
+			expect(reasons).toEqual(['high-chroma', 'low-chroma']);
+		});
+
+		it('excludes out-of-bounds colors from chromaMultiplier calculation', () => {
+			// Orange (normal) + Neon Green (very high chroma)
+			// ChromaMultiplier should only reflect orange, not be skewed by neon
+			const profile = analyzeBrandColors(['#FF6A00', '#39FF14']);
+
+			// Orange's chroma ratio is around 1.3, neon green is ~1.95
+			// If neon were included, multiplier would be ~1.6
+			// Since it's excluded, should be closer to orange's ratio
+			expect(profile.chromaMultiplier).toBeLessThan(1.5);
+		});
+	});
+
+	describe('hue-gap detection', () => {
+		// Test cases from CC Handoff: colors that are >10° from nearest Radix slot
+		const FIGMA_BLUE = '#1ABCFE'; // 11.9° from cyan
+		const CANVA_TEAL = '#00C4CC'; // 17.8° from sky/cyan
+
+		it('detects Figma blue as out of bounds (hue-gap)', () => {
+			const result = analyzeColor(FIGMA_BLUE);
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('hue-gap');
+			expect(result!.distance).toBeGreaterThan(SNAP_THRESHOLD);
+		});
+
+		it('detects Canva teal as out of bounds (hue-gap)', () => {
+			const result = analyzeColor(CANVA_TEAL);
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('hue-gap');
+			expect(result!.distance).toBeGreaterThan(SNAP_THRESHOLD);
+		});
+
+		it('does NOT detect Sveltopia orange as hue-gap (within threshold)', () => {
+			const result = analyzeColor(SVELTOPIA_ORANGE);
+			expect(result).not.toBeNull();
+			// Orange snaps to Radix orange slot
+			expect(result!.snaps).toBe(true);
+			expect(result!.distance).toBeLessThanOrEqual(SNAP_THRESHOLD);
+			// Should not be out of bounds (chroma is also within range)
+			expect(result!.isOutOfBounds).toBe(false);
+		});
+
+		it('creates customRows for hue-gap input', () => {
+			const profile = analyzeBrandColors([FIGMA_BLUE]);
+			expect(profile.customRows).toBeDefined();
+			expect(profile.customRows).toHaveLength(1);
+			expect(profile.customRows![0].reason).toBe('hue-gap');
+			expect(profile.customRows![0].hueDistance).toBeDefined();
+			expect(profile.customRows![0].hueDistance).toBeGreaterThan(SNAP_THRESHOLD);
+		});
+
+		it('uses custom- prefix for hue-gap row keys', () => {
+			const profile = analyzeBrandColors([FIGMA_BLUE]);
+			expect(profile.customRows![0].rowKey).toContain('custom-');
+		});
+
+		it('chroma out-of-bounds takes precedence over hue-gap', () => {
+			// A color that's both far from slots AND has extreme chroma
+			// should be classified by chroma reason, not hue-gap
+			const result = analyzeColor('#39FF14'); // Neon green
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			// Should be high-chroma, not hue-gap
+			expect(result!.outOfBoundsReason).toBe('high-chroma');
 		});
 	});
 });
