@@ -47,25 +47,11 @@ export const TEST_PALETTES: TestPalette[] = [
 		notes: 'Multi-color brand (4 colors)'
 	},
 	{
-		id: 'notion',
-		name: 'Notion',
-		colors: ['#000000', '#FA5252'],
-		category: 'real-brand',
-		notes: 'Pure black + red accent'
-	},
-	{
 		id: 'linear',
 		name: 'Linear',
 		colors: ['#5E6AD2'],
 		category: 'real-brand',
 		notes: 'Single indigo/violet'
-	},
-	{
-		id: 'vercel',
-		name: 'Vercel',
-		colors: ['#000000'],
-		category: 'real-brand',
-		notes: 'Minimal - pure black only'
 	},
 	{
 		id: 'figma',
@@ -75,11 +61,46 @@ export const TEST_PALETTES: TestPalette[] = [
 		notes: 'Multi-color brand (4 colors)'
 	},
 	{
-		id: 'cocacola',
-		name: 'Coca-Cola',
-		colors: ['#F40009'],
+		id: 'tiktok',
+		name: 'TikTok',
+		colors: ['#000000', '#FE2C55', '#25F4EE'],
 		category: 'real-brand',
-		notes: 'Iconic red'
+		notes: 'Black + signature pink-red + cyan (glitch aesthetic)'
+	},
+	{
+		id: 'starbucks',
+		name: 'Starbucks',
+		colors: ['#006241', '#00754A'],
+		category: 'real-brand',
+		notes: 'Two greens - similar hues, different L/C'
+	},
+	{
+		id: 'instagram',
+		name: 'Instagram',
+		colors: ['#833AB4', '#E1306C', '#F77737', '#FCAF45'],
+		category: 'real-brand',
+		notes: 'Gradient colors (purple → yellow) - 4 color stress test'
+	},
+	{
+		id: 'google',
+		name: 'Google',
+		colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853'],
+		category: 'real-brand',
+		notes: 'Elementary colors spread across wheel (blue, red, yellow, green)'
+	},
+	{
+		id: 'canva',
+		name: 'Canva',
+		colors: ['#00C4CC', '#7D2AE8'],
+		category: 'real-brand',
+		notes: 'Teal + purple - analogous cool hues'
+	},
+	{
+		id: 'apple',
+		name: 'Apple',
+		colors: ['#000000', '#A6A6A6'],
+		category: 'real-brand',
+		notes: 'Minimal - black + gray (elegant neutrals)'
 	},
 	{
 		id: 'mcdonalds',
