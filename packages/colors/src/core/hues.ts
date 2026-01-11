@@ -31,149 +31,149 @@ export interface HueDefinition {
  */
 export const BASELINE_HUES: Record<string, HueDefinition> = {
 	// Neutral gray (achromatic)
-	gray: { name: 'Gray', hue: 0, category: 'neutral', referenceChroma: 0.0, radixHex: '#8d8d8d' },
+	gray: { name: 'Gray', hue: 0.00, category: 'neutral', referenceChroma: 0.000000, radixHex: '#8d8d8d' },
 
 	// Red family (1° - 45°)
 	crimson: {
 		name: 'Crimson',
-		hue: 1.3,
+		hue: 1.28,
 		category: 'red',
-		referenceChroma: 0.213,
+		referenceChroma: 0.212961,
 		radixHex: '#e93d82'
 	},
-	ruby: { name: 'Ruby', hue: 13.2, category: 'red', referenceChroma: 0.195, radixHex: '#e54666' },
-	red: { name: 'Red', hue: 23.0, category: 'red', referenceChroma: 0.193, radixHex: '#e5484d' },
+	ruby: { name: 'Ruby', hue: 13.15, category: 'red', referenceChroma: 0.194866, radixHex: '#e54666' },
+	red: { name: 'Red', hue: 23.03, category: 'red', referenceChroma: 0.193340, radixHex: '#e5484d' },
 	tomato: {
 		name: 'Tomato',
-		hue: 33.3,
+		hue: 33.34,
 		category: 'red',
-		referenceChroma: 0.194,
+		referenceChroma: 0.193584,
 		radixHex: '#e54d2e'
 	},
 
 	// Orange family (45° - 70°)
 	bronze: {
 		name: 'Bronze',
-		hue: 44.2,
+		hue: 44.16,
 		category: 'neutral', // Warm-tinted neutral (chroma 0.046 is near-neutral)
-		referenceChroma: 0.046,
+		referenceChroma: 0.045953,
 		radixHex: '#a18072'
 	},
 	orange: {
 		name: 'Orange',
-		hue: 45.0,
+		hue: 45.02,
 		category: 'orange',
-		referenceChroma: 0.191,
+		referenceChroma: 0.190911,
 		radixHex: '#f76b15'
 	},
 	brown: {
 		name: 'Brown',
-		hue: 61.0,
+		hue: 60.98,
 		category: 'orange',
-		referenceChroma: 0.078,
+		referenceChroma: 0.078487,
 		radixHex: '#ad7f58'
 	},
 
 	// Yellow family (70° - 115°)
-	gold: { name: 'Gold', hue: 77.7, category: 'neutral', referenceChroma: 0.049, radixHex: '#978365' }, // Warm-tinted neutral
+	gold: { name: 'Gold', hue: 77.70, category: 'neutral', referenceChroma: 0.049157, radixHex: '#978365' }, // Warm-tinted neutral
 	amber: {
 		name: 'Amber',
-		hue: 84.1,
+		hue: 84.13,
 		category: 'yellow',
-		referenceChroma: 0.157,
+		referenceChroma: 0.157207,
 		radixHex: '#ffc53d'
 	},
 	yellow: {
 		name: 'Yellow',
-		hue: 100.9,
+		hue: 100.94,
 		category: 'yellow',
-		referenceChroma: 0.184,
+		referenceChroma: 0.183771,
 		radixHex: '#ffe629'
 	},
 	sand: {
 		name: 'Sand',
-		hue: 106.7,
+		hue: 106.68,
 		category: 'neutral',
-		referenceChroma: 0.01,
+		referenceChroma: 0.010232,
 		radixHex: '#8d8d86'
 	},
 
 	// Green family (115° - 175°)
-	lime: { name: 'Lime', hue: 126.1, category: 'green', referenceChroma: 0.175, radixHex: '#bdee63' },
+	lime: { name: 'Lime', hue: 126.09, category: 'green', referenceChroma: 0.174730, radixHex: '#bdee63' },
 	olive: {
 		name: 'Olive',
-		hue: 136.6,
+		hue: 136.58,
 		category: 'neutral',
-		referenceChroma: 0.012,
+		referenceChroma: 0.011791,
 		radixHex: '#898e87'
 	},
 	grass: {
 		name: 'Grass',
-		hue: 147.4,
+		hue: 147.39,
 		category: 'green',
-		referenceChroma: 0.147,
+		referenceChroma: 0.146785,
 		radixHex: '#46a758'
 	},
 	green: {
 		name: 'Green',
-		hue: 157.7,
+		hue: 157.68,
 		category: 'green',
-		referenceChroma: 0.133,
+		referenceChroma: 0.132875,
 		radixHex: '#30a46c'
 	},
-	jade: { name: 'Jade', hue: 170.7, category: 'green', referenceChroma: 0.115, radixHex: '#29a383' },
-	sage: { name: 'Sage', hue: 171.6, category: 'neutral', referenceChroma: 0.01, radixHex: '#868e8b' },
+	jade: { name: 'Jade', hue: 170.73, category: 'green', referenceChroma: 0.115025, radixHex: '#29a383' },
+	sage: { name: 'Sage', hue: 171.61, category: 'neutral', referenceChroma: 0.010322, radixHex: '#868e8b' },
 
 	// Cyan family (175° - 215°)
-	mint: { name: 'Mint', hue: 178.0, category: 'cyan', referenceChroma: 0.1, radixHex: '#86ead4' },
-	teal: { name: 'Teal', hue: 182.0, category: 'cyan', referenceChroma: 0.114, radixHex: '#12a594' },
-	sky: { name: 'Sky', hue: 217.8, category: 'cyan', referenceChroma: 0.103, radixHex: '#7ce2fe' },
-	cyan: { name: 'Cyan', hue: 221.7, category: 'cyan', referenceChroma: 0.122, radixHex: '#00a2c7' },
+	mint: { name: 'Mint', hue: 177.98, category: 'cyan', referenceChroma: 0.099913, radixHex: '#86ead4' },
+	teal: { name: 'Teal', hue: 181.96, category: 'cyan', referenceChroma: 0.113572, radixHex: '#12a594' },
+	sky: { name: 'Sky', hue: 217.80, category: 'cyan', referenceChroma: 0.102721, radixHex: '#7ce2fe' },
+	cyan: { name: 'Cyan', hue: 221.74, category: 'cyan', referenceChroma: 0.121716, radixHex: '#00a2c7' },
 
 	// Blue family (215° - 280°)
-	blue: { name: 'Blue', hue: 251.8, category: 'blue', referenceChroma: 0.193, radixHex: '#0090ff' },
+	blue: { name: 'Blue', hue: 251.78, category: 'blue', referenceChroma: 0.193040, radixHex: '#0090ff' },
 	indigo: {
 		name: 'Indigo',
-		hue: 267.0,
+		hue: 267.01,
 		category: 'blue',
-		referenceChroma: 0.191,
+		referenceChroma: 0.191015,
 		radixHex: '#3e63dd'
 	},
 	slate: {
 		name: 'Slate',
-		hue: 277.7,
+		hue: 277.70,
 		category: 'neutral',
-		referenceChroma: 0.016,
+		referenceChroma: 0.016454,
 		radixHex: '#8b8d98'
 	},
-	iris: { name: 'Iris', hue: 278.3, category: 'blue', referenceChroma: 0.184, radixHex: '#5b5bd6' },
+	iris: { name: 'Iris', hue: 278.28, category: 'blue', referenceChroma: 0.184124, radixHex: '#5b5bd6' },
 
 	// Purple family (280° - 330°)
 	violet: {
 		name: 'Violet',
-		hue: 288.0,
+		hue: 288.03,
 		category: 'purple',
-		referenceChroma: 0.179,
+		referenceChroma: 0.179028,
 		radixHex: '#6e56cf'
 	},
 	mauve: {
 		name: 'Mauve',
-		hue: 292.9,
+		hue: 292.92,
 		category: 'neutral',
-		referenceChroma: 0.019,
+		referenceChroma: 0.019269,
 		radixHex: '#8e8c99'
 	},
 	purple: {
 		name: 'Purple',
-		hue: 305.9,
+		hue: 305.86,
 		category: 'purple',
-		referenceChroma: 0.183,
+		referenceChroma: 0.182910,
 		radixHex: '#8e4ec6'
 	},
-	plum: { name: 'Plum', hue: 322.1, category: 'purple', referenceChroma: 0.188, radixHex: '#ab4aba' },
+	plum: { name: 'Plum', hue: 322.11, category: 'purple', referenceChroma: 0.187722, radixHex: '#ab4aba' },
 
 	// Pink family (330° - 360°)
-	pink: { name: 'Pink', hue: 346.0, category: 'pink', referenceChroma: 0.208, radixHex: '#d6409f' }
+	pink: { name: 'Pink', hue: 346.00, category: 'pink', referenceChroma: 0.207608, radixHex: '#d6409f' }
 } as const;
 
 /** Array of all hue keys for iteration */

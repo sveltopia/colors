@@ -42,10 +42,36 @@ export type ScaleStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
  * Information about an anchored brand color
  */
 export interface AnchorInfo {
-	/** Baseline hue slot this color anchors to */
+	/** Baseline hue slot this color anchors to (or custom row key) */
 	slot: string;
 	/** Which step in the scale this color should anchor (1-12) */
 	step: number;
+	/** True if this anchor requires a custom row (out-of-bounds chroma) */
+	isCustomRow?: boolean;
+}
+
+/**
+ * Information about an out-of-bounds brand color requiring a custom row
+ */
+export interface CustomRowInfo {
+	/** Original brand color hex */
+	originalHex: string;
+	/** Generated custom row key (e.g., "pastel-pink", "neon-lime") */
+	rowKey: string;
+	/** OKLCH values of the brand color */
+	oklch: OklchColor;
+	/** Chroma ratio relative to nearest Radix slot */
+	chromaRatio: number;
+	/** Reason for custom row */
+	reason: 'low-chroma' | 'high-chroma' | 'hue-gap';
+	/** Distance from nearest slot in degrees (for hue-gap) */
+	hueDistance?: number;
+	/** Nearest baseline hue slot (for curve reference) */
+	nearestSlot: string;
+	/** Anchor step determined by lightness (1-12) */
+	anchorStep: number;
+	/** Hue wheel position for ordering (0-360) */
+	hueAngle: number;
 }
 
 /**
@@ -61,6 +87,8 @@ export interface TuningProfile {
 	lightnessShift: number;
 	/** Mapping of brand input colors (hex) to anchor info */
 	anchors: Record<string, AnchorInfo>;
+	/** Custom rows for out-of-bounds chroma colors */
+	customRows?: CustomRowInfo[];
 }
 
 /**

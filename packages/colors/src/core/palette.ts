@@ -18,7 +18,7 @@ import {
 	RADIX_LIGHTNESS_CURVES
 } from './generate.js';
 import { analyzeBrandColors } from './analyze.js';
-import type { Scale, TuningProfile, OklchColor } from '../types.js';
+import type { Scale, TuningProfile, CustomRowInfo } from '../types.js';
 
 /**
  * Options for palette generation
@@ -153,6 +153,58 @@ function createTunedParent(
 }
 
 /**
+ * Generate a scale for a custom row (out-of-bounds chroma color).
+ *
+ * Key differences from standard scale generation:
+ * - Uses the brand color's actual chroma (no clamping)
+ * - Uses Radix curves from the nearest slot for shape
+ * - Pastel colors skip hueShift (too delicate)
+ * - Neon colors apply hueShift (robust enough to handle it)
+ * - Hue-gap colors skip hueShift (brand's distinct hue is the whole point)
+ *
+ * @param customRow - Custom row info from analysis
+ * @param tuning - Tuning profile (for hueShift on neon rows)
+ * @returns Generated scale
+ */
+function generateCustomRowScale(customRow: CustomRowInfo, tuning: TuningProfile): Scale {
+	// Determine effective hue shift based on reason:
+	// - low-chroma (pastel): DON'T apply hueShift (too delicate)
+	// - high-chroma (neon): DO apply hueShift (robust enough)
+	// - hue-gap: DON'T apply hueShift (brand's distinct hue is the defining feature)
+	const effectiveHueShift = customRow.reason === 'high-chroma' ? tuning.hueShift : 0;
+
+	// Get the nearest slot's step-9 lightness for proper gamut handling
+	const nearestHue = customRow.nearestSlot;
+	const lightnessCurve = RADIX_LIGHTNESS_CURVES[nearestHue];
+	const step9Lightness = lightnessCurve ? lightnessCurve[8] : 0.65;
+
+	// Create a synthetic parent with the brand's actual chroma (not clamped!)
+	// This is the key difference from standard generation
+	const syntheticParent = toHex(
+		clampOklch({
+			l: step9Lightness,
+			c: customRow.oklch.c, // Use actual brand chroma
+			h: (customRow.oklch.h + effectiveHueShift + 360) % 360
+		})
+	);
+
+	// Generate scale using the custom parent and nearest slot's curves
+	const generatedScale = generateScaleAPCA({
+		parentColor: syntheticParent,
+		anchorStep: customRow.anchorStep,
+		hueKey: nearestHue, // Use nearest hue's curves for shape
+		useFullCurve: false // Respect brand's actual values at anchor
+	});
+
+	const scale = toScale(generatedScale.steps);
+
+	// Replace anchor step with exact brand hex
+	scale[customRow.anchorStep as keyof Scale] = customRow.originalHex;
+
+	return scale;
+}
+
+/**
  * Generate a complete light-mode palette from brand colors.
  *
  * Algorithm:
@@ -172,9 +224,12 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 	const tuningProfile = options.tuningProfile ?? analyzeBrandColors(brandColors);
 
 	// Invert anchors map: slot -> { hex, step }
+	// Only include standard anchors (skip custom rows)
 	const slotToAnchor: Record<string, { hex: string; step: number }> = {};
 	for (const [hex, info] of Object.entries(tuningProfile.anchors)) {
-		slotToAnchor[info.slot] = { hex, step: info.step };
+		if (!info.isCustomRow) {
+			slotToAnchor[info.slot] = { hex, step: info.step };
+		}
 	}
 
 	const scales: Record<string, Scale> = {};
@@ -242,6 +297,17 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 		scales[hueKey] = scale;
 	}
 
+	// Generate custom row scales for out-of-bounds chroma colors
+	const customSlots: string[] = [];
+	if (tuningProfile.customRows && tuningProfile.customRows.length > 0) {
+		for (const customRow of tuningProfile.customRows) {
+			const scale = generateCustomRowScale(customRow, tuningProfile);
+			scales[customRow.rowKey] = scale;
+			customSlots.push(customRow.rowKey);
+			anchoredSlots.push(customRow.rowKey);
+		}
+	}
+
 	return {
 		scales,
 		meta: {
@@ -249,7 +315,7 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 			inputColors: brandColors,
 			generatedAt: new Date().toISOString(),
 			anchoredSlots,
-			customSlots: [] // Future: handle non-snapping brand colors
+			customSlots
 		}
 	};
 }
