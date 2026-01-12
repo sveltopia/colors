@@ -337,4 +337,104 @@ describe('Full Palette Generation', () => {
 			expect(stats.totalHues).toBe(HUE_COUNT + 1);
 		});
 	});
+
+	describe('nearly Radix anchored rows', () => {
+		// Slack cyan is very close to Radix cyan: 1.5° hue, 1.07x chroma
+		// Should generate a row that tracks Radix closely (no propagated drift)
+		const SLACK_CYAN = '#36C5F0';
+
+		it('Slack cyan anchors to cyan slot (not custom row)', () => {
+			const analysis = analyzeBrandColors([SLACK_CYAN]);
+
+			// Should NOT be a custom row (it snaps and has normal chroma)
+			expect(analysis.customRows).toBeUndefined();
+
+			// Should anchor to cyan
+			expect(analysis.anchors[SLACK_CYAN].slot).toBe('cyan');
+			expect(analysis.anchors[SLACK_CYAN].isCustomRow).toBeFalsy();
+		});
+
+		it('Slack cyan row tracks Radix cyan closely (no drift)', () => {
+			const palette = generateLightPalette({ brandColors: [SLACK_CYAN] });
+			const cyanScale = palette.scales.cyan;
+
+			// Get the actual anchor step from metadata
+			// Slack cyan anchors at step 7 (L=0.768 matches step 7's L=0.805)
+			const anchorStep = palette.meta.tuningProfile.anchors[SLACK_CYAN]?.step ?? 9;
+			expect(anchorStep).toBe(7); // Verify our understanding
+
+			// Import Radix colors for comparison
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			const radixCyan = require('@radix-ui/colors').cyan;
+
+			// Helper to parse hex to RGB
+			const hexToRgb = (hex: string) => ({
+				r: parseInt(hex.slice(1, 3), 16),
+				g: parseInt(hex.slice(3, 5), 16),
+				b: parseInt(hex.slice(5, 7), 16)
+			});
+
+			// Check that non-anchor steps are close to Radix
+			// Anchor step preserves exact brand color, all others should match Radix
+			for (let step = 1; step <= 12; step++) {
+				if (step === anchorStep) continue; // Skip anchor step (exact brand color)
+
+				const generated = cyanScale[step as keyof typeof cyanScale];
+				const radix = radixCyan[`cyan${step}`];
+
+				// Both should exist
+				expect(generated).toBeDefined();
+				expect(radix).toBeDefined();
+
+				// Should be very close (within 3 RGB points per channel)
+				// Small differences may occur due to OKLCH precision/rounding
+				const genRgb = hexToRgb(generated);
+				const radixRgb = hexToRgb(radix);
+				const maxDiff = Math.max(
+					Math.abs(genRgb.r - radixRgb.r),
+					Math.abs(genRgb.g - radixRgb.g),
+					Math.abs(genRgb.b - radixRgb.b)
+				);
+				expect(maxDiff).toBeLessThanOrEqual(3);
+			}
+		});
+
+		it('brand colors with significant departure still propagate offset', () => {
+			// Use a color that's clearly outside "nearly Radix" threshold
+			// Hot pink #FF69B4 has significant hue offset from pink slot
+			const HOT_PINK = '#FF69B4';
+			const palette = generateLightPalette({ brandColors: [HOT_PINK] });
+			const pinkScale = palette.scales.pink;
+
+			// Import Radix colors for comparison
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			const radixPink = require('@radix-ui/colors').pink;
+
+			// Helper to parse hex to RGB
+			const hexToRgb = (hex: string) => ({
+				r: parseInt(hex.slice(1, 3), 16),
+				g: parseInt(hex.slice(3, 5), 16),
+				b: parseInt(hex.slice(5, 7), 16)
+			});
+
+			// At least some non-anchor steps should differ significantly from Radix
+			// (because brand offset is propagated)
+			let maxDifference = 0;
+			for (let step = 1; step <= 12; step++) {
+				if (step === 9) continue;
+				const generated = pinkScale[step as keyof typeof pinkScale];
+				const radix = radixPink[`pink${step}`];
+				const genRgb = hexToRgb(generated);
+				const radixRgb = hexToRgb(radix);
+				const diff = Math.max(
+					Math.abs(genRgb.r - radixRgb.r),
+					Math.abs(genRgb.g - radixRgb.g),
+					Math.abs(genRgb.b - radixRgb.b)
+				);
+				maxDifference = Math.max(maxDifference, diff);
+			}
+			// Should have at least some noticeable difference (>5 RGB points)
+			expect(maxDifference).toBeGreaterThan(5);
+		});
+	});
 });
