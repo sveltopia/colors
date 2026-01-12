@@ -383,15 +383,33 @@ describe('Brand Analysis', () => {
 			expect(reasons).toEqual(['high-chroma', 'low-chroma']);
 		});
 
-		it('excludes out-of-bounds colors from chromaMultiplier calculation', () => {
-			// Orange (normal) + Neon Green (very high chroma)
-			// ChromaMultiplier should only reflect orange, not be skewed by neon
+		it('includes out-of-bounds colors in chromaMultiplier (clamped)', () => {
+			// Orange (~1.04x, normal) + Neon Green (1.95x clamped to 1.3x)
+			// Both contribute to average, but neon is clamped
 			const profile = analyzeBrandColors(['#FF6A00', '#39FF14']);
 
-			// Orange's chroma ratio is around 1.3, neon green is ~1.95
-			// If neon were included, multiplier would be ~1.6
-			// Since it's excluded, should be closer to orange's ratio
-			expect(profile.chromaMultiplier).toBeLessThan(1.5);
+			// Average of ~1.04 + 1.3 ≈ 1.17
+			// Key: neon is clamped, not excluded, so multiplier is > 1.0
+			expect(profile.chromaMultiplier).toBeGreaterThan(1.0);
+			expect(profile.chromaMultiplier).toBeLessThan(1.3);
+		});
+
+		it('Christmas palette gets high chromaMultiplier from neon inputs', () => {
+			// Both red and green are high-chroma (>1.3x)
+			// Should get clamped max multiplier
+			const profile = analyzeBrandColors(['#FF0000', '#00FF00']);
+
+			// Both colors clamp to 1.3x, average = 1.3x
+			expect(profile.chromaMultiplier).toBeCloseTo(1.3, 1);
+			expect(profile.chromaMultiplier).toBeGreaterThan(1.0);
+		});
+
+		it('pastel palette gets low chromaMultiplier from soft inputs', () => {
+			// Pastel pink has ~0.25x chroma ratio, clamped to 0.5x
+			const profile = analyzeBrandColors(['#FFD1DC']);
+
+			expect(profile.chromaMultiplier).toBeCloseTo(0.5, 1);
+			expect(profile.chromaMultiplier).toBeLessThan(1.0);
 		});
 	});
 

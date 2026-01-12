@@ -263,19 +263,28 @@ export function analyzeBrandColors(colors: string[]): TuningProfile {
 	const standardAnalyses = analyses.filter((a) => !a.isOutOfBounds);
 	const outOfBoundsAnalyses = analyses.filter((a) => a.isOutOfBounds);
 
-	// Calculate tuning profile from standard colors only
-	// (out-of-bounds colors define their own chroma and shouldn't skew the profile)
-	const chromaticAnalyses = standardAnalyses.filter((a) => a.oklch.c > 0.03);
-	const hasChromatic = chromaticAnalyses.length > 0;
+	// Calculate tuning profile from ALL chromatic colors
+	// Custom rows contribute their clamped chroma ratios to capture brand "feel"
+	// (e.g., neon brand → vivid palette, pastel brand → softer palette)
+	const allChromaticAnalyses = analyses.filter((a) => a.oklch.c > 0.03);
+	const standardChromaticAnalyses = standardAnalyses.filter((a) => a.oklch.c > 0.03);
+	const hasChromatic = allChromaticAnalyses.length > 0;
 
-	// Calculate average hue shift (only from chromatic colors that snap)
-	const snappingAnalyses = chromaticAnalyses.filter((a) => a.snaps);
+	// Calculate average hue shift (only from standard chromatic colors that snap)
+	// Custom rows keep their distinct hue, so exclude from hue shift calculation
+	const snappingAnalyses = standardChromaticAnalyses.filter((a) => a.snaps);
 	const hueShift =
 		snappingAnalyses.length > 0 ? average(snappingAnalyses.map((a) => a.hueOffset)) : 0;
 
-	// Calculate chroma multiplier (only from standard chromatic colors)
+	// Calculate chroma multiplier from ALL chromatic colors (including custom rows)
+	// Clamp out-of-bounds ratios to 0.5x-1.3x to prevent extreme skew
+	// This captures the brand's "feel" - neon brands get 1.3x, pastels get 0.5x
 	const chromaMultiplier = hasChromatic
-		? average(chromaticAnalyses.map((a) => a.chromaRatio))
+		? average(
+				allChromaticAnalyses.map((a) =>
+					Math.max(CHROMA_RATIO_FLOOR, Math.min(CHROMA_RATIO_CEILING, a.chromaRatio))
+				)
+			)
 		: 1;
 
 	// Calculate lightness shift (from all colors including out-of-bounds)

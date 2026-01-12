@@ -431,9 +431,10 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 	const effectiveChromaCurve = chromaCurve || hueChromaCurve || CHROMA_CURVE;
 
 	// When anchoring at a different step, we need to adjust the chroma curve
-	// so the parent's full chroma is at the anchor step
+	// so the parent's full chroma is at the anchor step.
+	// But for "nearly Radix" colors, skip this adjustment to match Radix exactly.
 	const anchorChromaMultiplier = effectiveChromaCurve[anchorStep - 1];
-	const adjustedChromaCurve = effectiveChromaCurve.map((c) => c / anchorChromaMultiplier);
+	// adjustedChromaCurve is set later after isNearlyRadix is calculated
 
 	// Get per-hue hue curve for natural hue shift across the scale
 	// This is critical for accurate reproduction of Radix's semantic intent:
@@ -460,6 +461,35 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 	const radixRefChroma = hueKey ? (RADIX_REFERENCE_CHROMAS[hueKey] ?? parent.c) : parent.c;
 	const chromaDeparture = parent.c / radixRefChroma; // e.g., 1.42 means +42% more chroma
 
+	// "Nearly Radix" threshold: if brand is very close to Radix STEP 9, skip offset propagation
+	// We compare against step 9 (hero position) because that's the canonical hue for the slot.
+	// This handles cases like Slack cyan which anchors at step 7 but has hue matching step 9.
+	// Thresholds: <3° hue offset from step 9 AND 0.90x-1.10x chroma ratio
+	const NEAR_RADIX_HUE_THRESHOLD = 3;
+	const NEAR_RADIX_CHROMA_MIN = 0.90;
+	const NEAR_RADIX_CHROMA_MAX = 1.10;
+
+	// Compare against step 9 hue (index 8) instead of anchor step
+	const radixStep9Hue = hueHueCurve ? hueHueCurve[8] : parent.h;
+	let hueOffsetFromStep9 = parent.h - radixStep9Hue;
+	if (hueOffsetFromStep9 > 180) hueOffsetFromStep9 -= 360;
+	if (hueOffsetFromStep9 < -180) hueOffsetFromStep9 += 360;
+
+	const isNearlyRadix =
+		Math.abs(hueOffsetFromStep9) < NEAR_RADIX_HUE_THRESHOLD &&
+		chromaDeparture >= NEAR_RADIX_CHROMA_MIN &&
+		chromaDeparture <= NEAR_RADIX_CHROMA_MAX;
+
+	// If nearly Radix, zero out offsets and skip curve adjustments to use pure Radix curves
+	const effectiveHueOffset = isNearlyRadix ? 0 : hueOffset;
+	const effectiveChromaDeparture = isNearlyRadix ? 1.0 : chromaDeparture;
+
+	// For nearly Radix: use original curve (no adjustment needed)
+	// For brand anchors: normalize so anchor step = 1.0
+	const adjustedChromaCurve = isNearlyRadix
+		? effectiveChromaCurve
+		: effectiveChromaCurve.map((c) => c / anchorChromaMultiplier);
+
 	for (let i = 0; i < 12; i++) {
 		const stepNum = i + 1;
 
@@ -472,19 +502,21 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 		const dampeningFactor = 1.0 - Math.pow(normalizedDistance, 1.5) * (1.0 - minDampening);
 
 		// Apply chroma with dampening toward Radix reference at edges
-		// At anchor: use full parent chroma (chromaDeparture)
+		// At anchor: use full parent chroma (effectiveChromaDeparture)
 		// At edges: blend toward 1.0 (Radix reference level)
-		const dampenedChromaDeparture = 1.0 + (chromaDeparture - 1.0) * dampeningFactor;
+		// Note: effectiveChromaDeparture is 1.0 if brand is "nearly Radix"
+		const dampenedChromaDeparture = 1.0 + (effectiveChromaDeparture - 1.0) * dampeningFactor;
 		const chroma = radixRefChroma * dampenedChromaDeparture * adjustedChromaCurve[i];
 
 		// Calculate hue for this step using Radix curve + dampened brand offset
 		// Dampening prevents large brand hue departures from over-propagating to edges.
 		// At anchor step: 100% of brand offset applied
 		// At edges (step 1 or 12): reduced offset (closer to pure Radix curve)
+		// Note: effectiveHueOffset is 0 if brand is "nearly Radix"
 		let hue: number;
 		if (hueHueCurve) {
 			// Reuse dampening factor calculated above for chroma
-			const dampenedOffset = hueOffset * dampeningFactor;
+			const dampenedOffset = effectiveHueOffset * dampeningFactor;
 			hue = (hueHueCurve[i] + dampenedOffset + 360) % 360;
 		} else {
 			// Fallback: constant parent hue with slight drift for dark steps
@@ -497,7 +529,8 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 		// Use Radix lightness curve directly - no APCA binary search needed
 		// For brand anchors: use parent's actual lightness at anchor step
 		// For synthetic parents (useFullCurve): use Radix curve for ALL steps
-		const useParentLightness = !options.useFullCurve && stepNum === anchorStep;
+		// For nearly Radix: also use Radix curve for all steps to minimize drift
+		const useParentLightness = !options.useFullCurve && stepNum === anchorStep && !isNearlyRadix;
 		const lightness = useParentLightness ? parent.l : lightnessCurve[i];
 
 		const oklch = clampOklch({ l: lightness, c: chroma, h: hue });
