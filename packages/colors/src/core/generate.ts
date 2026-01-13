@@ -329,6 +329,15 @@ export interface GenerateScaleOptions {
 	 * If false (default), anchor step uses parent's actual lightness.
 	 */
 	useFullCurve?: boolean;
+	/**
+	 * Global tuning profile to use as fallback when brand anchor is "nearly Radix".
+	 * This ensures uniform brand character across the palette even when individual
+	 * brand colors happen to be close to their Radix slot.
+	 */
+	globalTuning?: {
+		hueShift: number;
+		chromaMultiplier: number;
+	};
 }
 
 /**
@@ -475,14 +484,47 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 	if (hueOffsetFromStep9 > 180) hueOffsetFromStep9 -= 360;
 	if (hueOffsetFromStep9 < -180) hueOffsetFromStep9 += 360;
 
+	// Only apply "nearly Radix" for brand anchors (!useFullCurve), not synthetic parents.
+	// Synthetic parents already have tuning applied via createTunedParent() - checking
+	// isNearlyRadix here would cancel out that tuning since the synthetic parent is
+	// intentionally close to Radix (just shifted by the tuning profile).
 	const isNearlyRadix =
+		!options.useFullCurve &&
 		Math.abs(hueOffsetFromStep9) < NEAR_RADIX_HUE_THRESHOLD &&
 		chromaDeparture >= NEAR_RADIX_CHROMA_MIN &&
 		chromaDeparture <= NEAR_RADIX_CHROMA_MAX;
 
-	// If nearly Radix, zero out offsets and skip curve adjustments to use pure Radix curves
-	const effectiveHueOffset = isNearlyRadix ? 0 : hueOffset;
-	const effectiveChromaDeparture = isNearlyRadix ? 1.0 : chromaDeparture;
+	// When "nearly Radix", decide whether to apply global tuning or zero out.
+	// Key insight: Only apply global tuning if it's LARGER than the per-row offset.
+	// This handles two cases:
+	// 1. Sveltopia Orange: per-row 0.25°, global -1.72° → apply global (brand intended uniform shift)
+	// 2. Slack Cyan: per-row 1.46°, global 0.22° → zero out (brand cyan is intentionally close to Radix)
+	let effectiveHueOffset: number;
+	let effectiveChromaDeparture: number;
+
+	if (isNearlyRadix && options.globalTuning) {
+		// Only apply global tuning if it represents MORE shift than per-row offset
+		const globalShiftMagnitude = Math.abs(options.globalTuning.hueShift);
+		const perRowShiftMagnitude = Math.abs(hueOffsetFromStep9);
+
+		if (globalShiftMagnitude > perRowShiftMagnitude) {
+			// Global tuning is larger - apply it for uniform brand character
+			effectiveHueOffset = options.globalTuning.hueShift;
+			effectiveChromaDeparture = options.globalTuning.chromaMultiplier;
+		} else {
+			// Per-row offset is larger - brand intended this color close to Radix
+			effectiveHueOffset = 0;
+			effectiveChromaDeparture = 1.0;
+		}
+	} else if (isNearlyRadix) {
+		// No global tuning provided, fall back to zero (original behavior)
+		effectiveHueOffset = 0;
+		effectiveChromaDeparture = 1.0;
+	} else {
+		// Use per-row offset calculated from brand color
+		effectiveHueOffset = hueOffset;
+		effectiveChromaDeparture = chromaDeparture;
+	}
 
 	// For nearly Radix: use original curve (no adjustment needed)
 	// For brand anchors: normalize so anchor step = 1.0

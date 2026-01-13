@@ -263,7 +263,17 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 		}
 
 		// Generate the 12-step scale with appropriate anchor step and hue type
-		const generatedScale = generateScaleAPCA({ parentColor, anchorStep, hueKey, useFullCurve });
+		// Pass global tuning so anchored rows that are "nearly Radix" still get uniform brand shift
+		const generatedScale = generateScaleAPCA({
+			parentColor,
+			anchorStep,
+			hueKey,
+			useFullCurve,
+			globalTuning: {
+				hueShift: tuningProfile.hueShift,
+				chromaMultiplier: tuningProfile.chromaMultiplier
+			}
+		});
 		const scale = toScale(generatedScale.steps);
 
 		// For anchored slots: replace generated anchor step with exact brand hex
