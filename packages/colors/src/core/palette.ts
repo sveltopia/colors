@@ -15,7 +15,11 @@ import { BASELINE_HUES, HUE_KEYS } from './hues.js';
 import {
 	generateScaleAPCA,
 	RADIX_REFERENCE_CHROMAS,
-	RADIX_LIGHTNESS_CURVES
+	RADIX_LIGHTNESS_CURVES,
+	RADIX_REFERENCE_CHROMAS_DARK,
+	RADIX_LIGHTNESS_CURVES_DARK,
+	RADIX_HUE_CURVES_DARK,
+	type ColorMode
 } from './generate.js';
 import { analyzeBrandColors } from './analyze.js';
 import type { Scale, TuningProfile, CustomRowInfo } from '../types.js';
@@ -28,6 +32,8 @@ export interface GeneratePaletteOptions {
 	brandColors: string[];
 	/** Override tuning profile (if not provided, will be calculated from brandColors) */
 	tuningProfile?: TuningProfile;
+	/** Color mode: 'light' (default) or 'dark' */
+	mode?: ColorMode;
 }
 
 /**
@@ -103,13 +109,19 @@ const NEUTRAL_HUES = new Set(['gray', 'mauve', 'slate', 'sage', 'olive', 'sand']
  * @param hueKey - The hue name (e.g., 'yellow', 'cyan')
  * @param baselineHue - The baseline hue angle
  * @param tuning - The tuning profile to apply
+ * @param mode - Color mode ('light' or 'dark')
  * @returns Hex color to use as parent for scale generation
  */
 function createTunedParent(
 	hueKey: string,
 	baselineHue: number,
-	tuning: TuningProfile
+	tuning: TuningProfile,
+	mode: ColorMode = 'light'
 ): string {
+	// Select curves based on mode
+	const refChromas = mode === 'dark' ? RADIX_REFERENCE_CHROMAS_DARK : RADIX_REFERENCE_CHROMAS;
+	const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+
 	// Use Radix reference chroma as baseline (this is the "trust Radix" approach)
 	// Apply different bounds for neutrals vs chromatic hues
 	const isNeutral = NEUTRAL_HUES.has(hueKey);
@@ -127,20 +139,31 @@ function createTunedParent(
 		);
 	}
 
-	const radixChroma = RADIX_REFERENCE_CHROMAS[hueKey] ?? 0.15;
+	const radixChroma = refChromas[hueKey] ?? 0.15;
 	const tunedChroma = radixChroma * clampedMultiplier;
+
+	// For dark mode, use the dark mode Radix hue as baseline instead of light mode BASELINE_HUES.
+	// This is critical because some neutrals have significantly different hues in dark mode:
+	// - Slate: light 277.70° vs dark 262.34° = 15.36° difference
+	// - Sand: light 106.68° vs dark 97.45° = 9.23° difference
+	// Using light mode baseline in dark mode would cause synthetic parents to mismatch
+	// the dark Radix curves, triggering unwanted tuning for neutrals.
+	let effectiveBaselineHue = baselineHue;
+	if (mode === 'dark' && RADIX_HUE_CURVES_DARK[hueKey]) {
+		effectiveBaselineHue = RADIX_HUE_CURVES_DARK[hueKey][8]; // step 9 (index 8)
+	}
 
 	// Apply hueShift for brand cohesion - but NOT to neutrals
 	// At very low chroma (~0.01-0.02), even small hue shifts change
 	// the perceived tint disproportionately (e.g., Slate becomes Mauve-like)
 	const effectiveHueShift = isNeutral ? 0 : tuning.hueShift;
-	const tunedHue = (baselineHue + effectiveHueShift + 360) % 360;
+	const tunedHue = (effectiveBaselineHue + effectiveHueShift + 360) % 360;
 
 	// CRITICAL: Use Radix step 9 lightness for this hue to avoid gamut clipping!
 	// Yellow at L=0.65 loses 30% chroma when converted to sRGB.
 	// Yellow at L=0.918 (Radix step 9) preserves full chroma.
 	// This ensures the parent color has the correct chroma after sRGB conversion.
-	const lightnessCurve = RADIX_LIGHTNESS_CURVES[hueKey];
+	const lightnessCurve = lightnessCurves[hueKey];
 	const radixStep9Lightness = lightnessCurve ? lightnessCurve[8] : 0.65; // index 8 = step 9
 
 	const oklch = clampOklch({
@@ -164,9 +187,17 @@ function createTunedParent(
  *
  * @param customRow - Custom row info from analysis
  * @param tuning - Tuning profile (for hueShift on neon rows)
+ * @param mode - Color mode ('light' or 'dark')
  * @returns Generated scale
  */
-function generateCustomRowScale(customRow: CustomRowInfo, tuning: TuningProfile): Scale {
+function generateCustomRowScale(
+	customRow: CustomRowInfo,
+	tuning: TuningProfile,
+	mode: ColorMode = 'light'
+): Scale {
+	// Select curves based on mode
+	const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+
 	// Determine effective hue shift based on reason:
 	// - low-chroma (pastel): DON'T apply hueShift (too delicate)
 	// - high-chroma (neon): DO apply hueShift (robust enough)
@@ -175,7 +206,7 @@ function generateCustomRowScale(customRow: CustomRowInfo, tuning: TuningProfile)
 
 	// Get the nearest slot's step-9 lightness for proper gamut handling
 	const nearestHue = customRow.nearestSlot;
-	const lightnessCurve = RADIX_LIGHTNESS_CURVES[nearestHue];
+	const lightnessCurve = lightnessCurves[nearestHue];
 	const step9Lightness = lightnessCurve ? lightnessCurve[8] : 0.65;
 
 	// Create a synthetic parent with the brand's actual chroma (not clamped!)
@@ -193,7 +224,8 @@ function generateCustomRowScale(customRow: CustomRowInfo, tuning: TuningProfile)
 		parentColor: syntheticParent,
 		anchorStep: customRow.anchorStep,
 		hueKey: nearestHue, // Use nearest hue's curves for shape
-		useFullCurve: false // Respect brand's actual values at anchor
+		useFullCurve: false, // Respect brand's actual values at anchor
+		mode
 	});
 
 	const scale = toScale(generatedScale.steps);
@@ -218,10 +250,10 @@ function generateCustomRowScale(customRow: CustomRowInfo, tuning: TuningProfile)
  * @returns Complete light mode palette with 31 hues × 12 steps
  */
 export function generateLightPalette(options: GeneratePaletteOptions): LightPalette {
-	const { brandColors } = options;
+	const { brandColors, mode = 'light' } = options;
 
-	// Get or calculate tuning profile
-	const tuningProfile = options.tuningProfile ?? analyzeBrandColors(brandColors);
+	// Get or calculate tuning profile (mode-aware for correct anchor step placement)
+	const tuningProfile = options.tuningProfile ?? analyzeBrandColors(brandColors, mode);
 
 	// Invert anchors map: slot -> { hex, step }
 	// Only include standard anchors (skip custom rows)
@@ -255,7 +287,7 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 		} else {
 			// Not anchored - create tuned parent from Radix baseline
 			// Parent provides hue and chroma (from Radix reference); lightness comes from Radix curve
-			parentColor = createTunedParent(hueKey, baseline.hue, tuningProfile);
+			parentColor = createTunedParent(hueKey, baseline.hue, tuningProfile, mode);
 			anchorStep = 9;
 			// Synthetic parent: use Radix lightness curve for ALL steps
 			// This is critical for bright hues (yellow/lime) where step 9 should be LIGHTER
@@ -272,7 +304,8 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 			globalTuning: {
 				hueShift: tuningProfile.hueShift,
 				chromaMultiplier: tuningProfile.chromaMultiplier
-			}
+			},
+			mode
 		});
 		const scale = toScale(generatedScale.steps);
 
@@ -311,7 +344,7 @@ export function generateLightPalette(options: GeneratePaletteOptions): LightPale
 	const customSlots: string[] = [];
 	if (tuningProfile.customRows && tuningProfile.customRows.length > 0) {
 		for (const customRow of tuningProfile.customRows) {
-			const scale = generateCustomRowScale(customRow, tuningProfile);
+			const scale = generateCustomRowScale(customRow, tuningProfile, mode);
 			scales[customRow.rowKey] = scale;
 			customSlots.push(customRow.rowKey);
 			anchoredSlots.push(customRow.rowKey);
