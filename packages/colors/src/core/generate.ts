@@ -309,7 +309,166 @@ export const RADIX_HUE_CURVES: Record<string, number[]> = {
 	sky: [211.04, 219.59, 219.72, 219.19, 220.56, 223.65, 225.48, 228.43, 217.80, 219.37, 232.55, 242.37],
 };
 
+// ===== DARK MODE CURVES =====
+// Extracted from Radix dark mode values
+
+/**
+ * Radix dark mode lightness curves per hue.
+ * Dark mode inverts the lightness progression:
+ * - Step 1-2: Dark backgrounds (L ~0.17-0.21)
+ * - Step 9-10: Hero colors (similar saturation)
+ * - Step 11-12: Light text on dark (L ~0.77-0.95)
+ */
+export const RADIX_LIGHTNESS_CURVES_DARK: Record<string, number[]> = {
+	gray: [0.177638, 0.213423, 0.251965, 0.285017, 0.313167, 0.348460, 0.401667, 0.489056, 0.538237, 0.582916, 0.769931, 0.949119],
+	mauve: [0.179702, 0.215386, 0.254258, 0.284631, 0.313182, 0.349863, 0.402409, 0.491740, 0.540301, 0.584920, 0.769077, 0.949685],
+	slate: [0.178529, 0.213175, 0.252140, 0.283193, 0.311775, 0.346552, 0.399281, 0.489318, 0.537004, 0.582514, 0.768560, 0.948921],
+	sage: [0.179529, 0.210840, 0.249477, 0.281606, 0.309826, 0.347774, 0.400084, 0.489032, 0.532655, 0.578495, 0.765879, 0.947309],
+	olive: [0.180235, 0.211523, 0.250137, 0.281863, 0.310080, 0.345104, 0.397157, 0.488611, 0.535190, 0.581021, 0.765994, 0.947029],
+	sand: [0.177218, 0.213020, 0.251577, 0.284274, 0.312086, 0.348400, 0.401273, 0.491910, 0.537547, 0.581636, 0.768715, 0.945760],
+	tomato: [0.186622, 0.207826, 0.254740, 0.290235, 0.331097, 0.380006, 0.446356, 0.538064, 0.627076, 0.664292, 0.779355, 0.898673],
+	red: [0.188029, 0.204575, 0.251050, 0.289285, 0.332115, 0.381440, 0.450181, 0.543563, 0.625565, 0.663385, 0.780414, 0.902365],
+	ruby: [0.188831, 0.207921, 0.254120, 0.292542, 0.334134, 0.381974, 0.448242, 0.543185, 0.628361, 0.663853, 0.781411, 0.905549],
+	crimson: [0.189256, 0.206173, 0.255016, 0.293183, 0.332040, 0.382650, 0.450062, 0.543106, 0.634053, 0.663127, 0.782477, 0.908533],
+	pink: [0.190625, 0.207632, 0.261612, 0.298650, 0.338008, 0.388361, 0.458276, 0.549632, 0.616784, 0.649470, 0.784570, 0.905481],
+	plum: [0.189749, 0.210040, 0.267281, 0.307181, 0.343845, 0.388957, 0.456020, 0.545014, 0.578737, 0.616156, 0.786061, 0.906138],
+	purple: [0.191328, 0.213745, 0.267703, 0.308777, 0.344745, 0.388694, 0.448556, 0.541226, 0.555623, 0.595519, 0.780657, 0.910686],
+	violet: [0.191359, 0.211133, 0.270734, 0.311797, 0.349181, 0.388911, 0.444528, 0.517739, 0.541680, 0.588623, 0.777832, 0.911651],
+	iris: [0.192361, 0.209108, 0.272190, 0.318097, 0.356828, 0.400354, 0.448478, 0.506847, 0.540310, 0.586798, 0.774294, 0.913982],
+	indigo: [0.190865, 0.209368, 0.271567, 0.318454, 0.362468, 0.403298, 0.449066, 0.502083, 0.543750, 0.589149, 0.775873, 0.910782],
+	blue: [0.193607, 0.212927, 0.274470, 0.320138, 0.367096, 0.416028, 0.474106, 0.540567, 0.649294, 0.688383, 0.764220, 0.907125],
+	cyan: [0.191653, 0.214033, 0.273295, 0.316436, 0.362635, 0.413536, 0.477691, 0.556625, 0.660042, 0.698817, 0.785373, 0.909540],
+	teal: [0.187233, 0.215547, 0.272539, 0.317840, 0.363255, 0.414426, 0.473086, 0.537401, 0.649077, 0.688016, 0.788562, 0.905128],
+	jade: [0.186392, 0.215148, 0.273597, 0.316238, 0.361166, 0.412719, 0.468397, 0.536509, 0.642150, 0.677749, 0.785238, 0.902679],
+	green: [0.187292, 0.211657, 0.272144, 0.317272, 0.364928, 0.412449, 0.466981, 0.528033, 0.640597, 0.674587, 0.779430, 0.904840],
+	grass: [0.186899, 0.209651, 0.267256, 0.318556, 0.366816, 0.416368, 0.467985, 0.522900, 0.651236, 0.689358, 0.779656, 0.910860],
+	bronze: [0.180889, 0.201036, 0.248011, 0.290943, 0.332624, 0.376549, 0.432160, 0.499662, 0.627428, 0.671745, 0.791819, 0.915128],
+	gold: [0.181787, 0.217756, 0.265850, 0.309372, 0.356715, 0.406677, 0.470214, 0.540986, 0.610943, 0.654127, 0.782758, 0.896276],
+	brown: [0.178010, 0.207357, 0.254375, 0.295458, 0.341500, 0.381677, 0.432651, 0.506691, 0.632852, 0.673344, 0.798410, 0.917381],
+	orange: [0.186938, 0.207818, 0.257882, 0.293681, 0.333924, 0.384901, 0.452318, 0.540564, 0.690796, 0.732699, 0.788766, 0.924722],
+	amber: [0.184964, 0.211986, 0.257809, 0.295500, 0.336319, 0.386332, 0.454241, 0.536379, 0.853697, 0.884914, 0.861667, 0.935052],
+	yellow: [0.182083, 0.209466, 0.260942, 0.292897, 0.334641, 0.384898, 0.452049, 0.534914, 0.917579, 0.971098, 0.900112, 0.941547],
+	lime: [0.181880, 0.208992, 0.265644, 0.316491, 0.362634, 0.410268, 0.463333, 0.524084, 0.887418, 0.934584, 0.868276, 0.946490],
+	mint: [0.188564, 0.210871, 0.268302, 0.314638, 0.359045, 0.410634, 0.470159, 0.540835, 0.869608, 0.915577, 0.795425, 0.930603],
+	sky: [0.190016, 0.215795, 0.271445, 0.320786, 0.373434, 0.426177, 0.488424, 0.556840, 0.861068, 0.908492, 0.792706, 0.933986],
+};
+
+/**
+ * Radix dark mode chroma curves (normalized to step 9).
+ */
+export const RADIX_CHROMA_CURVES_DARK: Record<string, number[]> = {
+	gray: [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
+	mauve: [0.2538, 0.2425, 0.3360, 0.4524, 0.5390, 0.6445, 0.6937, 0.9449, 1.0000, 0.9800, 0.8441, 0.1559],
+	slate: [0.2655, 0.2750, 0.3800, 0.4562, 0.5420, 0.6716, 0.7872, 1.0128, 1.0000, 0.9494, 0.6294, 0.1885],
+	sage: [0.2163, 0.2081, 0.1998, 0.2665, 0.2605, 0.3671, 0.4197, 0.5667, 1.0000, 0.8850, 0.5654, 0.1437],
+	olive: [0.2382, 0.2290, 0.2197, 0.3365, 0.3286, 0.4051, 0.5036, 0.7318, 1.0000, 0.8752, 0.7194, 0.1875],
+	sand: [0.2605, 0.2490, 0.2390, 0.4628, 0.6772, 0.6842, 0.8663, 1.0218, 1.0000, 1.3616, 1.2725, 0.7021],
+	tomato: [0.0607, 0.0877, 0.2829, 0.4474, 0.5038, 0.5183, 0.5489, 0.6683, 1.0000, 0.9226, 0.6769, 0.2402],
+	red: [0.0696, 0.1121, 0.3359, 0.4919, 0.5517, 0.5732, 0.6262, 0.7539, 1.0000, 0.9175, 0.6626, 0.2725],
+	ruby: [0.0711, 0.0775, 0.3139, 0.4577, 0.5118, 0.5436, 0.5942, 0.7432, 1.0000, 0.9250, 0.6612, 0.2711],
+	crimson: [0.0679, 0.1089, 0.2807, 0.4389, 0.4909, 0.5067, 0.5666, 0.6946, 1.0000, 0.9268, 0.6283, 0.2539],
+	pink: [0.0842, 0.1520, 0.3012, 0.4723, 0.5042, 0.5176, 0.5765, 0.6514, 1.0000, 0.9489, 0.7467, 0.2831],
+	plum: [0.0945, 0.1695, 0.3242, 0.4655, 0.5150, 0.5177, 0.5720, 0.6822, 1.0000, 0.9682, 0.8183, 0.2931],
+	purple: [0.1230, 0.1637, 0.3345, 0.4474, 0.5032, 0.5269, 0.5902, 0.7252, 1.0000, 0.9663, 0.7939, 0.2662],
+	violet: [0.1460, 0.1790, 0.3658, 0.5192, 0.5537, 0.5705, 0.6163, 0.7292, 1.0000, 0.9452, 0.6961, 0.2511],
+	iris: [0.1202, 0.1600, 0.3767, 0.5554, 0.5950, 0.6065, 0.6509, 0.7477, 1.0000, 0.9327, 0.6600, 0.2283],
+	indigo: [0.1286, 0.1578, 0.3691, 0.4954, 0.5464, 0.5823, 0.6287, 0.7152, 1.0000, 0.9202, 0.5957, 0.2238],
+	blue: [0.1321, 0.1572, 0.3434, 0.5013, 0.5485, 0.5867, 0.6313, 0.7228, 1.0000, 0.8772, 0.6514, 0.2644],
+	cyan: [0.1466, 0.1527, 0.3569, 0.4870, 0.5583, 0.6135, 0.6792, 0.8094, 1.0000, 0.9815, 0.9516, 0.4675],
+	teal: [0.1074, 0.1398, 0.3319, 0.4783, 0.5293, 0.5770, 0.6493, 0.7579, 1.0000, 1.0812, 1.2917, 0.6347],
+	jade: [0.1176, 0.1435, 0.3775, 0.4971, 0.5553, 0.5971, 0.6594, 0.7605, 1.0000, 1.0916, 1.3554, 0.6742],
+	green: [0.0923, 0.1157, 0.2978, 0.4285, 0.4970, 0.5430, 0.6196, 0.7246, 1.0000, 1.0583, 1.2454, 0.6243],
+	grass: [0.0912, 0.0905, 0.2052, 0.3591, 0.4215, 0.4935, 0.5625, 0.6630, 1.0000, 0.9876, 0.9666, 0.5318],
+	bronze: [0.1173, 0.1974, 0.3420, 0.4276, 0.4824, 0.5609, 0.6968, 0.9064, 1.0000, 1.0580, 0.9383, 0.3734],
+	gold: [0.0252, 0.0746, 0.2145, 0.3671, 0.4918, 0.5753, 0.7107, 0.8691, 1.0000, 1.1475, 1.1894, 0.6779],
+	brown: [0.0554, 0.0789, 0.1664, 0.2492, 0.3220, 0.3546, 0.4095, 0.5067, 1.0000, 0.9433, 0.7990, 0.4562],
+	orange: [0.0599, 0.0969, 0.2339, 0.3735, 0.4363, 0.4541, 0.4951, 0.6056, 1.0000, 0.9522, 0.7509, 0.2744],
+	amber: [0.0850, 0.1171, 0.2813, 0.3986, 0.4559, 0.4986, 0.5239, 0.6131, 1.0000, 1.1482, 1.1003, 0.4562],
+	yellow: [0.0758, 0.0945, 0.2566, 0.3267, 0.3726, 0.4224, 0.4402, 0.5151, 1.0000, 0.9900, 0.9053, 0.4073],
+	lime: [0.0808, 0.1172, 0.1997, 0.2718, 0.3289, 0.3864, 0.4544, 0.5407, 1.0000, 1.0536, 0.8882, 0.4689],
+	mint: [0.1062, 0.1705, 0.3918, 0.5422, 0.6206, 0.6630, 0.7257, 0.8542, 1.0000, 0.7905, 1.1819, 0.5705],
+	sky: [0.2431, 0.2826, 0.5211, 0.6843, 0.7610, 0.8546, 0.9560, 1.1151, 1.0000, 0.7123, 0.9652, 0.5117],
+};
+
+/**
+ * Radix dark mode reference chromas (step 9 absolute values).
+ */
+export const RADIX_REFERENCE_CHROMAS_DARK: Record<string, number> = {
+	gray: 0.000000,
+	mauve: 0.017092,
+	slate: 0.015318,
+	sage: 0.017478,
+	olive: 0.018139,
+	sand: 0.007751,
+	tomato: 0.193584,
+	red: 0.193340,
+	ruby: 0.194866,
+	crimson: 0.212961,
+	pink: 0.207608,
+	plum: 0.187722,
+	purple: 0.182910,
+	violet: 0.179028,
+	iris: 0.184124,
+	indigo: 0.191015,
+	blue: 0.193040,
+	cyan: 0.121716,
+	teal: 0.113572,
+	jade: 0.115025,
+	green: 0.132875,
+	grass: 0.146785,
+	bronze: 0.045953,
+	gold: 0.079548,
+	brown: 0.078487,
+	orange: 0.190911,
+	amber: 0.157207,
+	yellow: 0.183771,
+	lime: 0.174730,
+	mint: 0.099913,
+	sky: 0.102721,
+};
+
+/**
+ * Radix dark mode hue curves per hue.
+ */
+export const RADIX_HUE_CURVES_DARK: Record<string, number[]> = {
+	gray: [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
+	mauve: [308.19, 308.25, 301.13, 308.16, 303.92, 308.11, 298.90, 299.48, 294.16, 294.22, 299.72, 286.35],
+	slate: [285.98, 264.48, 271.18, 248.07, 255.56, 253.97, 252.94, 251.69, 262.34, 266.63, 258.34, 264.54],
+	sage: [164.58, 164.68, 164.77, 174.10, 174.15, 164.65, 170.09, 168.42, 170.54, 173.79, 171.70, 165.07],
+	olive: [128.73, 128.68, 128.64, 134.94, 134.92, 128.70, 132.53, 141.23, 139.44, 138.72, 137.79, 145.55],
+	sand: [106.60, 106.56, 106.53, 106.63, 106.70, 91.54, 95.22, 97.47, 97.45, 100.11, 100.03, 95.10],
+	tomato: [18.26, 31.43, 26.76, 27.76, 28.63, 29.90, 31.61, 33.41, 33.34, 34.09, 34.91, 31.23],
+	red: [18.42, 14.06, 12.69, 14.33, 15.53, 16.80, 18.77, 21.76, 23.03, 22.85, 22.14, 6.45],
+	ruby: [1.87, 3.65, 6.05, 6.07, 6.48, 7.06, 9.12, 11.27, 13.15, 13.63, 15.10, 355.75],
+	crimson: [354.17, 354.54, 353.51, 354.29, 354.53, 355.87, 357.14, 358.72, 1.28, 1.85, 4.74, 346.63],
+	pink: [335.35, 337.00, 337.59, 339.42, 341.18, 341.41, 342.90, 347.43, 346.00, 345.96, 346.97, 343.22],
+	plum: [326.25, 326.64, 327.11, 325.61, 325.02, 324.96, 323.21, 321.88, 322.11, 322.30, 322.22, 326.02],
+	purple: [315.59, 313.13, 312.61, 310.80, 310.50, 309.45, 308.61, 307.57, 305.86, 306.45, 307.74, 310.99],
+	violet: [290.76, 300.93, 294.41, 292.08, 291.33, 292.12, 291.97, 290.29, 288.03, 289.35, 293.19, 292.44],
+	iris: [284.13, 286.61, 278.46, 275.99, 277.31, 279.45, 280.42, 280.80, 278.28, 281.26, 287.46, 287.02],
+	indigo: [276.53, 274.84, 267.98, 267.25, 267.03, 268.76, 268.94, 268.25, 267.01, 269.30, 273.02, 269.55],
+	blue: [256.49, 261.25, 253.93, 252.35, 250.70, 252.01, 253.09, 253.17, 251.78, 251.40, 249.46, 238.45],
+	cyan: [222.83, 227.95, 220.38, 223.70, 223.74, 221.50, 221.64, 221.11, 221.74, 218.86, 213.80, 211.50],
+	teal: [186.67, 189.00, 186.76, 187.27, 186.64, 184.75, 184.95, 183.49, 181.96, 180.31, 175.73, 175.13],
+	jade: [169.78, 168.20, 165.19, 167.62, 168.17, 169.57, 170.27, 172.23, 170.73, 169.57, 167.11, 166.88],
+	green: [167.01, 165.91, 162.17, 161.84, 161.23, 160.95, 160.24, 159.39, 157.68, 157.70, 157.29, 158.18],
+	grass: [159.73, 149.92, 150.16, 150.30, 149.85, 149.33, 148.99, 148.32, 147.39, 147.80, 148.48, 144.90],
+	bronze: [39.35, 43.04, 71.30, 70.23, 66.94, 66.91, 64.97, 61.20, 44.16, 45.86, 44.29, 50.42],
+	gold: [106.60, 91.62, 86.87, 93.65, 93.74, 92.81, 96.43, 92.56, 88.56, 90.07, 95.06, 94.46],
+	brown: [84.59, 56.02, 51.58, 50.20, 54.41, 53.67, 53.93, 66.73, 60.98, 61.13, 62.71, 75.54],
+	orange: [60.68, 62.72, 60.79, 56.70, 54.38, 54.98, 52.66, 50.05, 45.02, 50.86, 56.21, 66.17],
+	amber: [77.80, 81.99, 74.48, 73.88, 72.90, 75.25, 74.96, 73.44, 84.13, 94.78, 89.02, 86.07],
+	yellow: [94.03, 91.81, 90.26, 93.80, 92.46, 92.91, 91.97, 89.38, 100.94, 109.36, 101.72, 101.11],
+	lime: [120.76, 129.62, 132.01, 131.68, 131.03, 131.45, 131.08, 130.63, 126.09, 126.30, 124.74, 122.70],
+	mint: [196.29, 195.94, 192.36, 190.98, 189.96, 186.24, 183.51, 179.23, 177.98, 180.00, 176.46, 168.28],
+	sky: [259.24, 257.53, 251.29, 248.74, 244.92, 243.92, 240.81, 237.44, 217.80, 214.51, 231.61, 214.32],
+};
+
+/** Color mode for palette generation */
+export type ColorMode = 'light' | 'dark';
+
 const WHITE = '#ffffff';
+const BLACK = '#111111';
 const TOLERANCE = 2; // APCA tolerance in Lc units
 
 export interface GenerateScaleOptions {
@@ -329,6 +488,17 @@ export interface GenerateScaleOptions {
 	 * If false (default), anchor step uses parent's actual lightness.
 	 */
 	useFullCurve?: boolean;
+	/**
+	 * Global tuning profile to use as fallback when brand anchor is "nearly Radix".
+	 * This ensures uniform brand character across the palette even when individual
+	 * brand colors happen to be close to their Radix slot.
+	 */
+	globalTuning?: {
+		hueShift: number;
+		chromaMultiplier: number;
+	};
+	/** Color mode: 'light' (default) or 'dark' */
+	mode?: ColorMode;
 }
 
 /**
@@ -408,26 +578,33 @@ export function generateScale(options: GenerateScaleOptions): GeneratedScale {
  * @returns 12-step scale with precise APCA targeting
  */
 export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale {
-	const { parentColor, anchorStep = 9, hueKey, chromaCurve } = options;
+	const { parentColor, anchorStep = 9, hueKey, chromaCurve, mode = 'light' } = options;
 
 	const parent = toOklch(parentColor);
 	if (!parent) {
 		throw new Error(`Invalid parent color: ${parentColor}`);
 	}
 
+	// Select curves based on mode (light or dark)
+	const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+	const chromaCurves = mode === 'dark' ? RADIX_CHROMA_CURVES_DARK : RADIX_CHROMA_CURVES;
+	const hueCurves = mode === 'dark' ? RADIX_HUE_CURVES_DARK : RADIX_HUE_CURVES;
+	const refChromas = mode === 'dark' ? RADIX_REFERENCE_CHROMAS_DARK : RADIX_REFERENCE_CHROMAS;
+	const background = mode === 'dark' ? BLACK : WHITE;
+
 	// Get Radix lightness curve for this hue (if available)
 	// Using per-hue curves preserves Radix's semantic intent:
 	// - Bright hues have non-monotonic curves (step 9 lighter than 8)
 	// - Neutrals have flatter middle sections
 	// - Warm reds are darker at steps 9-10
-	const hueLightnessCurve = hueKey ? RADIX_LIGHTNESS_CURVES[hueKey] : null;
+	const hueLightnessCurve = hueKey ? lightnessCurves[hueKey] : null;
 	const lightnessCurve = hueLightnessCurve || RADIX_LIGHTNESS_TARGETS;
 
 	// Get per-hue chroma curve - this is critical for correct saturation progression
 	// Different hue families have very different chroma shapes:
 	// - Bright hues (yellow/amber): High ratios at light steps (0.77-0.84 at step 5)
 	// - Purple/violet: Lower ratios at mid-steps (0.29-0.31 at step 5)
-	const hueChromaCurve = hueKey ? RADIX_CHROMA_CURVES[hueKey] : null;
+	const hueChromaCurve = hueKey ? chromaCurves[hueKey] : null;
 	const effectiveChromaCurve = chromaCurve || hueChromaCurve || CHROMA_CURVE;
 
 	// When anchoring at a different step, we need to adjust the chroma curve
@@ -441,7 +618,7 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 	// - Orange shifts 80° → 41° (gets warmer/redder as it darkens)
 	// - Gold shifts 106° → 73° (yellow → orange as it darkens)
 	// - Yellow shifts 101° → 77° (more orange in darks)
-	const hueHueCurve = hueKey ? RADIX_HUE_CURVES[hueKey] : null;
+	const hueHueCurve = hueKey ? hueCurves[hueKey] : null;
 
 	// Calculate hue offset: difference between parent hue and Radix anchor step hue
 	// This offset preserves brand hue at anchor step while following Radix curve shape.
@@ -458,7 +635,7 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 
 	// Calculate chroma departure for dampening
 	// If parent has significantly more chroma than Radix reference, we dampen it at edges
-	const radixRefChroma = hueKey ? (RADIX_REFERENCE_CHROMAS[hueKey] ?? parent.c) : parent.c;
+	const radixRefChroma = hueKey ? (refChromas[hueKey] ?? parent.c) : parent.c;
 	const chromaDeparture = parent.c / radixRefChroma; // e.g., 1.42 means +42% more chroma
 
 	// "Nearly Radix" threshold: if brand is very close to Radix STEP 9, skip offset propagation
@@ -475,14 +652,47 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 	if (hueOffsetFromStep9 > 180) hueOffsetFromStep9 -= 360;
 	if (hueOffsetFromStep9 < -180) hueOffsetFromStep9 += 360;
 
+	// Only apply "nearly Radix" for brand anchors (!useFullCurve), not synthetic parents.
+	// Synthetic parents already have tuning applied via createTunedParent() - checking
+	// isNearlyRadix here would cancel out that tuning since the synthetic parent is
+	// intentionally close to Radix (just shifted by the tuning profile).
 	const isNearlyRadix =
+		!options.useFullCurve &&
 		Math.abs(hueOffsetFromStep9) < NEAR_RADIX_HUE_THRESHOLD &&
 		chromaDeparture >= NEAR_RADIX_CHROMA_MIN &&
 		chromaDeparture <= NEAR_RADIX_CHROMA_MAX;
 
-	// If nearly Radix, zero out offsets and skip curve adjustments to use pure Radix curves
-	const effectiveHueOffset = isNearlyRadix ? 0 : hueOffset;
-	const effectiveChromaDeparture = isNearlyRadix ? 1.0 : chromaDeparture;
+	// When "nearly Radix", decide whether to apply global tuning or zero out.
+	// Key insight: Only apply global tuning if it's LARGER than the per-row offset.
+	// This handles two cases:
+	// 1. Sveltopia Orange: per-row 0.25°, global -1.72° → apply global (brand intended uniform shift)
+	// 2. Slack Cyan: per-row 1.46°, global 0.22° → zero out (brand cyan is intentionally close to Radix)
+	let effectiveHueOffset: number;
+	let effectiveChromaDeparture: number;
+
+	if (isNearlyRadix && options.globalTuning) {
+		// Only apply global tuning if it represents MORE shift than per-row offset
+		const globalShiftMagnitude = Math.abs(options.globalTuning.hueShift);
+		const perRowShiftMagnitude = Math.abs(hueOffsetFromStep9);
+
+		if (globalShiftMagnitude > perRowShiftMagnitude) {
+			// Global tuning is larger - apply it for uniform brand character
+			effectiveHueOffset = options.globalTuning.hueShift;
+			effectiveChromaDeparture = options.globalTuning.chromaMultiplier;
+		} else {
+			// Per-row offset is larger - brand intended this color close to Radix
+			effectiveHueOffset = 0;
+			effectiveChromaDeparture = 1.0;
+		}
+	} else if (isNearlyRadix) {
+		// No global tuning provided, fall back to zero (original behavior)
+		effectiveHueOffset = 0;
+		effectiveChromaDeparture = 1.0;
+	} else {
+		// Use per-row offset calculated from brand color
+		effectiveHueOffset = hueOffset;
+		effectiveChromaDeparture = chromaDeparture;
+	}
 
 	// For nearly Radix: use original curve (no adjustment needed)
 	// For brand anchors: normalize so anchor step = 1.0
@@ -535,7 +745,7 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 
 		const oklch = clampOklch({ l: lightness, c: chroma, h: hue });
 		const hex = toHex(oklch);
-		const apca = Math.abs(calcAPCA(hex, WHITE));
+		const apca = Math.abs(calcAPCA(hex, background));
 
 		// Note: targetApca is now informational only (showing what APCA we achieve)
 		// We no longer target APCA, we target Radix's lightness curve

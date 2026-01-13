@@ -14,6 +14,7 @@
 import { generateLightPalette, getPaletteStats } from '../src/core/palette.js';
 import { BASELINE_HUES } from '../src/core/hues.js';
 import { RADIX_SCALES, RADIX_SCALE_ORDER } from '../src/reference/radix-scales.js';
+import { RADIX_SCALES_DARK } from '../src/reference/radix-scales-dark.js';
 import { TEST_PALETTES, type TestPalette } from '../src/reference/test-palettes.js';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -25,10 +26,14 @@ interface SerializedPalette {
 	category: TestPalette['category'];
 	notes?: string;
 	brandColors: string[];
-	scales: Record<string, Record<number, string>>;
+	scales: Record<string, Record<number, string>>; // Light mode
+	scalesDark: Record<string, Record<number, string>>; // Dark mode
 	anchoredSlots: string[];
+	anchoredSlotsDark: string[];
 	customSlots: string[];
-	anchorStepMap: Record<string, number>;
+	customSlotsDark: string[];
+	anchorStepMap: Record<string, number>; // Light mode
+	anchorStepMapDark: Record<string, number>; // Dark mode
 	customRowInfo: Array<{
 		rowKey: string;
 		reason: 'low-chroma' | 'high-chroma';
@@ -54,17 +59,24 @@ const allPalettes: SerializedPalette[] = [];
 
 for (const testPalette of TEST_PALETTES) {
 	try {
-		const palette = generateLightPalette({ brandColors: testPalette.colors });
-		const stats = getPaletteStats(palette);
+		// Generate both light and dark mode palettes
+		const paletteLight = generateLightPalette({ brandColors: testPalette.colors, mode: 'light' });
+		const paletteDark = generateLightPalette({ brandColors: testPalette.colors, mode: 'dark' });
+		const stats = getPaletteStats(paletteLight);
 
-		// Build anchor step map
+		// Build anchor step maps for both modes
 		const anchorStepMap: Record<string, number> = {};
-		for (const [hex, info] of Object.entries(palette.meta.tuningProfile.anchors)) {
+		for (const [hex, info] of Object.entries(paletteLight.meta.tuningProfile.anchors)) {
 			anchorStepMap[info.slot] = info.step;
 		}
 
+		const anchorStepMapDark: Record<string, number> = {};
+		for (const [hex, info] of Object.entries(paletteDark.meta.tuningProfile.anchors)) {
+			anchorStepMapDark[info.slot] = info.step;
+		}
+
 		// Build custom row info
-		const customRowInfo = (palette.meta.tuningProfile.customRows || []).map((cr) => ({
+		const customRowInfo = (paletteLight.meta.tuningProfile.customRows || []).map((cr) => ({
 			rowKey: cr.rowKey,
 			reason: cr.reason,
 			chromaRatio: cr.chromaRatio,
@@ -77,15 +89,19 @@ for (const testPalette of TEST_PALETTES) {
 			category: testPalette.category,
 			notes: testPalette.notes,
 			brandColors: testPalette.colors,
-			scales: palette.scales as Record<string, Record<number, string>>,
-			anchoredSlots: palette.meta.anchoredSlots,
-			customSlots: palette.meta.customSlots,
+			scales: paletteLight.scales as Record<string, Record<number, string>>,
+			scalesDark: paletteDark.scales as Record<string, Record<number, string>>,
+			anchoredSlots: paletteLight.meta.anchoredSlots,
+			anchoredSlotsDark: paletteDark.meta.anchoredSlots,
+			customSlots: paletteLight.meta.customSlots,
+			customSlotsDark: paletteDark.meta.customSlots,
 			anchorStepMap,
+			anchorStepMapDark,
 			customRowInfo,
 			tuningProfile: {
-				hueShift: palette.meta.tuningProfile.hueShift,
-				chromaMultiplier: palette.meta.tuningProfile.chromaMultiplier,
-				lightnessShift: palette.meta.tuningProfile.lightnessShift
+				hueShift: paletteLight.meta.tuningProfile.hueShift,
+				chromaMultiplier: paletteLight.meta.tuningProfile.chromaMultiplier,
+				lightnessShift: paletteLight.meta.tuningProfile.lightnessShift
 			},
 			stats: {
 				totalHues: stats.totalHues,
@@ -110,6 +126,7 @@ const orderedHueKeys = RADIX_SCALE_ORDER.filter(
 
 // Serialize Radix scales for client-side use
 const radixScalesJson = JSON.stringify(RADIX_SCALES);
+const radixScalesDarkJson = JSON.stringify(RADIX_SCALES_DARK);
 const hueDefs = JSON.stringify(
 	Object.fromEntries(orderedHueKeys.map((key) => [key, BASELINE_HUES[key]]))
 );
@@ -314,6 +331,18 @@ const html = `<!DOCTYPE html>
       z-index: 10;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
+    .swatch.copied::before {
+      content: 'Copied!';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 9px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      pointer-events: none;
+    }
     .swatch.brand-anchor::after {
       content: '\u2605';
       position: absolute;
@@ -362,6 +391,69 @@ const html = `<!DOCTYPE html>
     }
     .tuning-info h3 { margin-top: 0; color: #888; }
     .tuning-value { font-family: monospace; color: #30a46c; }
+
+    /* Mode toggle button */
+    .mode-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .mode-btn:hover {
+      border-color: #999;
+    }
+    .mode-btn.light {
+      background: #fff;
+      color: #1a1a1a;
+    }
+    .mode-btn.dark {
+      background: #1a1a1a;
+      color: #fff;
+      border-color: #444;
+    }
+    .mode-icon { font-size: 16px; }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background: #111;
+      color: #eee;
+    }
+    body.dark-mode .controls {
+      background: #1a1a1a;
+      border-color: #333;
+    }
+    body.dark-mode .stat {
+      background: #1a1a1a;
+      border-color: #333;
+    }
+    body.dark-mode .tuning-info {
+      background: #1a1a1a;
+      border-color: #333;
+    }
+    body.dark-mode .tuning-info h3 { color: #888; }
+    body.dark-mode .semantic-header {
+      background: #222;
+      color: #999;
+    }
+    body.dark-mode .header { color: #666; }
+    body.dark-mode .hue-label { color: #999; }
+    body.dark-mode .hue-label.anchored { color: #f76b15; }
+    body.dark-mode .hue-label.custom-row { color: #d19dff; }
+    body.dark-mode .hue-label.radix { color: #70b8ff; }
+    body.dark-mode h1, body.dark-mode h3 { color: #eee; }
+    body.dark-mode .subtitle { color: #888; }
+    body.dark-mode .legend { color: #888; }
+    body.dark-mode .palette-select {
+      background: #1a1a1a;
+      color: #eee;
+      border-color: #444;
+    }
   </style>
 </head>
 <body>
@@ -382,6 +474,12 @@ ${buildSelectorOptions()}      </select>
     <div class="control-group">
       <input type="checkbox" id="showGenerated" checked>
       <label for="showGenerated">Show Generated</label>
+    </div>
+    <div class="control-group mode-toggle">
+      <button type="button" id="modeToggle" class="mode-btn light">
+        <span class="mode-icon">☀️</span>
+        <span class="mode-label">Light</span>
+      </button>
     </div>
     <span id="paletteNotes" class="palette-notes"></span>
   </div>
@@ -462,7 +560,8 @@ ${buildSelectorOptions()}      </select>
   <script>
     // Embedded palette data
     const ALL_PALETTES = ${JSON.stringify(allPalettes)};
-    const RADIX_SCALES = ${radixScalesJson};
+    const RADIX_SCALES_LIGHT = ${radixScalesJson};
+    const RADIX_SCALES_DARK = ${radixScalesDarkJson};
     const HUE_DEFS = ${hueDefs};
     const ORDERED_HUE_KEYS = ${JSON.stringify(orderedHueKeys)};
     const NEUTRALS = ['gray', 'mauve', 'slate', 'sage', 'olive', 'sand'];
@@ -471,10 +570,14 @@ ${buildSelectorOptions()}      </select>
     const paletteSelect = document.getElementById('paletteSelect');
     const showRadix = document.getElementById('showRadix');
     const showGenerated = document.getElementById('showGenerated');
+    const modeToggle = document.getElementById('modeToggle');
     const paletteGrid = document.getElementById('paletteGrid');
     const brandColorsDiv = document.getElementById('brandColors');
     const categoryBadge = document.getElementById('categoryBadge');
     const paletteNotes = document.getElementById('paletteNotes');
+
+    // Current mode state
+    let currentMode = 'light';
 
     // Stats elements
     const statHues = document.getElementById('statHues');
@@ -491,6 +594,13 @@ ${buildSelectorOptions()}      </select>
     const tuneAnchors = document.getElementById('tuneAnchors');
 
     function renderPalette(palette) {
+      // Select scales and metadata based on current mode
+      const scales = currentMode === 'dark' ? palette.scalesDark : palette.scales;
+      const radixScales = currentMode === 'dark' ? RADIX_SCALES_DARK : RADIX_SCALES_LIGHT;
+      const anchoredSlots = currentMode === 'dark' ? palette.anchoredSlotsDark : palette.anchoredSlots;
+      const anchorStepMap = currentMode === 'dark' ? palette.anchorStepMapDark : palette.anchorStepMap;
+      const customSlots = currentMode === 'dark' ? palette.customSlotsDark : palette.customSlots;
+
       // Update brand colors display
       brandColorsDiv.innerHTML = palette.brandColors.map(hex =>
         '<div class="brand-color">' +
@@ -505,7 +615,7 @@ ${buildSelectorOptions()}      </select>
       statAnchored.textContent = palette.stats.anchoredHues;
       statCustom.textContent = palette.stats.customHues || 0;
       statCustomContainer.style.display = palette.stats.customHues > 0 ? 'block' : 'none';
-      hueCount.textContent = ORDERED_HUE_KEYS.length + (palette.customSlots?.length || 0);
+      hueCount.textContent = ORDERED_HUE_KEYS.length + (customSlots?.length || 0);
 
       // Update category badge
       const categoryLabels = {
@@ -524,7 +634,7 @@ ${buildSelectorOptions()}      </select>
       tuneHue.textContent = sign(palette.tuningProfile.hueShift) + palette.tuningProfile.hueShift.toFixed(1) + '\u00B0';
       tuneChroma.textContent = palette.tuningProfile.chromaMultiplier.toFixed(2) + 'x';
       tuneLightness.textContent = sign(palette.tuningProfile.lightnessShift) + palette.tuningProfile.lightnessShift.toFixed(3);
-      tuneAnchors.textContent = palette.anchoredSlots.join(', ') || 'none';
+      tuneAnchors.textContent = anchoredSlots.join(', ') || 'none';
 
       // Rebuild grid
       let gridHtml = '<div class="header"></div>';
@@ -535,11 +645,11 @@ ${buildSelectorOptions()}      </select>
       let lastWasNeutral = false;
 
       for (const hueKey of ORDERED_HUE_KEYS) {
-        const generatedScale = palette.scales[hueKey];
-        const radixScale = RADIX_SCALES[hueKey];
+        const generatedScale = scales[hueKey];
+        const radixScale = radixScales[hueKey];
         const hueDef = HUE_DEFS[hueKey];
-        const isAnchored = palette.anchoredSlots.includes(hueKey);
-        const anchorStep = palette.anchorStepMap[hueKey];
+        const isAnchored = anchoredSlots.includes(hueKey);
+        const anchorStep = anchorStepMap[hueKey];
         const isNeutral = NEUTRALS.includes(hueKey);
 
         // Section divider
@@ -570,13 +680,13 @@ ${buildSelectorOptions()}      </select>
       }
 
       // Render custom rows (no Radix counterpart)
-      if (palette.customSlots && palette.customSlots.length > 0) {
+      if (customSlots && customSlots.length > 0) {
         gridHtml += '<div class="section-divider"></div>';
 
-        for (const customKey of palette.customSlots) {
-          const customScale = palette.scales[customKey];
+        for (const customKey of customSlots) {
+          const customScale = scales[customKey];
           const customInfo = palette.customRowInfo.find(c => c.rowKey === customKey);
-          const anchorStep = palette.anchorStepMap[customKey];
+          const customAnchorStep = anchorStepMap[customKey];
           // Badge type based on reason: low-chroma=pastel, high-chroma=neon, hue-gap=custom
           var badgeType, badgeLabel;
           switch (customInfo?.reason) {
@@ -604,7 +714,7 @@ ${buildSelectorOptions()}      </select>
 
           for (let step = 1; step <= 12; step++) {
             const hex = customScale[step];
-            const isAnchorSwatch = step === anchorStep;
+            const isAnchorSwatch = step === customAnchorStep;
             const anchorClass = isAnchorSwatch ? ' brand-anchor' : '';
             const title = 'Custom ' + customKey + '-' + step + ': ' + hex + (isAnchorSwatch ? ' (BRAND ANCHOR)' : '');
             gridHtml += '<div class="swatch row-generated' + anchorClass + genHidden + '" style="background: ' + hex + '" title="' + title + '"></div>';
@@ -628,6 +738,26 @@ ${buildSelectorOptions()}      </select>
       return ALL_PALETTES.find(p => p.id === id);
     }
 
+    // Copy hex on click
+    function copyHex(e) {
+      const swatch = e.target.closest('.swatch');
+      if (!swatch) return;
+
+      // Extract hex from title attribute (format: "Type name-step: #hex" or "Type name-step: #hex (BRAND ANCHOR)")
+      const title = swatch.getAttribute('title') || '';
+      const hexMatch = title.match(/#[0-9A-Fa-f]{6}/);
+      if (!hexMatch) return;
+
+      const hex = hexMatch[0];
+      navigator.clipboard.writeText(hex).then(() => {
+        swatch.classList.add('copied');
+        setTimeout(() => swatch.classList.remove('copied'), 600);
+      });
+    }
+
+    // Event delegation for swatch clicks
+    paletteGrid.addEventListener('click', copyHex);
+
     // Event listeners
     paletteSelect.addEventListener('change', () => {
       const palette = findPalette(paletteSelect.value);
@@ -636,6 +766,22 @@ ${buildSelectorOptions()}      </select>
 
     showRadix.addEventListener('change', updateVisibility);
     showGenerated.addEventListener('change', updateVisibility);
+
+    modeToggle.addEventListener('click', () => {
+      currentMode = currentMode === 'light' ? 'dark' : 'light';
+
+      // Update button appearance
+      modeToggle.className = 'mode-btn ' + currentMode;
+      modeToggle.querySelector('.mode-icon').textContent = currentMode === 'dark' ? '🌙' : '☀️';
+      modeToggle.querySelector('.mode-label').textContent = currentMode === 'dark' ? 'Dark' : 'Light';
+
+      // Toggle body dark mode
+      document.body.classList.toggle('dark-mode', currentMode === 'dark');
+
+      // Re-render with new mode
+      const palette = findPalette(paletteSelect.value);
+      if (palette) renderPalette(palette);
+    });
 
     // Initial render
     const initialPalette = findPalette('sveltopia');

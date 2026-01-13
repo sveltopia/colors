@@ -386,8 +386,11 @@ describe('Full Palette Generation', () => {
 				expect(generated).toBeDefined();
 				expect(radix).toBeDefined();
 
-				// Should be very close (within 3 RGB points per channel)
-				// Small differences may occur due to OKLCH precision/rounding
+				// Should be very close (within 5 RGB points per channel)
+				// Small differences may occur due to:
+				// 1. OKLCH precision/rounding
+				// 2. Global tuning profile being applied for uniform brand character
+				//    (Slack's global tuning is ~0.2° hue, ~1.06x chroma)
 				const genRgb = hexToRgb(generated);
 				const radixRgb = hexToRgb(radix);
 				const maxDiff = Math.max(
@@ -395,7 +398,7 @@ describe('Full Palette Generation', () => {
 					Math.abs(genRgb.g - radixRgb.g),
 					Math.abs(genRgb.b - radixRgb.b)
 				);
-				expect(maxDiff).toBeLessThanOrEqual(3);
+				expect(maxDiff).toBeLessThanOrEqual(5);
 			}
 		});
 

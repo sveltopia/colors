@@ -13,7 +13,7 @@
 import { toOklch } from '../utils/oklch.js';
 import type { OklchColor, TuningProfile, AnchorInfo, CustomRowInfo } from '../types.js';
 import { BASELINE_HUES, findClosestHueWithDistance, SNAP_THRESHOLD } from './hues.js';
-import { RADIX_LIGHTNESS_CURVES } from './generate.js';
+import { RADIX_LIGHTNESS_CURVES, RADIX_LIGHTNESS_CURVES_DARK, type ColorMode } from './generate.js';
 
 /**
  * Chroma ratio thresholds for triggering custom row generation.
@@ -30,11 +30,11 @@ export const CHROMA_RATIO_FLOOR = 0.5;
 export const CHROMA_RATIO_CEILING = 1.3;
 
 /**
- * Radix lightness targets for each step (1-12).
+ * Radix lightness targets for each step (1-12) - LIGHT MODE.
  * Used to find best-fit anchor step for any input color.
- * These are the same values from generate.ts.
+ * Light mode: Step 1 is lightest, Step 12 is darkest.
  */
-const RADIX_LIGHTNESS_TARGETS = [
+const RADIX_LIGHTNESS_TARGETS_LIGHT = [
 	0.993, // Step 1
 	0.981, // Step 2
 	0.959, // Step 3
@@ -50,25 +50,59 @@ const RADIX_LIGHTNESS_TARGETS = [
 ];
 
 /**
+ * Radix lightness targets for each step (1-12) - DARK MODE.
+ * Dark mode: Step 1 is darkest, Step 12 is lightest.
+ * Extracted from Radix dark mode gray scale.
+ */
+const RADIX_LIGHTNESS_TARGETS_DARK = [
+	0.168, // Step 1 (darkest background)
+	0.211, // Step 2
+	0.265, // Step 3
+	0.313, // Step 4
+	0.354, // Step 5
+	0.398, // Step 6
+	0.464, // Step 7
+	0.529, // Step 8
+	0.561, // Step 9 (hero position - similar L to light mode)
+	0.600, // Step 10
+	0.771, // Step 11
+	0.946 // Step 12 (lightest text)
+];
+
+/**
  * Determine the best anchor step for a color based on its lightness.
  * Uses best-fit matching against per-hue Radix lightness curves.
  *
  * This allows anchoring at ANY step (1-12), not just 9 or 12.
- * For example:
+ *
+ * Light mode examples:
  * - L ≈ 0.66 → Step 9 (standard hero)
- * - L ≈ 0.73 → Step 8 (lighter hero)
- * - L ≈ 0.56 → Step 11 (dark accent)
- * - L ≈ 0.33 → Step 12 (text color)
- * - L < 0.25 → Step 12 (clamped, darker than any target)
+ * - L ≈ 0.33 → Step 12 (dark text)
+ * - L ≈ 0.99 → Step 1 (lightest background)
+ *
+ * Dark mode examples (inverted progression):
+ * - L ≈ 0.56 → Step 9 (hero position)
+ * - L ≈ 0.95 → Step 12 (light text)
+ * - L ≈ 0.17 → Step 1 (darkest background)
  *
  * @param lightness - OKLCH lightness value (0-1)
  * @param slot - Hue slot name for per-hue curve lookup (optional)
+ * @param mode - Color mode ('light' or 'dark')
  * @returns Best-fit step number (1-12)
  */
-export function suggestAnchorStep(lightness: number, slot?: string): number {
+export function suggestAnchorStep(
+	lightness: number,
+	slot?: string,
+	mode: ColorMode = 'light'
+): number {
+	// Select curves based on mode
+	const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+	const defaultTargets =
+		mode === 'dark' ? RADIX_LIGHTNESS_TARGETS_DARK : RADIX_LIGHTNESS_TARGETS_LIGHT;
+
 	// Use per-hue lightness curve if available, otherwise fall back to generic
-	const lightnessCurve = slot ? RADIX_LIGHTNESS_CURVES[slot] : null;
-	const targets = lightnessCurve || RADIX_LIGHTNESS_TARGETS;
+	const lightnessCurve = slot ? lightnessCurves[slot] : null;
+	const targets = lightnessCurve || defaultTargets;
 
 	let bestStep = 9;
 	let bestDiff = Infinity;
@@ -114,9 +148,10 @@ export interface ColorAnalysis {
  * Analyze a single brand color against the baseline hue map.
  *
  * @param hex - Input color as hex string
+ * @param mode - Color mode for anchor step calculation ('light' or 'dark')
  * @returns Analysis result or null if color is invalid
  */
-export function analyzeColor(hex: string): ColorAnalysis | null {
+export function analyzeColor(hex: string, mode: ColorMode = 'light'): ColorAnalysis | null {
 	const oklch = toOklch(hex);
 	if (!oklch) return null;
 
@@ -174,7 +209,7 @@ export function analyzeColor(hex: string): ColorAnalysis | null {
 		snaps,
 		hueOffset,
 		chromaRatio,
-		suggestedAnchorStep: suggestAnchorStep(oklch.l, slot),
+		suggestedAnchorStep: suggestAnchorStep(oklch.l, slot, mode),
 		isOutOfBounds,
 		outOfBoundsReason
 	};
@@ -236,10 +271,15 @@ export function generateCustomRowKey(analysis: ColorAnalysis, existingKeys: Set<
  * Colors with out-of-bounds chroma (< 0.5x or > 1.3x) are separated
  * into customRows for special handling during palette generation.
  *
+ * IMPORTANT: The mode parameter affects anchor step calculation.
+ * In dark mode, lightness progression is inverted, so the same
+ * brand color will anchor at a different step.
+ *
  * @param colors - Array of 1-7 hex color strings
+ * @param mode - Color mode for anchor step calculation ('light' or 'dark')
  * @returns TuningProfile describing the brand's color preferences
  */
-export function analyzeBrandColors(colors: string[]): TuningProfile {
+export function analyzeBrandColors(colors: string[], mode: ColorMode = 'light'): TuningProfile {
 	if (colors.length === 0) {
 		return createDefaultProfile();
 	}
@@ -252,8 +292,10 @@ export function analyzeBrandColors(colors: string[]): TuningProfile {
 		colors = colors.slice(0, MAX_BRAND_COLORS);
 	}
 
-	// Analyze each color
-	const analyses = colors.map(analyzeColor).filter((a): a is ColorAnalysis => a !== null);
+	// Analyze each color with mode-aware anchor step calculation
+	const analyses = colors
+		.map((hex) => analyzeColor(hex, mode))
+		.filter((a): a is ColorAnalysis => a !== null);
 
 	if (analyses.length === 0) {
 		return createDefaultProfile();
@@ -361,14 +403,19 @@ export function createDefaultProfile(): TuningProfile {
 /**
  * Get a detailed analysis report for debugging/display.
  */
-export function getAnalysisReport(colors: string[]): {
+export function getAnalysisReport(
+	colors: string[],
+	mode: ColorMode = 'light'
+): {
 	analyses: ColorAnalysis[];
 	profile: TuningProfile;
 	summary: string;
 } {
-	const analyses = colors.map(analyzeColor).filter((a): a is ColorAnalysis => a !== null);
+	const analyses = colors
+		.map((hex) => analyzeColor(hex, mode))
+		.filter((a): a is ColorAnalysis => a !== null);
 
-	const profile = analyzeBrandColors(colors);
+	const profile = analyzeBrandColors(colors, mode);
 
 	const summary = [
 		`Analyzed ${analyses.length} colors:`,
