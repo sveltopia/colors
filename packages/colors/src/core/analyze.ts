@@ -30,6 +30,34 @@ export const CHROMA_RATIO_FLOOR = 0.5;
 export const CHROMA_RATIO_CEILING = 1.3;
 
 /**
+ * Maximum allowed lightness gap between input color and matched step.
+ * Colors exceeding this threshold trigger custom row generation.
+ *
+ * 0.10 chosen because:
+ * - Radix steps are typically ~0.05-0.10 apart in lightness
+ * - 0.10 catches colors that don't fit well into any step
+ * - Combined with semantic check for better detection
+ */
+export const LIGHTNESS_GAP_THRESHOLD = 0.10;
+
+/**
+ * Minimum chroma for "high chroma" classification.
+ * Colors above this threshold are considered vibrant/saturated.
+ * Used for semantic step validation (hero vs text steps).
+ */
+export const HIGH_CHROMA_THRESHOLD = 0.12;
+
+/**
+ * Steps where high-chroma colors are semantically WRONG.
+ * - Steps 1-3: Background steps (should be very low chroma)
+ * - Step 12: High-contrast text (should be low chroma)
+ *
+ * Step 11 ("low-contrast text") can have moderate chroma for accent text.
+ * Steps 4-10 are OK for various chroma levels (UI elements, accents).
+ */
+export const SEMANTIC_MISMATCH_STEPS = new Set([1, 2, 3, 12]);
+
+/**
  * Radix lightness targets for each step (1-12) - LIGHT MODE.
  * Used to find best-fit anchor step for any input color.
  * Light mode: Step 1 is lightest, Step 12 is darkest.
@@ -120,6 +148,32 @@ export function suggestAnchorStep(
 	return bestStep;
 }
 
+/**
+ * Get the expected lightness for a specific step in a hue's scale.
+ * Uses mode-appropriate Radix lightness curves.
+ *
+ * @param step - Step number (1-12)
+ * @param hueKey - Hue slot name for per-hue curve lookup
+ * @param mode - Color mode ('light' or 'dark')
+ * @returns Expected OKLCH lightness value
+ */
+export function getExpectedLightnessForStep(
+	step: number,
+	hueKey: string,
+	mode: ColorMode = 'light'
+): number {
+	const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+	const defaultTargets =
+		mode === 'dark' ? RADIX_LIGHTNESS_TARGETS_DARK : RADIX_LIGHTNESS_TARGETS_LIGHT;
+
+	const curve = lightnessCurves[hueKey];
+	const targets = curve || defaultTargets;
+
+	// Step is 1-indexed, array is 0-indexed
+	const index = Math.max(0, Math.min(11, step - 1));
+	return targets[index];
+}
+
 /** Result of analyzing a single brand color */
 export interface ColorAnalysis {
 	/** Original input hex */
@@ -141,7 +195,9 @@ export interface ColorAnalysis {
 	/** Whether color is out of bounds (requires custom row) */
 	isOutOfBounds: boolean;
 	/** Reason for being out of bounds */
-	outOfBoundsReason?: 'low-chroma' | 'high-chroma' | 'hue-gap';
+	outOfBoundsReason?: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness';
+	/** Lightness gap from expected step (for extreme-lightness detection) */
+	lightnessGap?: number;
 }
 
 /**
@@ -179,12 +235,32 @@ export function analyzeColor(hex: string, mode: ColorMode = 'light'): ColorAnaly
 	// Detect out-of-bounds conditions (requires custom row generation)
 	// 1. Chroma out of bounds: < 0.5x or > 1.3x
 	// 2. Hue gap: > 10° from nearest slot (for chromatic colors)
+	// 3. Extreme lightness: too far from any valid step's expected lightness
 	const isChromaOutOfBounds =
 		isChromatic && (chromaRatio < CHROMA_RATIO_FLOOR || chromaRatio > CHROMA_RATIO_CEILING);
 	const isHueGap = isChromatic && !snaps;
-	const isOutOfBounds = isChromaOutOfBounds || isHueGap;
 
-	let outOfBoundsReason: 'low-chroma' | 'high-chroma' | 'hue-gap' | undefined;
+	// Calculate anchor step and check lightness gap
+	const suggestedStep = suggestAnchorStep(oklch.l, slot, mode);
+	const expectedLightness = getExpectedLightnessForStep(suggestedStep, slot, mode);
+	const lightnessGap = Math.abs(oklch.l - expectedLightness);
+
+	// Extreme lightness detection: two conditions (both require high chroma)
+	// 1. Pure lightness gap: high-chroma color too far from any step's expected lightness
+	// 2. Semantic mismatch: high-chroma color at background/text steps
+	//    - Steps 1-3 (backgrounds) and 12 (high-contrast text) are semantically wrong for high-chroma
+	//    - Steps 4-11 are OK for various chroma levels (UI elements, accents, hero, low-contrast text)
+	// Rationale: muted colors blend in even if lightness is off; vibrant colors at wrong steps are jarring
+	const isHighChroma = isChromatic && oklch.c > HIGH_CHROMA_THRESHOLD;
+	const isPureLightnessGap = isHighChroma && lightnessGap > LIGHTNESS_GAP_THRESHOLD;
+	const isSemanticMismatchStep = SEMANTIC_MISMATCH_STEPS.has(suggestedStep);
+	const isSemanticMismatch = isHighChroma && isSemanticMismatchStep;
+	const isExtremeLightness = isPureLightnessGap || isSemanticMismatch;
+
+	// Combine all out-of-bounds conditions (chroma and hue-gap take precedence)
+	const isOutOfBounds = isChromaOutOfBounds || isHueGap || isExtremeLightness;
+
+	let outOfBoundsReason: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness' | undefined;
 
 	if (isChromaOutOfBounds) {
 		// Chroma takes precedence as the reason
@@ -199,6 +275,20 @@ export function analyzeColor(hex: string, mode: ColorMode = 'light'): ColorAnaly
 			`Custom row needed: ${hex} is ${distance.toFixed(1)}° from nearest hue (${slot}), ` +
 				`exceeds ${SNAP_THRESHOLD}° threshold`
 		);
+	} else if (isExtremeLightness) {
+		outOfBoundsReason = 'extreme-lightness';
+		const lightnessDesc = oklch.l > 0.5 ? 'bright' : 'dark';
+		if (isSemanticMismatch) {
+			console.info(
+				`Custom row needed: ${hex} is high-chroma (C=${oklch.c.toFixed(2)}) at non-hero step ${suggestedStep} ` +
+					`(${slot}, semantic mismatch)`
+			);
+		} else {
+			console.info(
+				`Custom row needed: ${hex} is too ${lightnessDesc} for ${slot} step ${suggestedStep} ` +
+					`(L=${oklch.l.toFixed(2)}, expected=${expectedLightness.toFixed(2)}, gap=${lightnessGap.toFixed(2)})`
+			);
+		}
 	}
 
 	return {
@@ -209,9 +299,10 @@ export function analyzeColor(hex: string, mode: ColorMode = 'light'): ColorAnaly
 		snaps,
 		hueOffset,
 		chromaRatio,
-		suggestedAnchorStep: suggestAnchorStep(oklch.l, slot, mode),
+		suggestedAnchorStep: suggestedStep,
 		isOutOfBounds,
-		outOfBoundsReason
+		outOfBoundsReason,
+		lightnessGap: isExtremeLightness ? lightnessGap : undefined
 	};
 }
 
@@ -223,7 +314,11 @@ export const MAX_BRAND_COLORS = 7;
  *
  * Naming strategy:
  * - Uses nearest slot as base (e.g., "pink", "lime")
- * - Adds descriptor based on reason ("pastel-" for low chroma, "neon-" for high)
+ * - Adds descriptor based on reason:
+ *   - "pastel-" for low chroma
+ *   - "neon-" for high chroma
+ *   - "custom-" for hue gap
+ *   - "bright-" or "dark-" for extreme lightness
  * - Appends numeric suffix for uniqueness if needed
  *
  * @param analysis - Color analysis result
@@ -242,6 +337,10 @@ export function generateCustomRowKey(analysis: ColorAnalysis, existingKeys: Set<
 			break;
 		case 'hue-gap':
 			prefix = 'custom';
+			break;
+		case 'extreme-lightness':
+			// Use 'bright' for high lightness (L > 0.5), 'dark' for low lightness
+			prefix = analysis.oklch.l > 0.5 ? 'bright' : 'dark';
 			break;
 		default:
 			prefix = 'custom';

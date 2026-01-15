@@ -80,7 +80,8 @@ for (const testPalette of TEST_PALETTES) {
 			rowKey: cr.rowKey,
 			reason: cr.reason,
 			chromaRatio: cr.chromaRatio,
-			nearestSlot: cr.nearestSlot
+			nearestSlot: cr.nearestSlot,
+			oklch: cr.oklch
 		}));
 
 		allPalettes.push({
@@ -319,6 +320,8 @@ const html = `<!DOCTYPE html>
     .custom-badge.pastel { background: #fce7f3; color: #9d174d; }
     .custom-badge.neon { background: #d9f99d; color: #3f6212; }
     .custom-badge.hue-gap { background: #cffafe; color: #164e63; }
+    .custom-badge.bright { background: #fef3c7; color: #92400e; }
+    .custom-badge.dark { background: #1e293b; color: #94a3b8; }
     .swatch {
       height: 32px;
       border-radius: 3px;
@@ -701,6 +704,12 @@ ${buildSelectorOptions()}      </select>
             case 'hue-gap':
               badgeType = 'hue-gap';
               badgeLabel = 'Custom';
+              break;
+            case 'extreme-lightness':
+              // Use bright/dark based on the color's lightness
+              const isBright = customInfo?.oklch?.l > 0.5;
+              badgeType = isBright ? 'bright' : 'dark';
+              badgeLabel = isBright ? 'Bright' : 'Dark';
               break;
             default:
               badgeType = 'custom';

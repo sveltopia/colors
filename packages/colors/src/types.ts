@@ -63,7 +63,7 @@ export interface CustomRowInfo {
 	/** Chroma ratio relative to nearest Radix slot */
 	chromaRatio: number;
 	/** Reason for custom row */
-	reason: 'low-chroma' | 'high-chroma' | 'hue-gap';
+	reason: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness';
 	/** Distance from nearest slot in degrees (for hue-gap) */
 	hueDistance?: number;
 	/** Nearest baseline hue slot (for curve reference) */

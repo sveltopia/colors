@@ -468,4 +468,81 @@ describe('Brand Analysis', () => {
 			expect(result!.outOfBoundsReason).toBe('high-chroma');
 		});
 	});
+
+	describe('extreme lightness detection', () => {
+		// Test cases from SVE-162 dark mode validation
+		const TIKTOK_CYAN = '#25F4EE'; // Very bright cyan (L≈0.88)
+		const NAVY = '#000080'; // Very dark blue (L≈0.27)
+
+		it('detects TikTok cyan as out of bounds in dark mode (semantic mismatch at step 12)', () => {
+			// In dark mode, very bright colors anchor at step 12 (text step)
+			// High chroma at text step is a semantic mismatch
+			const result = analyzeColor(TIKTOK_CYAN, 'dark');
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('extreme-lightness');
+			expect(result!.suggestedAnchorStep).toBe(12); // Text step
+			expect(result!.oklch.c).toBeGreaterThan(0.12); // HIGH_CHROMA_THRESHOLD
+		});
+
+		it('does NOT detect TikTok cyan as out of bounds in light mode (OK at step 6)', () => {
+			// In light mode, bright colors anchor at step 6 (UI element step)
+			// This is semantically fine for high-chroma colors
+			const result = analyzeColor(TIKTOK_CYAN, 'light');
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(false);
+			expect(result!.suggestedAnchorStep).toBe(6); // UI element step
+		});
+
+		it('detects navy as out of bounds (extreme lightness - too dark)', () => {
+			const result = analyzeColor(NAVY);
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('extreme-lightness');
+			// Navy is detected via semantic mismatch: high chroma (0.19) at non-hero step
+			expect(result!.oklch.c).toBeGreaterThan(0.12); // HIGH_CHROMA_THRESHOLD
+		});
+
+		it('does NOT detect Sveltopia orange as extreme lightness (normal L)', () => {
+			const result = analyzeColor(SVELTOPIA_ORANGE);
+			expect(result).not.toBeNull();
+			// Orange has normal lightness that fits step 9
+			expect(result!.isOutOfBounds).toBe(false);
+			expect(result!.lightnessGap).toBeUndefined();
+		});
+
+		it('generates bright- prefix for high lightness colors (dark mode)', () => {
+			// In dark mode, TikTok cyan triggers semantic mismatch at step 12
+			const profile = analyzeBrandColors([TIKTOK_CYAN], 'dark');
+			expect(profile.customRows).toBeDefined();
+			expect(profile.customRows).toHaveLength(1);
+			expect(profile.customRows![0].reason).toBe('extreme-lightness');
+			expect(profile.customRows![0].rowKey).toMatch(/^bright-/);
+		});
+
+		it('generates dark- prefix for low lightness colors', () => {
+			const profile = analyzeBrandColors([NAVY]);
+			expect(profile.customRows).toBeDefined();
+			expect(profile.customRows).toHaveLength(1);
+			expect(profile.customRows![0].reason).toBe('extreme-lightness');
+			expect(profile.customRows![0].rowKey).toMatch(/^dark-/);
+		});
+
+		it('chroma out-of-bounds takes precedence over extreme lightness', () => {
+			// Neon green has both extreme chroma AND unusual lightness
+			// Should be classified by chroma reason
+			const result = analyzeColor('#39FF14');
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('high-chroma');
+		});
+
+		it('hue-gap takes precedence over extreme lightness', () => {
+			// Figma blue is far from slots - should be hue-gap, not extreme-lightness
+			const result = analyzeColor('#1ABCFE');
+			expect(result).not.toBeNull();
+			expect(result!.isOutOfBounds).toBe(true);
+			expect(result!.outOfBoundsReason).toBe('hue-gap');
+		});
+	});
 });
