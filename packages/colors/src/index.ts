@@ -56,3 +56,29 @@ export type { GenerateScaleOptions } from './core/generate.js';
 // Full palette generation
 export { generateLightPalette, getPaletteStats } from './core/palette.js';
 export type { GeneratePaletteOptions, LightPalette } from './core/palette.js';
+
+// Export utilities (CSS + JSON)
+export {
+	exportCSS,
+	exportJSON,
+	getAlphaColor,
+	getAlphaColorSrgb,
+	getAlphaColorP3,
+	formatOklchCss,
+	formatP3Css,
+	formatAlphaHex,
+	formatAlphaP3,
+	getContrastColor,
+	getSurfaceColor,
+	getSemanticTokens
+} from './core/export.js';
+export type {
+	CSSExportOptions,
+	JSONExportOptions,
+	ColorFormats,
+	AlphaColorFormats,
+	SemanticTokens,
+	JSONScale,
+	JSONAlphaScale,
+	JSONOutput
+} from './core/export.js';
