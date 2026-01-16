@@ -10,6 +10,7 @@
 
 import { oklch, formatHex, rgb, p3, formatCss } from 'culori';
 import type { Palette, Scale, OklchColor } from '../types.js';
+import { ensureAccessibility } from './validate.js';
 
 // =============================================================================
 // Types
@@ -359,6 +360,9 @@ export function getSemanticTokens(scale: Scale, mode: 'light' | 'dark'): Semanti
  * - Semantic tokens
  */
 export function exportCSS(palette: Palette, options: CSSExportOptions = {}): string {
+	// Apply accessibility safeguard before export
+	const safePalette = ensureAccessibility(palette);
+
 	const {
 		lightSelector = ':root',
 		darkSelector = '.dark, .dark-theme',
@@ -486,13 +490,13 @@ export function exportCSS(palette: Palette, options: CSSExportOptions = {}): str
 
 	// Generate light mode CSS
 	if (mode === 'light' || mode === 'both') {
-		lines.push(...generateModeCSS(palette.light, lightSelector, 'light'));
+		lines.push(...generateModeCSS(safePalette.light, lightSelector, 'light'));
 		lines.push('');
 	}
 
 	// Generate dark mode CSS
 	if (mode === 'dark' || mode === 'both') {
-		lines.push(...generateModeCSS(palette.dark, darkSelector, 'dark'));
+		lines.push(...generateModeCSS(safePalette.dark, darkSelector, 'dark'));
 		lines.push('');
 	}
 
@@ -502,11 +506,11 @@ export function exportCSS(palette: Palette, options: CSSExportOptions = {}): str
 		lines.push('  @media (color-gamut: p3) {');
 
 		if (mode === 'light' || mode === 'both') {
-			lines.push(...generateP3CSS(palette.light, lightSelector, 'light'));
+			lines.push(...generateP3CSS(safePalette.light, lightSelector, 'light'));
 		}
 
 		if (mode === 'dark' || mode === 'both') {
-			lines.push(...generateP3CSS(palette.dark, darkSelector, 'dark'));
+			lines.push(...generateP3CSS(safePalette.dark, darkSelector, 'dark'));
 		}
 
 		lines.push('  }');
@@ -548,6 +552,9 @@ export interface JSONOutput {
  * Export palette as structured JSON with multiple color formats.
  */
 export function exportJSON(palette: Palette, options: JSONExportOptions = {}): JSONOutput {
+	// Apply accessibility safeguard before export
+	const safePalette = ensureAccessibility(palette);
+
 	const { scales, includeAlpha = true, includeP3 = true, includeSemantic = true } = options;
 
 	// Determine which scales to export
@@ -556,8 +563,8 @@ export function exportJSON(palette: Palette, options: JSONExportOptions = {}): J
 		return scales ? allKeys.filter((k) => scales.includes(k)) : allKeys;
 	};
 
-	const lightKeys = getScaleKeys(palette.light);
-	const darkKeys = getScaleKeys(palette.dark);
+	const lightKeys = getScaleKeys(safePalette.light);
+	const darkKeys = getScaleKeys(safePalette.dark);
 
 	// Build scale data for a mode
 	const buildScaleData = (scale: Scale): JSONScale => {
@@ -610,10 +617,10 @@ export function exportJSON(palette: Palette, options: JSONExportOptions = {}): J
 
 	// Solid scales
 	for (const key of lightKeys) {
-		output.light[key] = buildScaleData(palette.light[key]);
+		output.light[key] = buildScaleData(safePalette.light[key]);
 	}
 	for (const key of darkKeys) {
-		output.dark[key] = buildScaleData(palette.dark[key]);
+		output.dark[key] = buildScaleData(safePalette.dark[key]);
 	}
 
 	// Alpha scales
@@ -621,10 +628,10 @@ export function exportJSON(palette: Palette, options: JSONExportOptions = {}): J
 		output.lightA = {};
 		output.darkA = {};
 		for (const key of lightKeys) {
-			output.lightA[key] = buildAlphaScaleData(palette.light[key], 'light');
+			output.lightA[key] = buildAlphaScaleData(safePalette.light[key], 'light');
 		}
 		for (const key of darkKeys) {
-			output.darkA[key] = buildAlphaScaleData(palette.dark[key], 'dark');
+			output.darkA[key] = buildAlphaScaleData(safePalette.dark[key], 'dark');
 		}
 	}
 
@@ -635,10 +642,10 @@ export function exportJSON(palette: Palette, options: JSONExportOptions = {}): J
 			dark: {}
 		};
 		for (const key of lightKeys) {
-			output.semantic.light[key] = getSemanticTokens(palette.light[key], 'light');
+			output.semantic.light[key] = getSemanticTokens(safePalette.light[key], 'light');
 		}
 		for (const key of darkKeys) {
-			output.semantic.dark[key] = getSemanticTokens(palette.dark[key], 'dark');
+			output.semantic.dark[key] = getSemanticTokens(safePalette.dark[key], 'dark');
 		}
 	}
 

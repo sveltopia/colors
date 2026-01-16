@@ -82,3 +82,21 @@ export type {
 	JSONAlphaScale,
 	JSONOutput
 } from './core/export.js';
+
+// APCA Validation
+export {
+	APCA_THRESHOLDS,
+	calculateAPCA,
+	getAbsoluteContrast,
+	meetsContrastThreshold,
+	validatePaletteContrast,
+	formatContrastReport,
+	isPaletteAccessible,
+	boostLightnessUntilContrast,
+	ensureAccessibility
+} from './core/validate.js';
+export type {
+	ContrastSeverity,
+	ContrastIssue,
+	ContrastReport
+} from './core/validate.js';
