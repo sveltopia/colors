@@ -14,6 +14,13 @@ import type { OklchColor, GeneratedScale, GeneratedScaleStep } from '../types.js
 import { calcAPCA } from 'apca-w3';
 
 /**
+ * Normalize calcAPCA return value to number (it can return string or number)
+ */
+function normalizeApca(value: string | number): number {
+	return typeof value === 'string' ? parseFloat(value) : value;
+}
+
+/**
  * APCA contrast targets derived from Radix Colors analysis.
  * These represent the average contrast values at each step
  * across orange, blue, and green scales.
@@ -550,7 +557,7 @@ export function generateScale(options: GenerateScaleOptions): GeneratedScale {
 		const hex = toHex(oklch);
 
 		// Calculate actual APCA contrast
-		const apca = Math.abs(calcAPCA(hex, WHITE));
+		const apca = Math.abs(normalizeApca(calcAPCA(hex, WHITE)));
 
 		steps.push({
 			step: stepNum,
@@ -745,7 +752,7 @@ export function generateScaleAPCA(options: GenerateScaleOptions): GeneratedScale
 
 		const oklch = clampOklch({ l: lightness, c: chroma, h: hue });
 		const hex = toHex(oklch);
-		const apca = Math.abs(calcAPCA(hex, background));
+		const apca = Math.abs(normalizeApca(calcAPCA(hex, background)));
 
 		// Note: targetApca is now informational only (showing what APCA we achieve)
 		// We no longer target APCA, we target Radix's lightness curve
@@ -785,7 +792,7 @@ function findLightnessForAPCA(
 	for (let iteration = 0; iteration < 20; iteration++) {
 		const oklch = clampOklch({ l: current, c: chroma, h: hue });
 		const hex = toHex(oklch);
-		const apca = Math.abs(calcAPCA(hex, WHITE));
+		const apca = Math.abs(normalizeApca(calcAPCA(hex, WHITE)));
 
 		const diff = Math.abs(apca - targetApca);
 		if (diff < bestDiff) {
