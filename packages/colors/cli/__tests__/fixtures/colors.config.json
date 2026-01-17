@@ -1,0 +1,6 @@
+{
+	"brandColors": ["#FF4F00", "#1A1A1A"],
+	"outputDir": "./test-output",
+	"formats": ["css", "json"],
+	"prefix": ""
+}
