@@ -532,6 +532,19 @@ export interface JSONAlphaScale {
 	[step: string]: AlphaColorFormats;
 }
 
+export interface BrandColorInfo {
+	/** Original hex value input by user */
+	hex: string;
+	/** Hue slot this color anchors to */
+	hue: string;
+	/** Step where brand color is anchored (1-12) */
+	anchorStep: number;
+	/** True if this is a custom row (out-of-bounds chroma/hue) */
+	isCustomRow: boolean;
+	/** Reason for custom row, if applicable */
+	customRowReason?: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness';
+}
+
 export interface JSONOutput {
 	light: Record<string, JSONScale>;
 	dark: Record<string, JSONScale>;
@@ -545,6 +558,19 @@ export interface JSONOutput {
 		generatedAt: string;
 		inputColors: string[];
 		scales: string[];
+		/**
+		 * Rich brand color information for semantic token mapping.
+		 * First item is the primary brand color (recommended for --accent-* alias).
+		 */
+		brandColors: BrandColorInfo[];
+		/**
+		 * Tuning profile applied to generate this palette.
+		 */
+		tuning: {
+			hueShift: number;
+			chromaMultiplier: number;
+			lightnessShift: number;
+		};
 	};
 }
 
@@ -604,6 +630,26 @@ export function exportJSON(palette: Palette, options: JSONExportOptions = {}): J
 		return result;
 	};
 
+	// Build brand color info from tuning profile
+	const brandColors: BrandColorInfo[] = [];
+	const { anchors, customRows } = palette._meta.tuningProfile;
+
+	// Process each input color to get its brand info
+	for (const hex of palette._meta.inputColors) {
+		const anchorInfo = anchors[hex];
+		if (anchorInfo) {
+			// Check if this is a custom row
+			const customRowInfo = customRows?.find((cr) => cr.originalHex === hex);
+			brandColors.push({
+				hex,
+				hue: anchorInfo.slot,
+				anchorStep: anchorInfo.step,
+				isCustomRow: !!anchorInfo.isCustomRow,
+				customRowReason: customRowInfo?.reason
+			});
+		}
+	}
+
 	// Build output
 	const output: JSONOutput = {
 		light: {},
@@ -611,7 +657,13 @@ export function exportJSON(palette: Palette, options: JSONExportOptions = {}): J
 		_meta: {
 			generatedAt: new Date().toISOString(),
 			inputColors: palette._meta.inputColors,
-			scales: [...new Set([...lightKeys, ...darkKeys])]
+			scales: [...new Set([...lightKeys, ...darkKeys])],
+			brandColors,
+			tuning: {
+				hueShift: palette._meta.tuningProfile.hueShift,
+				chromaMultiplier: palette._meta.tuningProfile.chromaMultiplier,
+				lightnessShift: palette._meta.tuningProfile.lightnessShift
+			}
 		}
 	};
 
