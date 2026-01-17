@@ -18,7 +18,7 @@ program
 	.option('-c, --colors <colors>', 'Comma-separated brand colors (e.g., "#FF4F00,#1A1A1A")')
 	.option('--config <path>', 'Path to config file (default: colors.config.json)')
 	.option('-o, --output <dir>', 'Output directory (default: ./colors)')
-	.option('-f, --format <format>', 'Output format: css, json, or both (default: both)', 'both')
+	.option('-f, --format <formats>', 'Output formats: css,json,tailwind,radix,panda or "all" (default: css,json)')
 	.action(async (options) => {
 		intro('@sveltopia/colors');
 		try {

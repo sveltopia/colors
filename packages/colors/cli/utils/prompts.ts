@@ -2,8 +2,9 @@
  * Shared prompt utilities for CLI commands
  */
 
-import { isCancel, cancel, text } from '@clack/prompts';
+import { isCancel, cancel, text, multiselect, confirm } from '@clack/prompts';
 import { validateColor } from '../../dist/index.js';
+import type { ExportFormat } from './config.js';
 
 /**
  * Format a validation error for display
@@ -63,4 +64,69 @@ export async function promptForColors(): Promise<string[]> {
 		.split(',')
 		.map((c) => c.trim())
 		.filter(Boolean);
+}
+
+/**
+ * Prompt user for output formats if none provided
+ */
+export async function promptForFormats(): Promise<ExportFormat[]> {
+	const response = await multiselect({
+		message: 'Select output formats',
+		options: [
+			{ value: 'css', label: 'CSS', hint: 'CSS custom properties with light/dark mode' },
+			{ value: 'json', label: 'JSON', hint: 'Full palette data with hex, oklch, P3' },
+			{ value: 'tailwind', label: 'Tailwind', hint: 'Tailwind CSS preset (50-950 scale)' },
+			{ value: 'radix', label: 'Radix', hint: 'Drop-in @radix-ui/colors replacement' },
+			{ value: 'panda', label: 'Panda CSS', hint: 'Panda CSS preset with semantic tokens' }
+		],
+		initialValues: ['css', 'json'],
+		required: true
+	});
+
+	if (isCancel(response)) {
+		cancel('Operation cancelled');
+		process.exit(0);
+	}
+
+	return response as ExportFormat[];
+}
+
+/**
+ * Prompt user for output directory if none provided
+ */
+export async function promptForOutput(): Promise<string> {
+	const response = await text({
+		message: 'Output directory',
+		placeholder: './colors',
+		defaultValue: './colors',
+		validate: (value) => {
+			if (!value.trim()) {
+				return 'Output directory is required';
+			}
+		}
+	});
+
+	if (isCancel(response)) {
+		cancel('Operation cancelled');
+		process.exit(0);
+	}
+
+	return (response as string) || './colors';
+}
+
+/**
+ * Ask if user wants to customize settings or use defaults
+ */
+export async function promptForInteractiveMode(): Promise<boolean> {
+	const response = await confirm({
+		message: 'Customize output settings?',
+		initialValue: false
+	});
+
+	if (isCancel(response)) {
+		cancel('Operation cancelled');
+		process.exit(0);
+	}
+
+	return response as boolean;
 }

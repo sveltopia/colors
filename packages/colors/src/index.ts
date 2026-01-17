@@ -85,6 +85,19 @@ export type {
 	BrandColorInfo
 } from './core/export.js';
 
+// Framework-specific exports (Tailwind, Radix, Panda CSS)
+export {
+	exportTailwind,
+	exportTailwindWithCSSVars,
+	exportRadix,
+	exportPanda
+} from './core/export-frameworks.js';
+export type {
+	TailwindExportOptions,
+	RadixExportOptions,
+	PandaExportOptions
+} from './core/export-frameworks.js';
+
 // APCA Validation
 export {
 	APCA_THRESHOLDS,
