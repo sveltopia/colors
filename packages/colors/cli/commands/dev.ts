@@ -1,6 +1,6 @@
 import { spinner, log } from '@clack/prompts';
 import { loadConfig, mergeOptions, type ColorsConfig } from '../utils/config.js';
-import { promptForColors, validateColors } from '../utils/prompts.js';
+import { validateColors } from '../utils/prompts.js';
 import { createPaletteServer, findAvailablePort } from '../server/static-server.js';
 import { exec } from 'node:child_process';
 import { platform } from 'node:os';
@@ -10,7 +10,6 @@ export interface DevOptions {
 	config?: string;
 	port?: string;
 	open?: boolean;
-	blank?: boolean;
 }
 
 /**
@@ -47,16 +46,10 @@ export async function devCommand(options: DevOptions): Promise<void> {
 	}
 	s.stop('Configuration loaded');
 
-	// Handle blank mode or prompt for colors
+	// Default to blank canvas if no colors specified
 	if (config.brandColors.length === 0) {
-		if (options.blank) {
-			// Start with a neutral gray as a starting point
-			config.brandColors = ['#888888'];
-			log.info('Starting with blank canvas (default gray). Add colors via the UI.');
-		} else {
-			log.info('No brand colors specified in config or --colors flag');
-			config.brandColors = await promptForColors();
-		}
+		config.brandColors = ['#888888'];
+		log.info('Starting with blank canvas. Add colors via the UI.');
 	}
 
 	// Validate colors

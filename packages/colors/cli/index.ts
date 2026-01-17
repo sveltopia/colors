@@ -42,7 +42,6 @@ program
 	.option('--config <path>', 'Path to config file (default: colors.config.json)')
 	.option('-p, --port <port>', 'Port to run the server on (default: 3000)', '3000')
 	.option('--no-open', 'Do not open browser automatically')
-	.option('-b, --blank', 'Start with a blank canvas (no color prompts)')
 	.action(async (options) => {
 		intro('@sveltopia/colors dev server');
 		try {
