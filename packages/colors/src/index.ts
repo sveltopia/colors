@@ -81,7 +81,8 @@ export type {
 	SemanticTokens,
 	JSONScale,
 	JSONAlphaScale,
-	JSONOutput
+	JSONOutput,
+	BrandColorInfo
 } from './core/export.js';
 
 // APCA Validation
@@ -101,3 +102,8 @@ export type {
 	ContrastIssue,
 	ContrastReport
 } from './core/validate.js';
+
+// Radix Reference Scales (for comparison/visualization)
+export { RADIX_SCALES, RADIX_SCALE_ORDER } from './reference/radix-scales.js';
+export { RADIX_SCALES_DARK } from './reference/radix-scales-dark.js';
+export type { RadixScale } from './reference/radix-scales.js';

@@ -1,9 +1,10 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
-import { spinner, log, isCancel, cancel, text } from '@clack/prompts';
+import { spinner, log } from '@clack/prompts';
 import { loadConfig, mergeOptions, type ColorsConfig } from '../utils/config.js';
-import { generatePalette, exportCSS, exportJSON, validateColor } from '../../dist/index.js';
+import { promptForColors, validateColors } from '../utils/prompts.js';
+import { generatePalette, exportCSS, exportJSON } from '../../dist/index.js';
 import type { Palette } from '../../dist/index.js';
 
 export interface GenerateOptions {
@@ -11,54 +12,6 @@ export interface GenerateOptions {
 	config?: string;
 	output?: string;
 	format?: string;
-}
-
-/**
- * Format a validation error for display
- */
-function formatColorError(color: string): string {
-	const result = validateColor(color);
-	if (result.valid) return '';
-
-	let message = `Invalid color "${color}": ${result.error}`;
-	if (result.suggestion) {
-		message += ` - ${result.suggestion}`;
-	}
-	return message;
-}
-
-/**
- * Prompt user for brand colors if none provided
- */
-async function promptForColors(): Promise<string[]> {
-	const response = await text({
-		message: 'Enter your brand colors (comma-separated hex values)',
-		placeholder: '#FF4F00, #1A1A1A',
-		validate: (value) => {
-			if (!value.trim()) {
-				return 'At least one color is required';
-			}
-			const colors = value.split(',').map((c) => c.trim());
-			for (const color of colors) {
-				const result = validateColor(color);
-				if (!result.valid) {
-					let msg = result.error || 'Invalid color';
-					if (result.suggestion) msg += ` - ${result.suggestion}`;
-					return msg;
-				}
-			}
-		}
-	});
-
-	if (isCancel(response)) {
-		cancel('Operation cancelled');
-		process.exit(0);
-	}
-
-	return (response as string)
-		.split(',')
-		.map((c) => c.trim())
-		.filter(Boolean);
 }
 
 /**
@@ -118,12 +71,7 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
 	}
 
 	// Validate colors with helpful error messages
-	for (const color of config.brandColors) {
-		const result = validateColor(color);
-		if (!result.valid) {
-			throw new Error(formatColorError(color));
-		}
-	}
+	validateColors(config.brandColors);
 
 	log.info(`Brand colors: ${config.brandColors.join(', ')}`);
 
