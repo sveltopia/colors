@@ -6,6 +6,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "colors": "./cli-dist/index.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -15,11 +18,13 @@
   },
   "files": [
     "dist",
+    "cli-dist",
     "!dist/**/*.test.*",
     "!dist/**/*.spec.*"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && pnpm build:cli",
+    "build:cli": "tsc -p tsconfig.cli.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -27,7 +32,9 @@
     "explore": "npx tsx scripts/explore.ts && open ../../explore.html"
   },
   "dependencies": {
+    "@clack/prompts": "^0.11.0",
     "apca-w3": "^0.1.9",
+    "commander": "^14.0.2",
     "culori": "^4.0.1"
   },
   "devDependencies": {

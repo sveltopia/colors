@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"declaration": false,
+		"outDir": "./cli-dist",
+		"rootDir": "./cli"
+	},
+	"include": ["cli/**/*"],
+	"exclude": ["cli/__tests__/**"]
+}

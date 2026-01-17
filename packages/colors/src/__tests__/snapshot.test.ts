@@ -11,7 +11,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { generateLightPalette } from '../core/palette.js';
+import { generatePalette } from '../core/palette.js';
 import { getTestPalette } from '../reference/test-palettes.js';
 import type { Scale } from '../types.js';
 
@@ -60,7 +60,7 @@ describe('Snapshot Regression Tests', () => {
 				const testPalette = getTestPalette(brandId);
 				expect(testPalette).toBeDefined();
 
-				const current = generateLightPalette({
+				const current = generatePalette({
 					brandColors: testPalette!.colors,
 					mode: 'light'
 				});
@@ -113,7 +113,7 @@ describe('Snapshot Regression Tests', () => {
 				const testPalette = getTestPalette(brandId);
 				expect(testPalette).toBeDefined();
 
-				const current = generateLightPalette({
+				const current = generatePalette({
 					brandColors: testPalette!.colors,
 					mode: 'dark'
 				});

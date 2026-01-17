@@ -9,7 +9,7 @@
 
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { generateLightPalette } from '../src/core/palette.js';
+import { generatePalette } from '../src/core/palette.js';
 import { getTestPalette } from '../src/reference/test-palettes.js';
 
 // Brands to snapshot - carefully selected to exercise all algorithm paths
@@ -48,7 +48,7 @@ function generateSnapshot(brandId: string, mode: 'light' | 'dark'): Snapshot {
 		throw new Error(`Unknown brand: ${brandId}`);
 	}
 
-	const palette = generateLightPalette({
+	const palette = generatePalette({
 		brandColors: testPalette.colors,
 		mode
 	});

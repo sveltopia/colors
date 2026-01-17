@@ -17,7 +17,8 @@ export type {
 } from './types.js';
 
 // OKLCH utilities
-export { toOklch, toHex, toCss, parseColor, isValidColor, clampOklch } from './utils/oklch.js';
+export { toOklch, toHex, toCss, parseColor, isValidColor, validateColor, clampOklch } from './utils/oklch.js';
+export type { ColorValidationResult } from './utils/oklch.js';
 
 // Baseline hues (extracted from Radix Colors)
 export {
@@ -54,7 +55,7 @@ export {
 export type { GenerateScaleOptions } from './core/generate.js';
 
 // Full palette generation
-export { generateLightPalette, getPaletteStats } from './core/palette.js';
+export { generatePalette, getPaletteStats } from './core/palette.js';
 export type { GeneratePaletteOptions, LightPalette } from './core/palette.js';
 
 // Export utilities (CSS + JSON)

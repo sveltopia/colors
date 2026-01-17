@@ -13,7 +13,7 @@ import {
 	getSurfaceColor,
 	getSemanticTokens
 } from '../core/export.js';
-import { generateLightPalette } from '../core/palette.js';
+import { generatePalette } from '../core/palette.js';
 import { rgb, oklch, formatHex } from 'culori';
 import type { Palette, Scale } from '../types.js';
 
@@ -40,8 +40,8 @@ function blendOver(
 
 // Helper to create a minimal test palette
 function createTestPalette(): Palette {
-	const light = generateLightPalette({ brandColors: ['#3B82F6'] }); // Blue brand
-	const dark = generateLightPalette({ brandColors: ['#3B82F6'], mode: 'dark' });
+	const light = generatePalette({ brandColors: ['#3B82F6'] }); // Blue brand
+	const dark = generatePalette({ brandColors: ['#3B82F6'], mode: 'dark' });
 
 	return {
 		light: light.scales,
