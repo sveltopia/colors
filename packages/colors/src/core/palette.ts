@@ -249,7 +249,7 @@ function generateCustomRowScale(
  * @param options - Generation options with brand colors
  * @returns Complete light mode palette with 31 hues × 12 steps
  */
-export function generateLightPalette(options: GeneratePaletteOptions): LightPalette {
+export function generatePalette(options: GeneratePaletteOptions): LightPalette {
 	const { brandColors, mode = 'light' } = options;
 
 	// Get or calculate tuning profile (mode-aware for correct anchor step placement)

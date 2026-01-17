@@ -10,13 +10,13 @@ import {
 	boostLightnessUntilContrast,
 	ensureAccessibility
 } from '../core/validate.js';
-import { generateLightPalette } from '../core/palette.js';
+import { generatePalette } from '../core/palette.js';
 import type { Palette } from '../types.js';
 
 // Helper to create a test palette
 function createTestPalette(brandColors: string[] = ['#3B82F6']): Palette {
-	const light = generateLightPalette({ brandColors });
-	const dark = generateLightPalette({ brandColors, mode: 'dark' });
+	const light = generatePalette({ brandColors });
+	const dark = generatePalette({ brandColors, mode: 'dark' });
 
 	return {
 		light: light.scales,

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateLightPalette, getPaletteStats } from '../core/palette.js';
+import { generatePalette, getPaletteStats } from '../core/palette.js';
 import { HUE_KEYS, HUE_COUNT } from '../core/hues.js';
 import { analyzeBrandColors } from '../core/analyze.js';
 
@@ -9,9 +9,9 @@ const SVELTOPIA_GREEN = '#43A047';
 const SVELTOPIA_DARK = '#1A1A1A';
 
 describe('Full Palette Generation', () => {
-	describe('generateLightPalette', () => {
+	describe('generatePalette', () => {
 		it('generates scales for all 31 baseline hues', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -24,7 +24,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('each scale has 12 steps', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -36,7 +36,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('all colors are valid hex strings', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -48,7 +48,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('anchors brand colors to correct slots', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE, SVELTOPIA_GREEN]
 			});
 
@@ -63,7 +63,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('preserves tuning profile in metadata', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE, SVELTOPIA_GREEN]
 			});
 
@@ -75,13 +75,13 @@ describe('Full Palette Generation', () => {
 
 		it('records input colors in metadata', () => {
 			const colors = [SVELTOPIA_ORANGE, SVELTOPIA_GREEN];
-			const palette = generateLightPalette({ brandColors: colors });
+			const palette = generatePalette({ brandColors: colors });
 
 			expect(palette.meta.inputColors).toEqual(colors);
 		});
 
 		it('includes generation timestamp', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -98,7 +98,7 @@ describe('Full Palette Generation', () => {
 				anchors: {}
 			};
 
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE],
 				tuningProfile: customProfile
 			});
@@ -107,7 +107,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('works with single brand color', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -116,7 +116,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('works with multiple brand colors', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE, SVELTOPIA_GREEN, SVELTOPIA_DARK]
 			});
 
@@ -124,7 +124,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('works with empty brand colors (uses defaults)', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: []
 			});
 
@@ -135,7 +135,7 @@ describe('Full Palette Generation', () => {
 
 	describe('getPaletteStats', () => {
 		it('returns correct total hues', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 			const stats = getPaletteStats(palette);
@@ -144,7 +144,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('returns correct total colors (hues × 12)', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 			const stats = getPaletteStats(palette);
@@ -153,7 +153,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('counts anchored hues correctly', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE, SVELTOPIA_GREEN]
 			});
 			const stats = getPaletteStats(palette);
@@ -165,7 +165,7 @@ describe('Full Palette Generation', () => {
 
 	describe('color quality', () => {
 		it('step 1 colors are near-white (high lightness)', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -179,7 +179,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('step 12 colors are dark (low lightness)', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -196,7 +196,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('anchored slot uses brand color characteristics', () => {
-			const palette = generateLightPalette({
+			const palette = generatePalette({
 				brandColors: [SVELTOPIA_ORANGE]
 			});
 
@@ -217,7 +217,7 @@ describe('Full Palette Generation', () => {
 
 	describe('custom row generation', () => {
 		it('generates custom row for pastel pink', () => {
-			const palette = generateLightPalette({ brandColors: ['#FFD1DC'] });
+			const palette = generatePalette({ brandColors: ['#FFD1DC'] });
 
 			expect(palette.meta.customSlots.length).toBeGreaterThan(0);
 			expect(palette.meta.customSlots[0]).toContain('pastel');
@@ -229,7 +229,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('generates custom row for neon green', () => {
-			const palette = generateLightPalette({ brandColors: ['#39FF14'] });
+			const palette = generatePalette({ brandColors: ['#39FF14'] });
 
 			expect(palette.meta.customSlots.length).toBeGreaterThan(0);
 			expect(palette.meta.customSlots[0]).toContain('neon');
@@ -241,7 +241,7 @@ describe('Full Palette Generation', () => {
 
 		it('preserves exact brand color at anchor step in custom row', () => {
 			const pastelPink = '#ffd1dc';
-			const palette = generateLightPalette({ brandColors: [pastelPink] });
+			const palette = generatePalette({ brandColors: [pastelPink] });
 			const customKey = palette.meta.customSlots[0];
 			const scale = palette.scales[customKey];
 
@@ -253,7 +253,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('custom row is tracked in anchoredSlots', () => {
-			const palette = generateLightPalette({ brandColors: ['#FFD1DC'] });
+			const palette = generatePalette({ brandColors: ['#FFD1DC'] });
 			const customKey = palette.meta.customSlots[0];
 
 			// Custom rows should also be tracked as anchored
@@ -261,7 +261,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('getPaletteStats counts custom hues', () => {
-			const palette = generateLightPalette({ brandColors: ['#FFD1DC'] });
+			const palette = generatePalette({ brandColors: ['#FFD1DC'] });
 			const stats = getPaletteStats(palette);
 
 			expect(stats.customHues).toBe(1);
@@ -271,7 +271,7 @@ describe('Full Palette Generation', () => {
 		it('standard hues still use clamped chroma multiplier with neon input', () => {
 			// When we have a neon input, non-anchored hues should still use
 			// clamped chroma (not be influenced by the extreme chroma)
-			const palette = generateLightPalette({ brandColors: ['#39FF14'] });
+			const palette = generatePalette({ brandColors: ['#39FF14'] });
 
 			// The neon creates a custom row, standard hues use default profile
 			expect(palette.meta.customSlots.length).toBe(1);
@@ -288,7 +288,7 @@ describe('Full Palette Generation', () => {
 		const CANVA_TEAL = '#00C4CC';
 
 		it('generates custom row for Figma blue (hue-gap)', () => {
-			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+			const palette = generatePalette({ brandColors: [FIGMA_BLUE] });
 
 			expect(palette.meta.customSlots.length).toBe(1);
 			expect(palette.meta.customSlots[0]).toContain('custom-');
@@ -300,7 +300,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('generates custom row for Canva teal (hue-gap)', () => {
-			const palette = generateLightPalette({ brandColors: [CANVA_TEAL] });
+			const palette = generatePalette({ brandColors: [CANVA_TEAL] });
 
 			expect(palette.meta.customSlots.length).toBe(1);
 			expect(palette.meta.customSlots[0]).toContain('custom-');
@@ -311,7 +311,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('preserves exact brand color at anchor step in hue-gap row', () => {
-			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+			const palette = generatePalette({ brandColors: [FIGMA_BLUE] });
 			const customKey = palette.meta.customSlots[0];
 			const scale = palette.scales[customKey];
 
@@ -323,14 +323,14 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('hue-gap row is tracked in anchoredSlots', () => {
-			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+			const palette = generatePalette({ brandColors: [FIGMA_BLUE] });
 			const customKey = palette.meta.customSlots[0];
 
 			expect(palette.meta.anchoredSlots).toContain(customKey);
 		});
 
 		it('getPaletteStats counts hue-gap custom hues', () => {
-			const palette = generateLightPalette({ brandColors: [FIGMA_BLUE] });
+			const palette = generatePalette({ brandColors: [FIGMA_BLUE] });
 			const stats = getPaletteStats(palette);
 
 			expect(stats.customHues).toBe(1);
@@ -355,7 +355,7 @@ describe('Full Palette Generation', () => {
 		});
 
 		it('Slack cyan row tracks Radix cyan closely (no drift)', () => {
-			const palette = generateLightPalette({ brandColors: [SLACK_CYAN] });
+			const palette = generatePalette({ brandColors: [SLACK_CYAN] });
 			const cyanScale = palette.scales.cyan;
 
 			// Get the actual anchor step from metadata
@@ -406,7 +406,7 @@ describe('Full Palette Generation', () => {
 			// Use a color that's clearly outside "nearly Radix" threshold
 			// Hot pink #FF69B4 has significant hue offset from pink slot
 			const HOT_PINK = '#FF69B4';
-			const palette = generateLightPalette({ brandColors: [HOT_PINK] });
+			const palette = generatePalette({ brandColors: [HOT_PINK] });
 			const pinkScale = palette.scales.pink;
 
 			// Import Radix colors for comparison

@@ -10,7 +10,7 @@
 import { describe, it, expect } from 'vitest';
 import * as radixColors from '@radix-ui/colors';
 import { analyzeBrandColors } from '../core/analyze.js';
-import { generateLightPalette } from '../core/palette.js';
+import { generatePalette } from '../core/palette.js';
 
 // All 31 Radix hue names
 const RADIX_HUES = [
@@ -36,7 +36,7 @@ describe('Baseline Accuracy: Exact Radix Input', () => {
 
   it('should generate colors that EXACTLY match Radix for all 31 hues', () => {
     const tuningProfile = analyzeBrandColors([EXACT_RADIX_INPUT]);
-    const palette = generateLightPalette({ tuningProfile });
+    const palette = generatePalette({ tuningProfile });
     
     const mismatches: string[] = [];
     
@@ -62,7 +62,7 @@ describe('Baseline Accuracy: Exact Radix Input', () => {
   for (const hue of RADIX_HUES) {
     it(`should match Radix exactly for ${hue}`, () => {
       const tuningProfile = analyzeBrandColors([EXACT_RADIX_INPUT]);
-      const palette = generateLightPalette({ tuningProfile });
+      const palette = generatePalette({ tuningProfile });
       
       const radixScale = (radixColors as any)[hue];
       const generatedScale = palette.scales[hue];

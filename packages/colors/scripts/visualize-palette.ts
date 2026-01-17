@@ -11,7 +11,7 @@
  * - Instant client-side switching (all palettes embedded as JSON)
  */
 
-import { generateLightPalette, getPaletteStats } from '../src/core/palette.js';
+import { generatePalette, getPaletteStats } from '../src/core/palette.js';
 import { BASELINE_HUES } from '../src/core/hues.js';
 import { RADIX_SCALES, RADIX_SCALE_ORDER } from '../src/reference/radix-scales.js';
 import { RADIX_SCALES_DARK } from '../src/reference/radix-scales-dark.js';
@@ -60,8 +60,8 @@ const allPalettes: SerializedPalette[] = [];
 for (const testPalette of TEST_PALETTES) {
 	try {
 		// Generate both light and dark mode palettes
-		const paletteLight = generateLightPalette({ brandColors: testPalette.colors, mode: 'light' });
-		const paletteDark = generateLightPalette({ brandColors: testPalette.colors, mode: 'dark' });
+		const paletteLight = generatePalette({ brandColors: testPalette.colors, mode: 'light' });
+		const paletteDark = generatePalette({ brandColors: testPalette.colors, mode: 'dark' });
 		const stats = getPaletteStats(paletteLight);
 
 		// Build anchor step maps for both modes

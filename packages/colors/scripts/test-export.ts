@@ -6,7 +6,7 @@
  */
 
 import { writeFileSync } from 'fs';
-import { generateLightPalette } from '../src/core/palette.js';
+import { generatePalette } from '../src/core/palette.js';
 import { exportCSS, exportJSON } from '../src/core/export.js';
 import type { Palette } from '../src/types.js';
 
@@ -15,8 +15,8 @@ const brandColors = ['#FF4F00', '#1A1A1A']; // Orange and dark gray
 
 console.log('Generating palette with brand colors:', brandColors);
 
-const light = generateLightPalette({ brandColors });
-const dark = generateLightPalette({ brandColors, mode: 'dark' });
+const light = generatePalette({ brandColors });
+const dark = generatePalette({ brandColors, mode: 'dark' });
 
 const palette: Palette = {
 	light: light.scales,
