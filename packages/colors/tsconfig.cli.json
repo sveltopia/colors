@@ -9,7 +9,11 @@
 		"forceConsistentCasingInFileNames": true,
 		"declaration": false,
 		"outDir": "./cli-dist",
-		"rootDir": "./cli"
+		"rootDir": "./cli",
+		"paths": {
+			"@sveltopia/colors": ["./dist/index.d.ts"]
+		},
+		"baseUrl": "."
 	},
 	"include": ["cli/**/*"],
 	"exclude": ["cli/__tests__/**"]

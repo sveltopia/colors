@@ -19,6 +19,9 @@ program
 	.option('--config <path>', 'Path to config file (default: colors.config.json)')
 	.option('-o, --output <dir>', 'Output directory (default: ./colors)')
 	.option('-f, --format <formats>', 'Output formats: css,json,tailwind,radix,panda or "all" (default: css,json)')
+	.option('-p, --prefix <prefix>', 'CSS variable prefix (e.g., "my-" for --my-red-9)')
+	.option('-v, --verbose', 'Show detailed generation info (tuning profile, anchors, custom rows)')
+	.option('--dry-run', 'Preview what would be generated without writing files')
 	.action(async (options) => {
 		intro('@sveltopia/colors');
 		try {

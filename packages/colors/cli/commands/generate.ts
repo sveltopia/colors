@@ -17,14 +17,17 @@ import {
 	exportTailwind,
 	exportRadix,
 	exportPanda
-} from '../../dist/index.js';
-import type { Palette, BrandColorInfo } from '../../dist/index.js';
+} from '@sveltopia/colors';
+import type { Palette, BrandColorInfo } from '@sveltopia/colors';
 
 export interface GenerateOptions {
 	colors?: string;
 	config?: string;
 	output?: string;
 	format?: string;
+	prefix?: string;
+	verbose?: boolean;
+	dryRun?: boolean;
 }
 
 interface PaletteResult {
@@ -88,7 +91,8 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
 		config = mergeOptions(config, {
 			colors: options.colors,
 			output: options.output,
-			format: options.format
+			format: options.format,
+			prefix: options.prefix
 		});
 	} catch (error) {
 		s.stop('Configuration failed');
@@ -119,6 +123,57 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
 	const { palette, brandColorInfo } = createPalette(config.brandColors);
 	const scaleCount = Object.keys(palette.light).length;
 	s.stop(`Generated ${scaleCount} scales (light + dark)`);
+
+	// Verbose output: show detailed generation info
+	if (options.verbose) {
+		log.info('');
+		log.info('┌─ Tuning Profile ─────────────────────────────────────');
+		const tuning = palette._meta.tuningProfile;
+		log.info(`│ Hue shift:          ${tuning.hueShift ?? 0}°`);
+		log.info(`│ Chroma multiplier:  ${tuning.chromaMultiplier ?? 1}x`);
+		log.info(`│ Lightness shift:    ${tuning.lightnessShift ?? 0}`);
+		log.info('├─ Brand Color Anchors ────────────────────────────────');
+		for (const info of brandColorInfo) {
+			const rowType = info.isCustomRow ? '(custom row)' : '(fitted to existing)';
+			log.info(`│ ${info.hex} → ${info.hue} step ${info.anchorStep} ${rowType}`);
+		}
+		log.info('├─ Hue Coverage ────────────────────────────────────────');
+		const anchoredHues = new Set(brandColorInfo.map((b) => b.hue));
+		const customHues = Object.keys(palette.light).filter((h) => h.startsWith('custom-'));
+		const baselineHues = Object.keys(palette.light).filter(
+			(h) => !anchoredHues.has(h) && !h.startsWith('custom-')
+		);
+		log.info(`│ Brand-anchored: ${[...anchoredHues].join(', ') || 'none'}`);
+		log.info(`│ Custom rows:    ${customHues.join(', ') || 'none'}`);
+		log.info(`│ Baseline:       ${baselineHues.length} scales`);
+		log.info('└───────────────────────────────────────────────────────');
+		log.info('');
+	}
+
+	// Dry-run mode: show what would be generated without writing
+	if (options.dryRun) {
+		log.warn('Dry-run mode: no files will be written');
+		log.info('');
+		log.info(`Would create output directory: ${resolve(config.outputDir)}`);
+		if (config.formats.includes('css')) {
+			log.info(`Would write: ${resolve(config.outputDir)}/colors.css`);
+		}
+		if (config.formats.includes('json')) {
+			log.info(`Would write: ${resolve(config.outputDir)}/colors.json`);
+		}
+		if (config.formats.includes('tailwind')) {
+			log.info(`Would write: ${resolve(config.outputDir)}/tailwind.preset.js`);
+		}
+		if (config.formats.includes('radix')) {
+			log.info(`Would write: ${resolve(config.outputDir)}/radix-colors.js`);
+		}
+		if (config.formats.includes('panda')) {
+			log.info(`Would write: ${resolve(config.outputDir)}/panda.preset.ts`);
+		}
+		log.info('');
+		log.success('Dry-run complete - no files written');
+		return;
+	}
 
 	// Ensure output directory exists
 	const outputDir = resolve(config.outputDir);

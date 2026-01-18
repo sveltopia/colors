@@ -80,6 +80,7 @@ export function mergeOptions(
 		colors?: string;
 		output?: string;
 		format?: string;
+		prefix?: string;
 	}
 ): ColorsConfig {
 	const merged = { ...config };
@@ -95,6 +96,11 @@ export function mergeOptions(
 	// CLI --output overrides config outputDir
 	if (cliOptions.output) {
 		merged.outputDir = cliOptions.output;
+	}
+
+	// CLI --prefix overrides config prefix
+	if (cliOptions.prefix !== undefined) {
+		merged.prefix = cliOptions.prefix;
 	}
 
 	// CLI --format overrides config formats

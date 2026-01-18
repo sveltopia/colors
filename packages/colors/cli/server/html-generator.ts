@@ -12,7 +12,7 @@ import {
 	RADIX_SCALES,
 	RADIX_SCALES_DARK,
 	type LightPalette
-} from '../../dist/index.js';
+} from '@sveltopia/colors';
 
 export interface GenerateHtmlOptions {
 	brandColors: string[];
