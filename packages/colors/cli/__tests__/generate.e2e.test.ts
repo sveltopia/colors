@@ -114,6 +114,95 @@ describe('CLI Generate Command E2E Tests', () => {
 			expect(cssExists).toBe(true);
 			expect(jsonExists).toBe(true);
 		});
+
+		it('generates Tailwind preset when format is tailwind', async () => {
+			await execAsync(
+				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format tailwind`,
+				{ cwd: path.join(__dirname, '../..') }
+			);
+
+			const tailwindPath = path.join(testDir, 'tailwind.preset.js');
+			const tailwindExists = await fs.access(tailwindPath).then(() => true).catch(() => false);
+			expect(tailwindExists).toBe(true);
+
+			const content = await fs.readFile(tailwindPath, 'utf-8');
+			expect(content).toContain('export default {');
+			expect(content).toContain("darkMode: 'class'");
+			expect(content).toContain('"50":'); // Tailwind scale
+			expect(content).toContain('"950":'); // Tailwind scale
+		});
+
+		it('generates Radix colors when format is radix', async () => {
+			await execAsync(
+				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format radix`,
+				{ cwd: path.join(__dirname, '../..') }
+			);
+
+			const radixPath = path.join(testDir, 'radix-colors.js');
+			const radixExists = await fs.access(radixPath).then(() => true).catch(() => false);
+			expect(radixExists).toBe(true);
+
+			const content = await fs.readFile(radixPath, 'utf-8');
+			expect(content).toContain('export const gray =');
+			expect(content).toContain('export const grayA ='); // Alpha variant
+			expect(content).toContain('export const grayP3 ='); // P3 variant
+			expect(content).toContain('export const grayDark ='); // Dark variant
+			expect(content).toContain('gray1:'); // Radix naming
+			expect(content).toContain('gray12:');
+		});
+
+		it('generates Panda CSS preset when format is panda', async () => {
+			await execAsync(
+				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format panda`,
+				{ cwd: path.join(__dirname, '../..') }
+			);
+
+			const pandaPath = path.join(testDir, 'panda.preset.ts');
+			const pandaExists = await fs.access(pandaPath).then(() => true).catch(() => false);
+			expect(pandaExists).toBe(true);
+
+			const content = await fs.readFile(pandaPath, 'utf-8');
+			expect(content).toContain("import { definePreset } from '@pandacss/dev'");
+			expect(content).toContain('export const sveltopiaColors = definePreset({');
+			expect(content).toContain('semanticTokens:');
+			expect(content).toContain('"accent":');
+		});
+
+		it('generates multiple formats with comma-separated values', async () => {
+			await execAsync(
+				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format css,tailwind,radix`,
+				{ cwd: path.join(__dirname, '../..') }
+			);
+
+			const cssExists = await fs.access(path.join(testDir, 'colors.css')).then(() => true).catch(() => false);
+			const tailwindExists = await fs.access(path.join(testDir, 'tailwind.preset.js')).then(() => true).catch(() => false);
+			const radixExists = await fs.access(path.join(testDir, 'radix-colors.js')).then(() => true).catch(() => false);
+			const jsonExists = await fs.access(path.join(testDir, 'colors.json')).then(() => true).catch(() => false);
+
+			expect(cssExists).toBe(true);
+			expect(tailwindExists).toBe(true);
+			expect(radixExists).toBe(true);
+			expect(jsonExists).toBe(false); // Not requested
+		});
+
+		it('generates all formats when format is "all"', async () => {
+			await execAsync(
+				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format all`,
+				{ cwd: path.join(__dirname, '../..') }
+			);
+
+			const cssExists = await fs.access(path.join(testDir, 'colors.css')).then(() => true).catch(() => false);
+			const jsonExists = await fs.access(path.join(testDir, 'colors.json')).then(() => true).catch(() => false);
+			const tailwindExists = await fs.access(path.join(testDir, 'tailwind.preset.js')).then(() => true).catch(() => false);
+			const radixExists = await fs.access(path.join(testDir, 'radix-colors.js')).then(() => true).catch(() => false);
+			const pandaExists = await fs.access(path.join(testDir, 'panda.preset.ts')).then(() => true).catch(() => false);
+
+			expect(cssExists).toBe(true);
+			expect(jsonExists).toBe(true);
+			expect(tailwindExists).toBe(true);
+			expect(radixExists).toBe(true);
+			expect(pandaExists).toBe(true);
+		});
 	});
 
 	describe('--config flag', () => {

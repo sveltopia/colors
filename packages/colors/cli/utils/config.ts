@@ -2,10 +2,12 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 
+export type ExportFormat = 'css' | 'json' | 'tailwind' | 'radix' | 'panda';
+
 export interface ColorsConfig {
 	brandColors: string[];
 	outputDir: string;
-	formats: ('css' | 'json')[];
+	formats: ExportFormat[];
 	prefix?: string;
 }
 
@@ -97,10 +99,21 @@ export function mergeOptions(
 
 	// CLI --format overrides config formats
 	if (cliOptions.format) {
-		if (cliOptions.format === 'both') {
+		const validFormats: ExportFormat[] = ['css', 'json', 'tailwind', 'radix', 'panda'];
+		const requestedFormats = cliOptions.format.split(',').map((f) => f.trim().toLowerCase());
+
+		// Handle 'all' shorthand
+		if (requestedFormats.includes('all')) {
+			merged.formats = validFormats;
+		} else {
+			merged.formats = requestedFormats.filter((f): f is ExportFormat =>
+				validFormats.includes(f as ExportFormat)
+			);
+		}
+
+		// Default to css,json if no valid formats
+		if (merged.formats.length === 0) {
 			merged.formats = ['css', 'json'];
-		} else if (cliOptions.format === 'css' || cliOptions.format === 'json') {
-			merged.formats = [cliOptions.format];
 		}
 	}
 

@@ -72,11 +72,18 @@ export function mergeOptions(config, cliOptions) {
     }
     // CLI --format overrides config formats
     if (cliOptions.format) {
-        if (cliOptions.format === 'both') {
-            merged.formats = ['css', 'json'];
+        const validFormats = ['css', 'json', 'tailwind', 'radix', 'panda'];
+        const requestedFormats = cliOptions.format.split(',').map((f) => f.trim().toLowerCase());
+        // Handle 'all' shorthand
+        if (requestedFormats.includes('all')) {
+            merged.formats = validFormats;
         }
-        else if (cliOptions.format === 'css' || cliOptions.format === 'json') {
-            merged.formats = [cliOptions.format];
+        else {
+            merged.formats = requestedFormats.filter((f) => validFormats.includes(f));
+        }
+        // Default to css,json if no valid formats
+        if (merged.formats.length === 0) {
+            merged.formats = ['css', 'json'];
         }
     }
     return merged;
