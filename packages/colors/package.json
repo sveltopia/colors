@@ -1,7 +1,7 @@
 {
   "name": "@sveltopia/colors",
-  "version": "0.0.1",
-  "description": "Algorithmic color palette generation from sparse brand colors using OKLCH + APCA",
+  "version": "0.1.0",
+  "description": "Generate accessible color palettes from brand colors. Drop-in compatible with Radix, Tailwind, and Panda CSS.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -19,6 +19,7 @@
   "files": [
     "dist",
     "cli-dist",
+    "README.md",
     "!dist/**/*.test.*",
     "!dist/**/*.spec.*"
   ],
@@ -48,12 +49,21 @@
   },
   "keywords": [
     "color",
+    "colors",
     "palette",
     "oklch",
     "apca",
     "accessibility",
     "design-system",
-    "color-generation"
+    "design-tokens",
+    "color-generation",
+    "radix-colors",
+    "tailwind",
+    "panda-css",
+    "css-variables",
+    "dark-mode",
+    "p3",
+    "wide-gamut"
   ],
   "author": "Sveltopia",
   "license": "MIT",
