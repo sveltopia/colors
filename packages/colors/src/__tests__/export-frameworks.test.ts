@@ -301,39 +301,44 @@ describe('Framework Export Utilities', () => {
 			const output = exportPanda(palette, brandInfo);
 
 			expect(output).toContain('semanticTokens:');
-			expect(output).toContain('accent:');
-			expect(output).toContain('brand:');
-			expect(output).toContain('primary:');
-			expect(output).toContain('secondary:');
+			expect(output).toContain('"accent":');
+			expect(output).toContain('"brand":');
+			expect(output).toContain('"primary":');
+			expect(output).toContain('"secondary":');
 		});
 
-		it('maps accent to primary brand color', () => {
+		it('maps accent to primary brand color with dark mode', () => {
 			const palette = createTestPalette();
 			const brandInfo = createBrandColorInfo();
 			const output = exportPanda(palette, brandInfo);
 
-			// Should reference orange (the primary brand color)
-			expect(output).toContain("'{colors.orange.");
+			// Should reference orangeLight and orangeDark (the primary brand color)
+			expect(output).toContain('{colors.orangeLight.');
+			expect(output).toContain('{colors.orangeDark.');
 		});
 
-		it('includes accent scale (1-12 + DEFAULT)', () => {
+		it('includes accent scale with base/_dark values', () => {
 			const palette = createTestPalette();
 			const brandInfo = createBrandColorInfo();
 			const output = exportPanda(palette, brandInfo);
 
-			// Should have accent.1 through accent.12
-			expect(output).toContain("1: { value: '{colors.orange.1}'");
-			expect(output).toContain("12: { value: '{colors.orange.12}'");
-			expect(output).toContain("DEFAULT: { value: '{colors.orange.9}'");
+			// Should have accent tokens with base and _dark values
+			expect(output).toContain('"accent":');
+			expect(output).toContain('"base":');
+			expect(output).toContain('"_dark":');
+			expect(output).toContain('"DEFAULT":');
 		});
 
-		it('excludes semantic tokens when disabled', () => {
+		it('excludes accent/brand semantic tokens when disabled', () => {
 			const palette = createTestPalette();
 			const brandInfo = createBrandColorInfo();
 			const output = exportPanda(palette, brandInfo, { includeSemantic: false });
 
-			expect(output).not.toContain('semanticTokens:');
-			expect(output).not.toContain('accent:');
+			// Semantic tokens for hue scales still exist
+			expect(output).toContain('semanticTokens:');
+			// But accent/brand tokens are excluded
+			expect(output).not.toContain('"accent":');
+			expect(output).not.toContain('"brand":');
 		});
 
 		it('includes dark mode conditions', () => {
@@ -346,12 +351,18 @@ describe('Framework Export Utilities', () => {
 			expect(output).toContain("dark: '[data-theme=dark]");
 		});
 
-		it('exports dark mode tokens separately', () => {
+		it('wires dark mode automatically via semantic tokens', () => {
 			const palette = createTestPalette();
 			const brandInfo = createBrandColorInfo();
 			const output = exportPanda(palette, brandInfo);
 
-			expect(output).toContain('export const sveltopiaColorsDark =');
+			// Raw tokens have Light/Dark variants
+			expect(output).toContain('"orangeLight":');
+			expect(output).toContain('"orangeDark":');
+
+			// Semantic tokens wire them together
+			expect(output).toContain('{colors.orangeLight.');
+			expect(output).toContain('{colors.orangeDark.');
 		});
 
 		it('includes header comment with usage example', () => {
@@ -368,9 +379,12 @@ describe('Framework Export Utilities', () => {
 			const palette = createTestPalette();
 			const output = exportPanda(palette, []);
 
-			// Should still export without semantic tokens
+			// Should still export with semantic tokens for hue scales
 			expect(output).toContain('export const sveltopiaColors');
-			expect(output).not.toContain('semanticTokens:');
+			expect(output).toContain('semanticTokens:');
+			// But no accent/brand tokens
+			expect(output).not.toContain('"accent":');
+			expect(output).not.toContain('"brand":');
 		});
 
 		it('handles single brand color', () => {
@@ -385,10 +399,14 @@ describe('Framework Export Utilities', () => {
 			];
 			const output = exportPanda(palette, brandInfo);
 
-			// Primary should work
-			expect(output).toContain("primary: { value: '{colors.orange.9}'");
+			// Primary should work with base/_dark structure
+			expect(output).toContain('"primary":');
+			expect(output).toContain('{colors.orangeLight.9}');
+			expect(output).toContain('{colors.orangeDark.9}');
 			// Secondary should fall back to gray
-			expect(output).toContain("secondary: { value: '{colors.gray.11}'");
+			expect(output).toContain('"secondary":');
+			expect(output).toContain('{colors.grayLight.11}');
+			expect(output).toContain('{colors.grayDark.11}');
 		});
 	});
 

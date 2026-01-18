@@ -165,7 +165,7 @@ describe('CLI Generate Command E2E Tests', () => {
 			expect(content).toContain("import { definePreset } from '@pandacss/dev'");
 			expect(content).toContain('export const sveltopiaColors = definePreset({');
 			expect(content).toContain('semanticTokens:');
-			expect(content).toContain('accent:');
+			expect(content).toContain('"accent":');
 		});
 
 		it('generates multiple formats with comma-separated values', async () => {
