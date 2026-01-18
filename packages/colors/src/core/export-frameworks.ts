@@ -14,6 +14,7 @@ import {
 	getAlphaColorP3,
 	formatAlphaHex,
 	formatAlphaP3,
+	sortScaleKeys,
 	type BrandColorInfo
 } from './export.js';
 
@@ -96,16 +97,18 @@ export function exportTailwind(palette: Palette, options: TailwindExportOptions 
 		return result;
 	};
 
-	// Build all light mode colors
+	// Build all light mode colors (sorted in canonical Radix order)
 	const lightColors: Record<string, Record<string, string>> = {};
-	for (const [name, scale] of Object.entries(safePalette.light)) {
-		lightColors[name] = buildScale(scale);
+	const sortedLightKeys = sortScaleKeys(Object.keys(safePalette.light));
+	for (const name of sortedLightKeys) {
+		lightColors[name] = buildScale(safePalette.light[name]);
 	}
 
-	// Build all dark mode colors
+	// Build all dark mode colors (sorted in canonical Radix order)
 	const darkColors: Record<string, Record<string, string>> = {};
-	for (const [name, scale] of Object.entries(safePalette.dark)) {
-		darkColors[name] = buildScale(scale);
+	const sortedDarkKeys = sortScaleKeys(Object.keys(safePalette.dark));
+	for (const name of sortedDarkKeys) {
+		darkColors[name] = buildScale(safePalette.dark[name]);
 	}
 
 	// Generate the Tailwind config file content
@@ -342,8 +345,10 @@ export function exportRadix(palette: Palette, options: RadixExportOptions = {}):
 		return `{\n${entries.join(',\n')}\n}`;
 	};
 
-	// Process each scale
-	for (const [name, lightScale] of Object.entries(safePalette.light)) {
+	// Process each scale (sorted in canonical Radix order)
+	const sortedScaleNames = sortScaleKeys(Object.keys(safePalette.light));
+	for (const name of sortedScaleNames) {
+		const lightScale = safePalette.light[name];
 		const darkScale = safePalette.dark[name];
 
 		// Light mode - base
@@ -525,16 +530,19 @@ export function exportPanda(
 	): Record<string, Record<string, { value: string }>> => {
 		const tokens: Record<string, Record<string, { value: string }>> = {};
 
-		// Add light mode tokens (e.g., orangeLight)
-		for (const [name, scale] of Object.entries(lightScales)) {
+		// Add light mode tokens (e.g., orangeLight) - sorted in canonical order
+		const sortedNames = sortScaleKeys(Object.keys(lightScales));
+		for (const name of sortedNames) {
+			const scale = lightScales[name];
 			tokens[`${name}Light`] = {};
 			for (let step = 1; step <= 12; step++) {
 				tokens[`${name}Light`][step] = { value: scale[step as keyof Scale] };
 			}
 		}
 
-		// Add dark mode tokens (e.g., orangeDark)
-		for (const [name, scale] of Object.entries(darkScales)) {
+		// Add dark mode tokens (e.g., orangeDark) - sorted in canonical order
+		for (const name of sortedNames) {
+			const scale = darkScales[name];
 			tokens[`${name}Dark`] = {};
 			for (let step = 1; step <= 12; step++) {
 				tokens[`${name}Dark`][step] = { value: scale[step as keyof Scale] };
@@ -566,7 +574,7 @@ export function exportPanda(
 	};
 
 	const rawTokens = buildRawTokens(safePalette.light, safePalette.dark);
-	const scaleNames = Object.keys(safePalette.light);
+	const scaleNames = sortScaleKeys(Object.keys(safePalette.light));
 	const semanticColorTokens = buildSemanticColorTokens(scaleNames);
 
 	// Build additional semantic tokens for accent/brand if we have brand color info

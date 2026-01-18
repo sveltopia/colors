@@ -11,7 +11,7 @@ import { writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { generateHtml, type GenerateHtmlOptions } from './html-generator.js';
-import { generatePalette, exportCSS, exportJSON, type Palette } from '../../dist/index.js';
+import { generatePalette, exportCSS, exportJSON, type Palette } from '@sveltopia/colors';
 
 export interface ServerOptions {
 	port: number;

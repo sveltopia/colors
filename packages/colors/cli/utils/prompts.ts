@@ -3,7 +3,7 @@
  */
 
 import { isCancel, cancel, text, multiselect, confirm } from '@clack/prompts';
-import { validateColor } from '../../dist/index.js';
+import { validateColor } from '@sveltopia/colors';
 import type { ExportFormat } from './config.js';
 
 /**

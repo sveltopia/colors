@@ -459,10 +459,11 @@ describe('Export Utilities', () => {
 
 		it('exports with custom prefix', () => {
 			const palette = createTestPalette();
-			const css = exportCSS(palette, { scales: ['blue'], prefix: 'brand' });
+			const css = exportCSS(palette, { scales: ['blue'], prefix: 'my-' });
 
-			expect(css).toContain('--brand-1:');
-			expect(css).toContain('--brand-9:');
+			// Prefix prepends to hue name: my-blue-1, my-blue-9
+			expect(css).toContain('--my-blue-1:');
+			expect(css).toContain('--my-blue-9:');
 		});
 
 		it('exports light mode only', () => {

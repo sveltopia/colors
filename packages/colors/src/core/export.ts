@@ -13,6 +13,70 @@ import type { Palette, Scale, OklchColor } from '../types.js';
 import { ensureAccessibility } from './validate.js';
 
 // =============================================================================
+// Canonical Hue Ordering (Radix order: grays first, then color wheel)
+// =============================================================================
+
+/**
+ * Radix-compatible hue order for consistent output.
+ * Grays first, then color wheel from red through yellow.
+ */
+const CANONICAL_HUE_ORDER = [
+	'gray',
+	'mauve',
+	'slate',
+	'sage',
+	'olive',
+	'sand',
+	'tomato',
+	'red',
+	'ruby',
+	'crimson',
+	'pink',
+	'plum',
+	'purple',
+	'violet',
+	'iris',
+	'indigo',
+	'blue',
+	'cyan',
+	'teal',
+	'jade',
+	'green',
+	'grass',
+	'bronze',
+	'gold',
+	'brown',
+	'orange',
+	'amber',
+	'yellow',
+	'lime',
+	'mint',
+	'sky'
+];
+
+/**
+ * Sort scale keys to match Radix canonical order.
+ * Custom hues (e.g., 'custom-xyz') are appended at the end.
+ */
+export function sortScaleKeys(keys: string[]): string[] {
+	return [...keys].sort((a, b) => {
+		const aIndex = CANONICAL_HUE_ORDER.indexOf(a);
+		const bIndex = CANONICAL_HUE_ORDER.indexOf(b);
+
+		// Both in canonical order: sort by index
+		if (aIndex !== -1 && bIndex !== -1) {
+			return aIndex - bIndex;
+		}
+		// Only a is canonical: a comes first
+		if (aIndex !== -1) return -1;
+		// Only b is canonical: b comes first
+		if (bIndex !== -1) return 1;
+		// Neither canonical (custom hues): alphabetical
+		return a.localeCompare(b);
+	});
+}
+
+// =============================================================================
 // Types
 // =============================================================================
 
@@ -376,10 +440,11 @@ export function exportCSS(palette: Palette, options: CSSExportOptions = {}): str
 
 	const lines: string[] = [];
 
-	// Determine which scales to export
+	// Determine which scales to export (sorted in canonical Radix order)
 	const getScaleKeys = (modeScales: Record<string, Scale>) => {
 		const allKeys = Object.keys(modeScales);
-		return scales ? allKeys.filter((k) => scales.includes(k)) : allKeys;
+		const filtered = scales ? allKeys.filter((k) => scales.includes(k)) : allKeys;
+		return sortScaleKeys(filtered);
 	};
 
 	// Generate CSS for a single mode
@@ -396,7 +461,7 @@ export function exportCSS(palette: Palette, options: CSSExportOptions = {}): str
 
 		for (const scaleName of scaleKeys) {
 			const scale = modeScales[scaleName];
-			const varPrefix = prefix || scaleName;
+			const varPrefix = prefix ? `${prefix}${scaleName}` : scaleName;
 
 			// Solid scale (sRGB hex)
 			for (let step = 1; step <= 12; step++) {
@@ -447,7 +512,7 @@ export function exportCSS(palette: Palette, options: CSSExportOptions = {}): str
 
 		for (const scaleName of scaleKeys) {
 			const scale = modeScales[scaleName];
-			const varPrefix = prefix || scaleName;
+			const varPrefix = prefix ? `${prefix}${scaleName}` : scaleName;
 
 			// Solid scale (OKLCH)
 			for (let step = 1; step <= 12; step++) {
@@ -583,10 +648,11 @@ export function exportJSON(palette: Palette, options: JSONExportOptions = {}): J
 
 	const { scales, includeAlpha = true, includeP3 = true, includeSemantic = true } = options;
 
-	// Determine which scales to export
+	// Determine which scales to export (sorted in canonical Radix order)
 	const getScaleKeys = (modeScales: Record<string, Scale>) => {
 		const allKeys = Object.keys(modeScales);
-		return scales ? allKeys.filter((k) => scales.includes(k)) : allKeys;
+		const filtered = scales ? allKeys.filter((k) => scales.includes(k)) : allKeys;
+		return sortScaleKeys(filtered);
 	};
 
 	const lightKeys = getScaleKeys(safePalette.light);
