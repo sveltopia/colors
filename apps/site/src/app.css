@@ -1,0 +1,137 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '$lib/colors/colors.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@plugin '@tailwindcss/typography';
+
+:root {
+  --radius: 0.625rem;
+
+  /* Semantic tokens using Sveltopia Colors palette */
+  /* Using orange as primary, gray as neutral */
+  --background: var(--gray-1);
+  --foreground: var(--gray-12);
+  --card: var(--gray-1);
+  --card-foreground: var(--gray-12);
+  --popover: var(--gray-1);
+  --popover-foreground: var(--gray-12);
+  --primary: var(--orange-9);
+  --primary-foreground: white;
+  --secondary: var(--gray-3);
+  --secondary-foreground: var(--gray-12);
+  --muted: var(--gray-3);
+  --muted-foreground: var(--gray-11);
+  --accent: var(--grass-9);
+  --accent-foreground: white;
+  --destructive: var(--red-9);
+  --border: var(--gray-6);
+  --input: var(--gray-6);
+  --ring: var(--orange-8);
+  --chart-1: var(--orange-9);
+  --chart-2: var(--grass-9);
+  --chart-3: var(--blue-9);
+  --chart-4: var(--purple-9);
+  --chart-5: var(--amber-9);
+  --sidebar: var(--gray-2);
+  --sidebar-foreground: var(--gray-12);
+  --sidebar-primary: var(--orange-9);
+  --sidebar-primary-foreground: white;
+  --sidebar-accent: var(--gray-4);
+  --sidebar-accent-foreground: var(--gray-12);
+  --sidebar-border: var(--gray-6);
+  --sidebar-ring: var(--orange-8);
+}
+
+.dark {
+  --background: var(--gray-1);
+  --foreground: var(--gray-12);
+  --card: var(--gray-2);
+  --card-foreground: var(--gray-12);
+  --popover: var(--gray-2);
+  --popover-foreground: var(--gray-12);
+  --primary: var(--orange-9);
+  --primary-foreground: white;
+  --secondary: var(--gray-3);
+  --secondary-foreground: var(--gray-12);
+  --muted: var(--gray-3);
+  --muted-foreground: var(--gray-11);
+  --accent: var(--grass-9);
+  --accent-foreground: white;
+  --destructive: var(--red-9);
+  --border: var(--gray-6);
+  --input: var(--gray-6);
+  --ring: var(--orange-8);
+  --chart-1: var(--orange-9);
+  --chart-2: var(--grass-9);
+  --chart-3: var(--blue-9);
+  --chart-4: var(--purple-9);
+  --chart-5: var(--amber-9);
+  --sidebar: var(--gray-2);
+  --sidebar-foreground: var(--gray-12);
+  --sidebar-primary: var(--orange-9);
+  --sidebar-primary-foreground: white;
+  --sidebar-accent: var(--gray-4);
+  --sidebar-accent-foreground: var(--gray-12);
+  --sidebar-border: var(--gray-6);
+  --sidebar-ring: var(--orange-8);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Remove backticks from prose code elements */
+  .prose code::before,
+  .prose code::after {
+    content: none;
+  }
+
+  /* Consistent line-height for lead paragraphs */
+  .prose .lead {
+    line-height: 1.75rem;
+  }
+}
