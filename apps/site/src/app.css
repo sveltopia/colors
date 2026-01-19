@@ -10,38 +10,38 @@
   --radius: 0.625rem;
 
   /* Semantic tokens using Sveltopia Colors palette */
-  /* Using orange as primary, slate as neutral (subtle blue tint) */
+  /* Using grass as primary (better APCA), orange as accent, slate as neutral */
   --background: var(--slate-1);
   --foreground: var(--slate-12);
   --card: var(--slate-1);
   --card-foreground: var(--slate-12);
   --popover: var(--slate-1);
   --popover-foreground: var(--slate-12);
-  --primary: var(--orange-9);
+  --primary: var(--grass-9);
   --primary-foreground: white;
   --secondary: var(--slate-3);
   --secondary-foreground: var(--slate-12);
   --muted: var(--slate-3);
   --muted-foreground: var(--slate-11);
-  --accent: var(--grass-9);
+  --accent: var(--orange-9);
   --accent-foreground: white;
   --destructive: var(--red-9);
   --border: var(--slate-6);
   --input: var(--slate-6);
-  --ring: var(--orange-8);
-  --chart-1: var(--orange-9);
-  --chart-2: var(--grass-9);
+  --ring: var(--grass-8);
+  --chart-1: var(--grass-9);
+  --chart-2: var(--orange-9);
   --chart-3: var(--blue-9);
   --chart-4: var(--purple-9);
   --chart-5: var(--amber-9);
   --sidebar: var(--slate-2);
   --sidebar-foreground: var(--slate-12);
-  --sidebar-primary: var(--orange-9);
+  --sidebar-primary: var(--grass-9);
   --sidebar-primary-foreground: white;
   --sidebar-accent: var(--slate-4);
   --sidebar-accent-foreground: var(--slate-12);
   --sidebar-border: var(--slate-6);
-  --sidebar-ring: var(--orange-8);
+  --sidebar-ring: var(--grass-8);
 }
 
 .dark {
@@ -51,31 +51,31 @@
   --card-foreground: var(--slate-12);
   --popover: var(--slate-2);
   --popover-foreground: var(--slate-12);
-  --primary: var(--orange-9);
+  --primary: var(--grass-9);
   --primary-foreground: white;
   --secondary: var(--slate-3);
   --secondary-foreground: var(--slate-12);
   --muted: var(--slate-3);
   --muted-foreground: var(--slate-11);
-  --accent: var(--grass-9);
+  --accent: var(--orange-9);
   --accent-foreground: white;
   --destructive: var(--red-9);
   --border: var(--slate-6);
   --input: var(--slate-6);
-  --ring: var(--orange-8);
-  --chart-1: var(--orange-9);
-  --chart-2: var(--grass-9);
+  --ring: var(--grass-8);
+  --chart-1: var(--grass-9);
+  --chart-2: var(--orange-9);
   --chart-3: var(--blue-9);
   --chart-4: var(--purple-9);
   --chart-5: var(--amber-9);
   --sidebar: var(--slate-2);
   --sidebar-foreground: var(--slate-12);
-  --sidebar-primary: var(--orange-9);
+  --sidebar-primary: var(--grass-9);
   --sidebar-primary-foreground: white;
   --sidebar-accent: var(--slate-4);
   --sidebar-accent-foreground: var(--slate-12);
   --sidebar-border: var(--slate-6);
-  --sidebar-ring: var(--orange-8);
+  --sidebar-ring: var(--grass-8);
 }
 
 @theme inline {

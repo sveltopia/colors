@@ -1,12 +1,17 @@
 <script lang="ts">
   import CodeViewer from '$lib/components/CodeViewer.svelte';
   import PalettePreview from '$lib/components/PalettePreview.svelte';
-  import { Palette, Moon, Accessibility, Layers, Sparkles, Zap } from 'lucide-svelte';
+  import HueSpectrum from '$lib/components/HueSpectrum.svelte';
+  import { Palette, Moon, Accessibility, Layers, Sparkles, Zap, ArrowDown } from 'lucide-svelte';
 
   const generateExample = `npx @sveltopia/colors generate \\
   --colors "#FF6A00,#43A047,#1A1A1A" \\
   --format css \\
-  --output src/lib/colors`;
+  --output src/lib/colors
+
+# ✓ Analyzed 3 brand colors
+# ✓ Generated 31 scales (light + dark)
+# ✓ Wrote src/lib/colors/colors.css`;
 
   const cssOutputExample = `:root {
   --orange-1: #fff8f3;
@@ -31,10 +36,10 @@
     <!-- Hero Section -->
     <section class="space-y-6 text-center">
       <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-        Generate accessible color palettes from your brand colors
+        Generate <span class="bg-gradient-to-r from-[var(--grass-10)] to-[var(--grass-8)] bg-clip-text text-transparent">accessible</span> <span class="bg-gradient-to-r from-[var(--orange-9)] to-[var(--orange-11)] bg-clip-text text-transparent">color palettes</span> from your brand
       </h1>
       <p class="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-        Drop 1-7 hex colors, get 31 complete tint scales. Radix-compatible output for Tailwind, Panda CSS, or plain CSS variables.
+        Provide 1-7 hex colors, get 31 complete tint scales tuned to your brand. Radix-compatible output for Tailwind, Panda CSS, or plain CSS variables.
       </p>
 
       <!-- CTA Buttons -->
@@ -67,13 +72,52 @@
     <!-- Palette Preview -->
     <section class="space-y-6">
       <div class="text-center">
-        <h2 class="text-2xl font-bold sm:text-3xl">Your Brand, Full Spectrum</h2>
+        <h2 class="text-2xl font-bold sm:text-3xl">Your Project Colors Should Reflect Your Brand</h2>
         <p class="mt-2 text-muted-foreground">
-          From 3 brand colors to complete light and dark palettes
+          No more compromising with fixed palettes—transform your brand into complete light and dark scales.
         </p>
       </div>
+
+      <!-- Brand Input Visualization -->
+      <div class="flex flex-col items-center gap-3">
+        <!-- Input brand colors -->
+        <div class="flex items-center gap-2 text-xs text-muted-foreground">
+          <span>Input:</span>
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5">
+              <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #43A047;"></div>
+              <span class="hidden font-mono sm:inline">#43A047</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #FF6A00;"></div>
+              <span class="hidden font-mono sm:inline">#FF6A00</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #1A1A1A;"></div>
+              <span class="hidden font-mono sm:inline">#1A1A1A</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <ArrowDown class="h-5 w-5 text-muted-foreground" />
+
+        <!-- Output label -->
+        <span class="text-xs text-muted-foreground">Output: 31 tuned scales (3 anchored to your brand + 28 baseline hues)</span>
+      </div>
+
+      <!-- Combined palette container -->
       <div class="rounded-xl border bg-card p-4 sm:p-6">
         <PalettePreview />
+
+        <!-- Divider -->
+        <div class="my-6 border-t border-border"></div>
+
+        <!-- 28 more hues -->
+        <p class="mb-3 text-center text-sm text-muted-foreground">
+          Plus 28 more hues, all tuned to your brand
+        </p>
+        <HueSpectrum />
       </div>
     </section>
 
@@ -85,7 +129,7 @@
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <div class="rounded-lg border bg-card p-6">
           <div class="mb-4">
-            <Palette class="h-6 w-6 text-primary" />
+            <Palette class="h-6 w-6 text-accent" />
           </div>
           <h3 class="mb-2 font-semibold">31 Hue Scales</h3>
           <p class="text-sm text-muted-foreground">
@@ -95,7 +139,7 @@
 
         <div class="rounded-lg border bg-card p-6">
           <div class="mb-4">
-            <Moon class="h-6 w-6 text-primary" />
+            <Moon class="h-6 w-6 text-accent" />
           </div>
           <h3 class="mb-2 font-semibold">Auto Dark Mode</h3>
           <p class="text-sm text-muted-foreground">
@@ -105,7 +149,7 @@
 
         <div class="rounded-lg border bg-card p-6">
           <div class="mb-4">
-            <Accessibility class="h-6 w-6 text-primary" />
+            <Accessibility class="h-6 w-6 text-accent" />
           </div>
           <h3 class="mb-2 font-semibold">APCA Contrast</h3>
           <p class="text-sm text-muted-foreground">
@@ -115,7 +159,7 @@
 
         <div class="rounded-lg border bg-card p-6">
           <div class="mb-4">
-            <Sparkles class="h-6 w-6 text-primary" />
+            <Sparkles class="h-6 w-6 text-accent" />
           </div>
           <h3 class="mb-2 font-semibold">P3 Wide Gamut</h3>
           <p class="text-sm text-muted-foreground">
@@ -125,7 +169,7 @@
 
         <div class="rounded-lg border bg-card p-6">
           <div class="mb-4">
-            <Layers class="h-6 w-6 text-primary" />
+            <Layers class="h-6 w-6 text-accent" />
           </div>
           <h3 class="mb-2 font-semibold">Multiple Formats</h3>
           <p class="text-sm text-muted-foreground">
@@ -135,7 +179,7 @@
 
         <div class="rounded-lg border bg-card p-6">
           <div class="mb-4">
-            <Zap class="h-6 w-6 text-primary" />
+            <Zap class="h-6 w-6 text-accent" />
           </div>
           <h3 class="mb-2 font-semibold">Dev Server</h3>
           <p class="text-sm text-muted-foreground">
@@ -184,7 +228,7 @@
             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">2</span>
             <div>
               <h4 class="font-semibold">Algorithm finds the best matches</h4>
-              <p class="text-sm text-muted-foreground">Each brand color anchors a Radix scale at the perceptually closest hue.</p>
+              <p class="text-sm text-muted-foreground">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
             </div>
           </li>
           <li class="flex gap-4">
@@ -207,11 +251,29 @@
 
     <!-- Bottom CTA -->
     <section class="rounded-xl border bg-card p-8 text-center sm:p-12">
-      <h2 class="text-2xl font-bold sm:text-3xl">Ready to generate your palette?</h2>
-      <p class="mt-2 text-muted-foreground">
-        Try the playground or jump straight into the CLI.
-      </p>
-      <div class="mt-6 flex flex-wrap justify-center gap-4">
+      <div class="space-y-8">
+        <!-- Generate command -->
+        <div>
+          <h2 class="text-2xl font-bold sm:text-3xl">One command yields a complete palette</h2>
+          <div class="mt-4">
+            <code class="inline-block rounded-lg bg-muted px-4 py-2 font-mono text-sm">
+              npx @sveltopia/colors generate --colors "#YOUR_BRAND"
+            </code>
+          </div>
+        </div>
+
+        <!-- Dev server command -->
+        <div>
+          <h3 class="text-xl font-bold sm:text-2xl">Or use the dev server to experiment</h3>
+          <div class="mt-4">
+            <code class="inline-block rounded-lg bg-muted px-4 py-2 font-mono text-sm">
+              npx @sveltopia/colors dev --colors "#YOUR_BRAND"
+            </code>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
         <a
           href="/playground"
           class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
