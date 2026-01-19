@@ -3,8 +3,16 @@ name: Test Colors Package
 on:
   push:
     branches: ['**']
+    paths:
+      - 'packages/colors/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/test.yml'
   pull_request:
     branches: ['**']
+    paths:
+      - 'packages/colors/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/test.yml'
 
 jobs:
   test:

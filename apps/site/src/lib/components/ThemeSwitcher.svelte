@@ -35,7 +35,7 @@
 
 <div data-theme-switcher class="relative">
   <button
-    class="cursor-pointer rounded-lg p-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+    class="cursor-pointer rounded-lg p-2.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
     aria-label="Toggle theme"
     onclick={() => (isOpen = !isOpen)}
   >
@@ -57,9 +57,9 @@
     >
       <button
         onclick={() => selectMode('light')}
-        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent {userPrefersMode.current ===
+        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-secondary {userPrefersMode.current ===
         'light'
-          ? 'font-medium text-primary'
+          ? 'font-medium text-foreground'
           : 'text-muted-foreground'}"
       >
         <Sun size={16} />
@@ -67,9 +67,9 @@
       </button>
       <button
         onclick={() => selectMode('dark')}
-        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent {userPrefersMode.current ===
+        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-secondary {userPrefersMode.current ===
         'dark'
-          ? 'font-medium text-primary'
+          ? 'font-medium text-foreground'
           : 'text-muted-foreground'}"
       >
         <Moon size={16} />
@@ -77,9 +77,9 @@
       </button>
       <button
         onclick={() => selectMode('system')}
-        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent {userPrefersMode.current ===
+        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-secondary {userPrefersMode.current ===
         'system'
-          ? 'font-medium text-primary'
+          ? 'font-medium text-foreground'
           : 'text-muted-foreground'}"
       >
         <Monitor size={16} />
