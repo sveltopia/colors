@@ -265,30 +265,10 @@ export function analyzeColor(hex: string, mode: ColorMode = 'light'): ColorAnaly
 	if (isChromaOutOfBounds) {
 		// Chroma takes precedence as the reason
 		outOfBoundsReason = chromaRatio < CHROMA_RATIO_FLOOR ? 'low-chroma' : 'high-chroma';
-		console.info(
-			`Custom row needed: ${hex} has ${chromaRatio.toFixed(2)}x chroma ` +
-				`(${outOfBoundsReason}, threshold: ${CHROMA_RATIO_FLOOR}x-${CHROMA_RATIO_CEILING}x)`
-		);
 	} else if (isHueGap) {
 		outOfBoundsReason = 'hue-gap';
-		console.info(
-			`Custom row needed: ${hex} is ${distance.toFixed(1)}° from nearest hue (${slot}), ` +
-				`exceeds ${SNAP_THRESHOLD}° threshold`
-		);
 	} else if (isExtremeLightness) {
 		outOfBoundsReason = 'extreme-lightness';
-		const lightnessDesc = oklch.l > 0.5 ? 'bright' : 'dark';
-		if (isSemanticMismatch) {
-			console.info(
-				`Custom row needed: ${hex} is high-chroma (C=${oklch.c.toFixed(2)}) at non-hero step ${suggestedStep} ` +
-					`(${slot}, semantic mismatch)`
-			);
-		} else {
-			console.info(
-				`Custom row needed: ${hex} is too ${lightnessDesc} for ${slot} step ${suggestedStep} ` +
-					`(L=${oklch.l.toFixed(2)}, expected=${expectedLightness.toFixed(2)}, gap=${lightnessGap.toFixed(2)})`
-			);
-		}
 	}
 
 	return {
@@ -385,9 +365,6 @@ export function analyzeBrandColors(colors: string[], mode: ColorMode = 'light'):
 
 	// Enforce 7-color limit
 	if (colors.length > MAX_BRAND_COLORS) {
-		console.warn(
-			`Brand color limit is ${MAX_BRAND_COLORS}, received ${colors.length}. Using first ${MAX_BRAND_COLORS}.`
-		);
 		colors = colors.slice(0, MAX_BRAND_COLORS);
 	}
 

@@ -12,6 +12,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "dependencies": {
+    "@sveltopia/colors": "workspace:*",
     "lucide-svelte": "^0.525.0"
   },
   "devDependencies": {

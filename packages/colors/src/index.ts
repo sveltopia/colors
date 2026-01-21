@@ -9,6 +9,8 @@ export type {
 	Scale,
 	ScaleStep,
 	TuningProfile,
+	AnchorInfo,
+	CustomRowInfo,
 	Palette,
 	ContrastResult,
 	ValidationReport,
@@ -120,3 +122,7 @@ export type {
 export { RADIX_SCALES, RADIX_SCALE_ORDER } from './reference/radix-scales.js';
 export { RADIX_SCALES_DARK } from './reference/radix-scales-dark.js';
 export type { RadixScale } from './reference/radix-scales.js';
+
+// Test Palettes (for presets/demos)
+export { TEST_PALETTES, getTestPalette, getPalettesByCategory } from './reference/test-palettes.js';
+export type { TestPalette } from './reference/test-palettes.js';
