@@ -17,6 +17,9 @@ importers:
 
   apps/site:
     dependencies:
+      '@sveltopia/colors':
+        specifier: workspace:*
+        version: link:../../packages/colors
       lucide-svelte:
         specifier: ^0.525.0
         version: 0.525.0(svelte@5.46.4)

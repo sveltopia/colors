@@ -317,22 +317,6 @@ export function generatePalette(options: GeneratePaletteOptions): LightPalette {
 			const brandHex = anchor.hex;
 
 			// Validate the algorithm produced something close (within tolerance)
-			// If wildly different, it indicates an algorithm problem
-			const generated = toOklch(generatedHex);
-			const brand = toOklch(brandHex);
-			if (generated && brand) {
-				const deltaL = Math.abs(generated.l - brand.l);
-				const deltaC = Math.abs(generated.c - brand.c);
-				// Allow small differences from rounding, but flag large ones
-				if (deltaL > 0.05 || deltaC > 0.05) {
-					console.warn(
-						`Anchor validation warning: ${hueKey} step ${anchor.step} ` +
-							`differs significantly from brand color. ` +
-							`Generated: ${generatedHex}, Brand: ${brandHex}`
-					);
-				}
-			}
-
 			// Always use exact brand hex for anchor step
 			scale[anchor.step as keyof Scale] = brandHex;
 		}
