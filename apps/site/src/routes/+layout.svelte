@@ -15,6 +15,8 @@
 
 <svelte:head>
   <link rel="icon" href="/favicon.svg" />
+  <!-- Default color preset for the site -->
+  <link rel="stylesheet" href="/presets/sveltopia.css" />
 </svelte:head>
 
 <ModeWatcher />
@@ -71,6 +73,14 @@
               : 'text-muted-foreground'}">Playground</a
           >
           <a
+            href="/demos/tailwind"
+            class="transition-colors hover:text-foreground/80 {page.url.pathname.startsWith(
+              '/demos'
+            )
+              ? 'text-foreground'
+              : 'text-muted-foreground'}">Demos</a
+          >
+          <a
             href="https://github.com/sveltopia/colors"
             class="text-muted-foreground transition-colors hover:text-foreground/80">GitHub</a
           >
@@ -115,6 +125,14 @@
                   )
                     ? 'border-orange-500/75'
                     : 'border-transparent'}">Playground</a
+                >
+                <a
+                  href="/demos/tailwind"
+                  class="border-b-3 px-3 py-2 transition-colors hover:text-foreground/80 {page.url.pathname.startsWith(
+                    '/demos'
+                  )
+                    ? 'border-orange-500/75'
+                    : 'border-transparent'}">Demos</a
                 >
                 <a
                   href="https://github.com/sveltopia/colors"
