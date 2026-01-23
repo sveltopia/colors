@@ -36,7 +36,7 @@
     <!-- Hero Section -->
     <section class="space-y-6 text-center">
       <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-        Generate <span class="bg-gradient-to-r from-[var(--grass-10)] to-[var(--grass-8)] bg-clip-text text-transparent">accessible</span> <span class="bg-gradient-to-r from-[var(--orange-9)] to-[var(--orange-11)] bg-clip-text text-transparent">color palettes</span> from your brand
+        Generate <span class="bg-gradient-to-r from-[var(--color-grass-850)] to-[var(--color-grass-700)] bg-clip-text text-transparent">accessible</span> <span class="bg-gradient-to-r from-[var(--color-orange-800)] to-[var(--color-orange-900)] bg-clip-text text-transparent">color palettes</span> from your brand
       </h1>
       <p class="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
         Provide 1-7 hex colors, get 31 complete tint scales tuned to your brand. Radix-compatible output for Tailwind, Panda CSS, or plain CSS variables.

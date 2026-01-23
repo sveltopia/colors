@@ -40,6 +40,13 @@ export const TEST_PALETTES: TestPalette[] = [
 		notes: 'Signature green + near-black'
 	},
 	{
+		id: 'claude',
+		name: 'Claude',
+		colors: ['#C15F3C', '#B1ADA1', '#F4F3EE'],
+		category: 'real-brand',
+		notes: 'Signature terracotta + warm taupe + cream'
+	},
+	{
 		id: 'slack',
 		name: 'Slack',
 		colors: ['#4A154B', '#E01E5A', '#ECB22E', '#36C5F0'],

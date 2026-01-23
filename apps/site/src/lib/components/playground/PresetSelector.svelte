@@ -13,7 +13,7 @@
   const presets = TEST_PALETTES.filter((p: TestPalette) => p.category === 'real-brand');
 
   // Subset of presets to show (most recognizable brands)
-  const FEATURED_PRESET_IDS = ['sveltopia', 'stripe', 'spotify', 'linear', 'figma', 'slack'];
+  const FEATURED_PRESET_IDS = ['sveltopia', 'stripe', 'spotify', 'claude', 'slack', 'linear', 'figma'];
   const featuredPresets = presets.filter((p: TestPalette) => FEATURED_PRESET_IDS.includes(p.id));
 </script>
 

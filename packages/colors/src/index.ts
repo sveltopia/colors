@@ -91,11 +91,13 @@ export type {
 export {
 	exportTailwind,
 	exportTailwindWithCSSVars,
+	exportTailwindV4CSS,
 	exportRadix,
 	exportPanda
 } from './core/export-frameworks.js';
 export type {
 	TailwindExportOptions,
+	TailwindV4CSSExportOptions,
 	RadixExportOptions,
 	PandaExportOptions
 } from './core/export-frameworks.js';
