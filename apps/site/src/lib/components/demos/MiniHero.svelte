@@ -33,13 +33,13 @@
 			<!-- CTA Buttons -->
 			<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
 				<button
-					class="inline-flex items-center gap-2 rounded-lg bg-secondary-800 px-6 py-3 text-base font-semibold text-white shadow-lg transition-all hover:bg-secondary-850 hover:shadow-xl"
+					class="inline-flex items-center gap-2 rounded-lg bg-primary-800 px-6 py-3 text-base font-semibold text-white shadow-lg transition-all hover:bg-primary-850 hover:shadow-xl"
 				>
 					Get Started
 					<ArrowRight class="h-5 w-5" />
 				</button>
 				<button
-					class="inline-flex items-center gap-2 rounded-lg border-2 border-secondary-800 bg-white/80 px-6 py-3 text-base font-semibold text-secondary-900 backdrop-blur transition-all hover:border-secondary-700 hover:bg-white"
+					class="inline-flex items-center gap-2 rounded-lg border-2 border-primary-800 bg-white/80 px-6 py-3 text-base font-semibold text-primary-900 backdrop-blur transition-all hover:border-primary-700 hover:bg-white"
 				>
 					View Documentation
 				</button>

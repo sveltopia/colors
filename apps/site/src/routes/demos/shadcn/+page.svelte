@@ -8,7 +8,6 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { Toggle } from '$lib/components/ui/toggle';
 	import * as Avatar from '$lib/components/ui/avatar';
-	import IntegrationGuide from '$lib/components/demos/IntegrationGuide.svelte';
 
 	// Form state
 	let emailValue = $state('');
@@ -112,9 +111,6 @@
 			</div>
 		</div>
 	</section>
-
-	<!-- Integration Guide: How to set up shadcn with generated colors -->
-	<IntegrationGuide framework="shadcn" />
 
 	<!-- Section 2: Web-App Components -->
 	<section class="bg-[var(--color-gray-50)] px-6 py-16">

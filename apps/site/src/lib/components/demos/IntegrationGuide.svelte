@@ -3,9 +3,12 @@
 
 	interface Props {
 		framework: 'tailwind' | 'shadcn';
+		variant?: 'section' | 'sheet';
 	}
 
-	let { framework }: Props = $props();
+	let { framework, variant = 'section' }: Props = $props();
+
+	const isSheet = $derived(variant === 'sheet');
 
 	const tailwindSteps = [
 		{
@@ -114,65 +117,114 @@
 	const steps = $derived(framework === 'tailwind' ? tailwindSteps : shadcnSteps);
 </script>
 
-<section class="border-b border-gray-500 bg-gray-50 px-6 py-12">
-	<div class="mx-auto max-w-4xl">
-		<div class="mb-8 flex items-center gap-3">
-			<div class="rounded-lg bg-primary-200/50 p-2">
-				<Terminal class="h-5 w-5 text-primary-900" />
-			</div>
-			<div>
-				<h2 class="text-xl font-bold text-gray-950">
-					{framework === 'tailwind' ? 'Tailwind CSS v4' : 'shadcn-svelte'} Integration
-				</h2>
-				<p class="text-sm text-gray-900">
-					{framework === 'tailwind'
-						? 'Drop-in preset with real Tailwind classes'
-						: 'Map palette colors to shadcn semantic tokens'}
-				</p>
-			</div>
-		</div>
-
-		<div class="space-y-6">
+{#if isSheet}
+	<!-- Sheet variant: no outer section, compact padding -->
+	<div class="px-6 pb-6">
+		<div class="space-y-4">
 			{#each steps as step, i}
-				<div class="overflow-hidden rounded-xl border border-gray-500 bg-gray-100">
+				<div class="overflow-hidden rounded-lg border border-gray-500 bg-gray-100">
 					<!-- Step header -->
-					<div class="flex items-center gap-3 border-b border-gray-500 px-4 py-3">
+					<div class="flex items-center gap-3 border-b border-gray-500 px-3 py-2">
 						<span
-							class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-800 text-xs font-bold text-white"
+							class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-800 text-xs font-bold text-white"
 						>
 							{i + 1}
 						</span>
-						<span class="font-medium text-gray-950">{step.title}</span>
+						<span class="text-sm font-medium text-gray-950">{step.title}</span>
 					</div>
 
 					<!-- Code block -->
-					<div class="bg-gray-50 p-4">
+					<div class="bg-gray-50 p-3">
 						<pre
-							class="overflow-x-auto text-sm"><code class="text-gray-950">{step.code}</code></pre>
+							class="overflow-x-auto text-xs"><code class="text-gray-950">{step.code}</code></pre>
 					</div>
 
 					<!-- Description -->
-					<div class="flex items-center gap-2 border-t border-gray-500 px-4 py-3">
-						<Check class="h-4 w-4 text-green-900" />
-						<span class="text-sm text-gray-900">{step.description}</span>
+					<div class="flex items-start gap-2 border-t border-gray-500 px-3 py-2">
+						<Check class="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-900" />
+						<span class="text-xs text-gray-900">{step.description}</span>
 					</div>
 				</div>
 			{/each}
 		</div>
 
 		<!-- Key insight -->
-		<div class="mt-8 rounded-xl border border-primary-500 bg-primary-200/50 p-4">
-			<div class="flex gap-3">
-				<Palette class="mt-0.5 h-5 w-5 shrink-0 text-primary-900" />
+		<div class="mt-6 rounded-lg border border-primary-500 bg-primary-200/50 p-3">
+			<div class="flex gap-2">
+				<Palette class="mt-0.5 h-4 w-4 shrink-0 text-primary-900" />
 				<div>
-					<p class="font-medium text-primary-950">The magic: same code, any brand</p>
-					<p class="mt-1 text-sm text-primary-900">
+					<p class="text-sm font-medium text-primary-950">The magic: same code, any brand</p>
+					<p class="mt-1 text-xs text-primary-900">
 						{framework === 'tailwind'
-							? 'Switch brand colors by swapping the CSS preset. All your Tailwind classes stay the same - only the CSS variables change. Inspect element shows real OKLCH values!'
+							? 'Switch brand colors by swapping the CSS preset. All your Tailwind classes stay the same - only the CSS variables change.'
 							: 'Your shadcn components never change. Regenerate the palette with new brand colors, and the entire UI transforms automatically.'}
 					</p>
 				</div>
 			</div>
 		</div>
 	</div>
-</section>
+{:else}
+	<!-- Section variant: full page section with borders -->
+	<section class="border-b border-gray-500 bg-gray-50 px-6 py-12">
+		<div class="mx-auto max-w-4xl">
+			<div class="mb-8 flex items-center gap-3">
+				<div class="rounded-lg bg-primary-200/50 p-2">
+					<Terminal class="h-5 w-5 text-primary-900" />
+				</div>
+				<div>
+					<h2 class="text-xl font-bold text-gray-950">
+						{framework === 'tailwind' ? 'Tailwind CSS v4' : 'shadcn-svelte'} Integration
+					</h2>
+					<p class="text-sm text-gray-900">
+						{framework === 'tailwind'
+							? 'Drop-in preset with real Tailwind classes'
+							: 'Map palette colors to shadcn semantic tokens'}
+					</p>
+				</div>
+			</div>
+
+			<div class="space-y-6">
+				{#each steps as step, i}
+					<div class="overflow-hidden rounded-xl border border-gray-500 bg-gray-100">
+						<!-- Step header -->
+						<div class="flex items-center gap-3 border-b border-gray-500 px-4 py-3">
+							<span
+								class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-800 text-xs font-bold text-white"
+							>
+								{i + 1}
+							</span>
+							<span class="font-medium text-gray-950">{step.title}</span>
+						</div>
+
+						<!-- Code block -->
+						<div class="bg-gray-50 p-4">
+							<pre
+								class="overflow-x-auto text-sm"><code class="text-gray-950">{step.code}</code></pre>
+						</div>
+
+						<!-- Description -->
+						<div class="flex items-center gap-2 border-t border-gray-500 px-4 py-3">
+							<Check class="h-4 w-4 text-green-900" />
+							<span class="text-sm text-gray-900">{step.description}</span>
+						</div>
+					</div>
+				{/each}
+			</div>
+
+			<!-- Key insight -->
+			<div class="mt-8 rounded-xl border border-primary-500 bg-primary-200/50 p-4">
+				<div class="flex gap-3">
+					<Palette class="mt-0.5 h-5 w-5 shrink-0 text-primary-900" />
+					<div>
+						<p class="font-medium text-primary-950">The magic: same code, any brand</p>
+						<p class="mt-1 text-sm text-primary-900">
+							{framework === 'tailwind'
+								? 'Switch brand colors by swapping the CSS preset. All your Tailwind classes stay the same - only the CSS variables change. Inspect element shows real OKLCH values!'
+								: 'Your shadcn components never change. Regenerate the palette with new brand colors, and the entire UI transforms automatically.'}
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{/if}

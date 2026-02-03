@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { mode, setMode } from 'mode-watcher';
-	import { Sun, Moon, Palette } from 'lucide-svelte';
+	import { Sun, Moon, Code2 } from 'lucide-svelte';
 	import DemoBrandSwitcher from '$lib/components/demos/DemoBrandSwitcher.svelte';
+	import IntegrationGuide from '$lib/components/demos/IntegrationGuide.svelte';
+	import * as Sheet from '$lib/components/ui/sheet';
 	import { usePresetId, getPresetStylesheetUrl } from '$lib/stores/demo-preset.svelte';
 	import { page } from '$app/state';
 
 	let { children } = $props();
+
+	// Sheet state
+	let sheetOpen = $state(false);
 
 	// Preset state for stylesheet swapping
 	const preset = usePresetId();
@@ -17,6 +22,9 @@
 	// Current route for tab highlight
 	const isTailwindRoute = $derived(page.url.pathname.includes('/tailwind'));
 	const isShadcnRoute = $derived(page.url.pathname.includes('/shadcn'));
+
+	// Current framework for integration guide
+	const currentFramework = $derived(isShadcnRoute ? 'shadcn' : 'tailwind');
 </script>
 
 <svelte:head>
@@ -36,12 +44,8 @@
 	<div class="sticky top-14 z-40 border-b bg-background/95 backdrop-blur">
 		<div class="w-full px-4 py-3 lg:container lg:mx-auto">
 			<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-				<!-- Left: Demo type tabs -->
-				<div class="flex items-center gap-4">
-					<div class="flex items-center gap-2">
-						<Palette class="h-4 w-4 text-muted-foreground" />
-						<span class="text-sm font-semibold">Framework Demos</span>
-					</div>
+				<!-- Left: Framework tabs + Integration button -->
+				<div class="flex items-center gap-2">
 					<nav class="flex items-center gap-1">
 						<a
 							href="/demos/tailwind"
@@ -62,6 +66,16 @@
 							shadcn-svelte
 						</a>
 					</nav>
+
+					<!-- Integration button -->
+					<button
+						type="button"
+						onclick={() => (sheetOpen = true)}
+						class="flex items-center gap-1.5 rounded-md border border-primary-600 bg-primary-100 px-3 py-1.5 text-sm font-medium text-primary-900 transition-colors hover:bg-primary-200"
+					>
+						<Code2 class="h-4 w-4" />
+						<span>Integration</span>
+					</button>
 				</div>
 
 				<!-- Right: Brand switcher + mode toggle -->
@@ -103,3 +117,22 @@
 		{@render children()}
 	</div>
 </div>
+
+<!-- Implementation Guide Sheet -->
+<Sheet.Root bind:open={sheetOpen}>
+	<Sheet.Content side="right" class="w-full overflow-y-auto sm:max-w-xl">
+		<Sheet.Header>
+			<Sheet.Title>
+				{currentFramework === 'tailwind' ? 'Tailwind CSS v4' : 'shadcn-svelte'} Integration
+			</Sheet.Title>
+			<Sheet.Description>
+				{currentFramework === 'tailwind'
+					? 'Drop-in preset with real Tailwind classes'
+					: 'Map palette colors to shadcn semantic tokens'}
+			</Sheet.Description>
+		</Sheet.Header>
+		<div class="mt-6 overflow-y-auto">
+			<IntegrationGuide framework={currentFramework} variant="sheet" />
+		</div>
+	</Sheet.Content>
+</Sheet.Root>

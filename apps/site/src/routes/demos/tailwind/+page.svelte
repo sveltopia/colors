@@ -1,6 +1,5 @@
 <script lang="ts">
 	import MiniHero from '$lib/components/demos/MiniHero.svelte';
-	import IntegrationGuide from '$lib/components/demos/IntegrationGuide.svelte';
 	import WebAppComponents from '$lib/components/demos/WebAppComponents.svelte';
 	import ProductCards from '$lib/components/demos/ProductCards.svelte';
 	import AlphaShowcase from '$lib/components/demos/AlphaShowcase.svelte';
@@ -21,9 +20,6 @@
 <div class="min-h-screen">
 	<!-- Section 1: Mini Hero -->
 	<MiniHero />
-
-	<!-- Integration Guide: How to set up Tailwind with generated colors -->
-	<IntegrationGuide framework="tailwind" />
 
 	<!-- Section 2: Web-App Components -->
 	<WebAppComponents />
