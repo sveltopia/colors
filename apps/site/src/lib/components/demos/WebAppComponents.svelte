@@ -3,6 +3,7 @@
 
 	let emailValue = $state('');
 	let passwordValue = $state('');
+	let rememberMe = $state(true);
 	let notificationsEnabled = $state(true);
 	let marketingEnabled = $state(false);
 	let activeTab = $state('account');
@@ -48,6 +49,28 @@
 						/>
 					</div>
 
+					<!-- Remember me checkbox -->
+					<div class="flex items-center gap-2">
+						<button
+							type="button"
+							onclick={() => (rememberMe = !rememberMe)}
+							class="flex h-5 w-5 items-center justify-center rounded border transition-colors {rememberMe
+								? 'border-primary-800 bg-primary-800'
+								: 'border-gray-600 bg-gray-50'}"
+						>
+							{#if rememberMe}
+								<Check class="h-3.5 w-3.5 text-white" />
+							{/if}
+						</button>
+						<label
+							for="remember"
+							class="text-sm text-gray-900 cursor-pointer select-none"
+							onclick={() => (rememberMe = !rememberMe)}
+						>
+							Remember me
+						</label>
+					</div>
+
 					<button
 						type="submit"
 						class="w-full rounded-lg bg-primary-800 py-2.5 font-medium text-white transition-colors hover:bg-primary-850"
@@ -56,7 +79,7 @@
 					</button>
 				</form>
 
-				<!-- Toggle Switches -->
+				<!-- Toggle Switches (using secondary color) -->
 				<div class="mt-6 space-y-3 border-t border-gray-500 pt-6">
 					<div class="flex items-center justify-between">
 						<span class="text-sm text-gray-900">Enable notifications</span>
@@ -65,7 +88,7 @@
 							aria-label="Toggle notifications"
 							onclick={() => (notificationsEnabled = !notificationsEnabled)}
 							class="relative h-6 w-11 rounded-full transition-colors {notificationsEnabled
-								? 'bg-primary-800'
+								? 'bg-secondary-800'
 								: 'bg-gray-500'}"
 						>
 							<span
@@ -82,7 +105,7 @@
 							aria-label="Toggle marketing emails"
 							onclick={() => (marketingEnabled = !marketingEnabled)}
 							class="relative h-6 w-11 rounded-full transition-colors {marketingEnabled
-								? 'bg-primary-800'
+								? 'bg-secondary-800'
 								: 'bg-gray-500'}"
 						>
 							<span
@@ -109,7 +132,7 @@
 								onclick={() => (activeTab = tab.id)}
 								class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors {activeTab ===
 								tab.id
-									? 'bg-gray-50 text-gray-950 shadow-sm'
+									? 'bg-gray-50 text-primary-900 shadow-sm'
 									: 'text-gray-900 hover:text-gray-950'}"
 							>
 								<svelte:component this={tab.icon} class="h-4 w-4" />
@@ -177,6 +200,85 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<!-- Data Table -->
+		<div class="mt-8 rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm">
+			<h3 class="mb-4 text-lg font-semibold text-gray-950">Team Members</h3>
+			<div class="overflow-x-auto">
+				<table class="w-full text-sm">
+					<thead>
+						<tr class="border-b border-gray-500">
+							<th class="pb-3 pl-3 text-left font-medium text-gray-900">Name</th>
+							<th class="pb-3 text-left font-medium text-gray-900">Role</th>
+							<th class="pb-3 text-left font-medium text-gray-900">Status</th>
+							<th class="pb-3 pr-3 text-right font-medium text-gray-900">Actions</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-gray-400">
+						<tr class="hover:bg-gray-200/50">
+							<td class="py-3 pl-3">
+								<div class="flex items-center gap-3">
+									<div class="h-8 w-8 rounded-full bg-primary-300 flex items-center justify-center text-primary-900 font-medium text-xs">JD</div>
+									<span class="text-gray-950">Jane Doe</span>
+								</div>
+							</td>
+							<td class="py-3 text-gray-900">Admin</td>
+							<td class="py-3">
+								<span class="inline-flex items-center rounded-full bg-green-200/50 px-2 py-0.5 text-xs font-medium text-green-900">Active</span>
+							</td>
+							<td class="py-3 pr-3 text-right">
+								<button class="text-primary-800 hover:text-primary-900 font-medium">Edit</button>
+							</td>
+						</tr>
+						<tr class="hover:bg-gray-200/50">
+							<td class="py-3 pl-3">
+								<div class="flex items-center gap-3">
+									<div class="h-8 w-8 rounded-full bg-secondary-300 flex items-center justify-center text-secondary-900 font-medium text-xs">AS</div>
+									<span class="text-gray-950">Alex Smith</span>
+								</div>
+							</td>
+							<td class="py-3 text-gray-900">Developer</td>
+							<td class="py-3">
+								<span class="inline-flex items-center rounded-full bg-green-200/50 px-2 py-0.5 text-xs font-medium text-green-900">Active</span>
+							</td>
+							<td class="py-3 pr-3 text-right">
+								<button class="text-primary-800 hover:text-primary-900 font-medium">Edit</button>
+							</td>
+						</tr>
+						<tr class="hover:bg-gray-200/50">
+							<td class="py-3 pl-3">
+								<div class="flex items-center gap-3">
+									<div class="h-8 w-8 rounded-full bg-tertiary-300 flex items-center justify-center text-tertiary-900 font-medium text-xs">MJ</div>
+									<span class="text-gray-950">Mike Johnson</span>
+								</div>
+							</td>
+							<td class="py-3 text-gray-900">Designer</td>
+							<td class="py-3">
+								<span class="inline-flex items-center rounded-full bg-amber-200/50 px-2 py-0.5 text-xs font-medium text-amber-900">Away</span>
+							</td>
+							<td class="py-3 pr-3 text-right">
+								<button class="text-primary-800 hover:text-primary-900 font-medium">Edit</button>
+							</td>
+						</tr>
+						<tr class="hover:bg-gray-200/50">
+							<td class="py-3 pl-3">
+								<div class="flex items-center gap-3">
+									<div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-900 font-medium text-xs">SL</div>
+									<span class="text-gray-950">Sarah Lee</span>
+								</div>
+							</td>
+							<td class="py-3 text-gray-900">Marketing</td>
+							<td class="py-3">
+								<span class="inline-flex items-center rounded-full bg-gray-200/50 px-2 py-0.5 text-xs font-medium text-gray-900">Offline</span>
+							</td>
+							<td class="py-3 pr-3 text-right">
+								<button class="text-primary-800 hover:text-primary-900 font-medium">Edit</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>

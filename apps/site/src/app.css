@@ -6,14 +6,18 @@
 @plugin '@tailwindcss/typography';
 
 /*
- * Color Theme Registration
+ * Color Theme Registration (Runtime Theming Pattern)
  *
- * This registers all color utilities for Tailwind v4.
- * Actual values come from preset CSS files (/static/presets/*.css)
- * which define --color-{hue}-{step} variables.
+ * These self-referencing declarations (--color-x: var(--color-x)) tell
+ * Tailwind to generate utilities (bg-gray-50, text-gray-50, etc.) that
+ * resolve to CSS variables at runtime.
  *
- * Using @theme (non-inline) so utilities reference CSS variables,
- * allowing runtime preset switching.
+ * The actual values are provided by preset stylesheets loaded via <link>
+ * (see /static/presets/*.css). This enables instant theme switching
+ * without rebuilding - just swap the stylesheet href.
+ *
+ * This is NOT the typical @theme usage (which embeds values directly),
+ * but is intentional for our runtime preset system.
  */
 @theme {
   /* Gray */

@@ -349,24 +349,52 @@ export function exportTailwindV4CSS(
 		}
 	}
 
-	// Add semantic role aliases for light mode
+	// Add semantic role aliases for light mode (with backfill for missing accents)
 	if (includeSemanticRoles) {
 		const anchors = safePalette._meta.tuningProfile.anchors || {};
 		const anchorEntries = Object.entries(anchors);
-		const semanticRoles = ['primary', 'secondary', 'tertiary'];
 
-		anchorEntries.forEach(([, anchor], index) => {
-			if (index >= semanticRoles.length) return;
-			const role = semanticRoles[index];
-			const hue = anchor.slot;
+		// Backfill logic:
+		// 1 accent: primary = secondary = tertiary
+		// 2 accents: primary = secondary = A1, tertiary = A2
+		// 3+ accents: primary = A1, secondary = A2, tertiary = A3
+		let primaryHue: string;
+		let secondaryHue: string;
+		let tertiaryHue: string;
 
+		if (anchorEntries.length >= 3) {
+			primaryHue = anchorEntries[0][1].slot;
+			secondaryHue = anchorEntries[1][1].slot;
+			tertiaryHue = anchorEntries[2][1].slot;
+		} else if (anchorEntries.length === 2) {
+			primaryHue = anchorEntries[0][1].slot;
+			secondaryHue = anchorEntries[0][1].slot;
+			tertiaryHue = anchorEntries[1][1].slot;
+		} else if (anchorEntries.length === 1) {
+			primaryHue = anchorEntries[0][1].slot;
+			secondaryHue = anchorEntries[0][1].slot;
+			tertiaryHue = anchorEntries[0][1].slot;
+		} else {
+			// No anchors - use gray as fallback
+			primaryHue = 'gray';
+			secondaryHue = 'gray';
+			tertiaryHue = 'gray';
+		}
+
+		const roleMapping = [
+			{ role: 'primary', hue: primaryHue },
+			{ role: 'secondary', hue: secondaryHue },
+			{ role: 'tertiary', hue: tertiaryHue }
+		];
+
+		for (const { role, hue } of roleMapping) {
 			lines.push('');
 			lines.push(`  /* ${role} = ${hue} */`);
 			for (let step = 1; step <= 12; step++) {
 				const tailwindStep = RADIX_TO_TAILWIND[step];
 				lines.push(`  --color-${role}-${tailwindStep}: var(--color-${hue}-${tailwindStep});`);
 			}
-		});
+		}
 	}
 
 	lines.push('}');
@@ -385,24 +413,52 @@ export function exportTailwindV4CSS(
 		}
 	}
 
-	// Add semantic role aliases for dark mode
+	// Add semantic role aliases for dark mode (with backfill for missing accents)
 	if (includeSemanticRoles) {
 		const anchors = safePalette._meta.tuningProfile.anchors || {};
 		const anchorEntries = Object.entries(anchors);
-		const semanticRoles = ['primary', 'secondary', 'tertiary'];
 
-		anchorEntries.forEach(([, anchor], index) => {
-			if (index >= semanticRoles.length) return;
-			const role = semanticRoles[index];
-			const hue = anchor.slot;
+		// Backfill logic (same as light mode):
+		// 1 accent: primary = secondary = tertiary
+		// 2 accents: primary = secondary = A1, tertiary = A2
+		// 3+ accents: primary = A1, secondary = A2, tertiary = A3
+		let primaryHue: string;
+		let secondaryHue: string;
+		let tertiaryHue: string;
 
+		if (anchorEntries.length >= 3) {
+			primaryHue = anchorEntries[0][1].slot;
+			secondaryHue = anchorEntries[1][1].slot;
+			tertiaryHue = anchorEntries[2][1].slot;
+		} else if (anchorEntries.length === 2) {
+			primaryHue = anchorEntries[0][1].slot;
+			secondaryHue = anchorEntries[0][1].slot;
+			tertiaryHue = anchorEntries[1][1].slot;
+		} else if (anchorEntries.length === 1) {
+			primaryHue = anchorEntries[0][1].slot;
+			secondaryHue = anchorEntries[0][1].slot;
+			tertiaryHue = anchorEntries[0][1].slot;
+		} else {
+			// No anchors - use gray as fallback
+			primaryHue = 'gray';
+			secondaryHue = 'gray';
+			tertiaryHue = 'gray';
+		}
+
+		const roleMapping = [
+			{ role: 'primary', hue: primaryHue },
+			{ role: 'secondary', hue: secondaryHue },
+			{ role: 'tertiary', hue: tertiaryHue }
+		];
+
+		for (const { role, hue } of roleMapping) {
 			lines.push('');
 			lines.push(`  /* ${role} = ${hue} */`);
 			for (let step = 1; step <= 12; step++) {
 				const tailwindStep = RADIX_TO_TAILWIND[step];
 				lines.push(`  --color-${role}-${tailwindStep}: var(--color-${hue}-${tailwindStep});`);
 			}
-		});
+		}
 	}
 
 	lines.push('}');
