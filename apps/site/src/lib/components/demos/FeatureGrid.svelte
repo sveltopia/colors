@@ -93,7 +93,7 @@
 </script>
 
 <!-- Section 6: Full Palette Harmony -->
-<section class="bg-gray-50 px-6 py-20 dark:bg-gray-100">
+<section id="features" class="bg-gray-50 px-6 py-20 dark:bg-gray-100">
 	<div class="mx-auto max-w-6xl">
 		<div class="mb-16 text-center">
 			<h2 class="text-2xl font-bold text-gray-950 sm:text-3xl">Every Color, Perfectly Tuned</h2>
