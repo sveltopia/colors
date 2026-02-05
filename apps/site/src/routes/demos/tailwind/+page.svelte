@@ -6,7 +6,7 @@
 	import GradientSection from '$lib/components/demos/GradientSection.svelte';
 	import FeatureGrid from '$lib/components/demos/FeatureGrid.svelte';
 	import TestimonialBlock from '$lib/components/demos/TestimonialBlock.svelte';
-	import ActionButtons from '$lib/components/demos/ActionButtons.svelte';
+	import DemoFooter from '$lib/components/demos/DemoFooter.svelte';
 </script>
 
 <svelte:head>
@@ -39,6 +39,6 @@
 	<!-- Section 7: Testimonial Block (Dark Mode) -->
 	<TestimonialBlock />
 
-	<!-- Section 8: Action Buttons Row -->
-	<ActionButtons />
+	<!-- Section 8: Demo Footer -->
+	<DemoFooter />
 </div>

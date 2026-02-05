@@ -36,7 +36,7 @@
 		}
 	];
 
-	let favorites = $state<number[]>([]);
+	let favorites = $state<number[]>([1]);
 
 	function toggleFavorite(id: number) {
 		if (favorites.includes(id)) {
@@ -61,9 +61,9 @@
 					class="group overflow-hidden rounded-xl border border-gray-500 bg-gray-50 shadow-sm transition-all hover:border-primary-600 hover:shadow-lg"
 				>
 					<!-- Image Placeholder -->
-					<div class="relative aspect-square bg-gradient-to-br from-gray-200 to-gray-300">
+					<div class="relative aspect-square bg-linear-to-br from-primary-100 to-primary-200">
 						<div
-							class="absolute inset-0 flex items-center justify-center text-4xl text-gray-700"
+							class="absolute inset-0 flex items-center justify-center text-5xl sm:text-6xl lg:text-[8rem] text-gray-700"
 						>
 							{#if product.image === 'headphones'}
 								🎧
@@ -83,7 +83,7 @@
 						>
 							<Heart
 								class="h-5 w-5 transition-colors {favorites.includes(product.id)
-									? 'fill-red-800 text-red-800'
+									? 'fill-primary-800 text-primary-800'
 									: 'text-gray-800'}"
 							/>
 						</button>
@@ -91,7 +91,7 @@
 						<!-- New Badge -->
 						{#if product.id === 3}
 							<span
-								class="absolute left-3 top-3 rounded-full bg-primary-800 px-2.5 py-1 text-xs font-semibold text-white"
+								class="absolute left-3 top-3 rounded-full bg-secondary-800 px-2.5 py-1 text-xs font-semibold text-white"
 							>
 								New
 							</span>

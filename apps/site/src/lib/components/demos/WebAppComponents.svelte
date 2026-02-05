@@ -14,7 +14,6 @@
 	<div class="mx-auto max-w-6xl">
 		<div class="mb-12 text-center">
 			<h2 class="text-2xl font-bold text-gray-950 sm:text-3xl">Web App Components</h2>
-			<p class="mt-2 text-gray-900">Forms, toggles, tabs, and alert banners</p>
 		</div>
 
 		<div class="grid gap-8 lg:grid-cols-2">
@@ -62,13 +61,7 @@
 								<Check class="h-3.5 w-3.5 text-white" />
 							{/if}
 						</button>
-						<label
-							for="remember"
-							class="text-sm text-gray-900 cursor-pointer select-none"
-							onclick={() => (rememberMe = !rememberMe)}
-						>
-							Remember me
-						</label>
+						<span class="text-sm text-gray-900 select-none">Remember me</span>
 					</div>
 
 					<button
@@ -135,7 +128,7 @@
 									? 'bg-gray-50 text-primary-900 shadow-sm'
 									: 'text-gray-900 hover:text-gray-950'}"
 							>
-								<svelte:component this={tab.icon} class="h-4 w-4" />
+								<tab.icon class="h-4 w-4" />
 								{tab.label}
 							</button>
 						{/each}

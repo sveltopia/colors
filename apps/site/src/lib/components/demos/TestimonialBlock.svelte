@@ -6,13 +6,13 @@
 <section class="dark relative overflow-hidden bg-gray-50 px-6 py-16">
 	<!-- Subtle glow effect using primary color -->
 	<div
-		class="absolute left-1/2 top-0 h-64 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-800/20"
+		class="absolute left-1/2 top-0 h-64 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-800/10"
 	></div>
 
 	<div class="relative mx-auto max-w-4xl">
 		<div class="text-center">
-			<!-- Quote icon -->
-			<div class="mb-8 inline-flex rounded-full bg-primary-200/50 p-4">
+			<!-- Quote icon (pulled up into burst area) -->
+			<div class="-mt-4 mb-8 inline-flex rounded-full bg-primary-800/10 p-4">
 				<Quote class="h-8 w-8 text-primary-800" />
 			</div>
 
@@ -25,9 +25,10 @@
 
 			<!-- Author -->
 			<div class="mt-8 flex items-center justify-center gap-4">
-				<!-- Avatar -->
+				<!-- Avatar: primary to primary-adjacent gradient -->
 				<div
-					class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-800 to-amber-800 text-xl font-bold text-white"
+					class="flex h-14 w-14 items-center justify-center rounded-full text-xl font-bold text-white"
+					style="background: linear-gradient(to bottom right, var(--color-primary-800), var(--color-primary-adjacent-800));"
 				>
 					JD
 				</div>
@@ -43,7 +44,7 @@
 				<p class="mb-4 text-sm text-gray-900">Trusted by teams at</p>
 				<div class="flex flex-wrap items-center justify-center gap-8">
 					{#each ['Acme Inc', 'TechCorp', 'Designly', 'BuildFast'] as company}
-						<span class="text-lg font-semibold text-gray-800">{company}</span>
+						<span class="text-lg font-semibold text-secondary-800">{company}</span>
 					{/each}
 				</div>
 			</div>

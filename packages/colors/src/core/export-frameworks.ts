@@ -56,6 +56,61 @@ const RADIX_TO_TAILWIND: Record<number, string> = {
 	12: '950'
 };
 
+/**
+ * Maps each Radix hue to its adjacent hue on the color wheel.
+ * Used for harmonious gradient generation (secondary → adjacent target).
+ */
+const ADJACENT_HUE_MAP: Record<string, string> = {
+	// Warm reds → oranges
+	red: 'tomato',
+	tomato: 'orange',
+	orange: 'amber',
+	amber: 'yellow',
+	yellow: 'lime',
+
+	// Greens
+	lime: 'green',
+	green: 'teal',
+	grass: 'green',
+
+	// Cool blues
+	teal: 'cyan',
+	cyan: 'sky',
+	sky: 'blue',
+	blue: 'indigo',
+	indigo: 'violet',
+	iris: 'indigo',
+	violet: 'purple',
+	purple: 'plum',
+	plum: 'violet',
+
+	// Pinks
+	pink: 'plum',
+	crimson: 'pink',
+	ruby: 'crimson',
+
+	// Neutrals - pick warm or cool adjacent
+	gray: 'slate',
+	mauve: 'plum',
+	slate: 'blue',
+	sage: 'green',
+	olive: 'grass',
+	sand: 'amber',
+
+	// Browns/golds
+	gold: 'amber',
+	bronze: 'gold',
+	brown: 'orange'
+};
+
+/**
+ * Get the adjacent hue for gradient purposes.
+ * Falls back to amber if hue not found.
+ */
+function getAdjacentHue(hue: string): string {
+	return ADJACENT_HUE_MAP[hue] || 'amber';
+}
+
 // =============================================================================
 // Tailwind Export
 // =============================================================================
@@ -381,10 +436,16 @@ export function exportTailwindV4CSS(
 			tertiaryHue = 'gray';
 		}
 
+		// Adjacent hues for harmonious gradients
+		const primaryAdjacentHue = getAdjacentHue(primaryHue);
+		const secondaryAdjacentHue = getAdjacentHue(secondaryHue);
+
 		const roleMapping = [
 			{ role: 'primary', hue: primaryHue },
 			{ role: 'secondary', hue: secondaryHue },
-			{ role: 'tertiary', hue: tertiaryHue }
+			{ role: 'tertiary', hue: tertiaryHue },
+			{ role: 'primary-adjacent', hue: primaryAdjacentHue },
+			{ role: 'adjacent', hue: secondaryAdjacentHue }
 		];
 
 		for (const { role, hue } of roleMapping) {
@@ -445,10 +506,16 @@ export function exportTailwindV4CSS(
 			tertiaryHue = 'gray';
 		}
 
+		// Adjacent hues for harmonious gradients
+		const primaryAdjacentHue = getAdjacentHue(primaryHue);
+		const secondaryAdjacentHue = getAdjacentHue(secondaryHue);
+
 		const roleMapping = [
 			{ role: 'primary', hue: primaryHue },
 			{ role: 'secondary', hue: secondaryHue },
-			{ role: 'tertiary', hue: tertiaryHue }
+			{ role: 'tertiary', hue: tertiaryHue },
+			{ role: 'primary-adjacent', hue: primaryAdjacentHue },
+			{ role: 'adjacent', hue: secondaryAdjacentHue }
 		];
 
 		for (const { role, hue } of roleMapping) {

@@ -37,7 +37,7 @@
           <div class="flex items-center gap-2">
             <span class="font-semibold">Colors</span>
             <span
-              class="rounded-md border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold text-orange-700 dark:text-orange-400"
+              class="rounded-md border border-primary-800/20 bg-primary-800/10 px-2 py-0.5 text-xs font-semibold text-primary-800"
               >v0.1.0</span
             >
           </div>
@@ -106,7 +106,7 @@
             <div class="flex items-center gap-2 px-4">
               <span class="font-semibold">Colors</span>
               <span
-                class="rounded-md border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold text-orange-700 dark:text-orange-400"
+                class="rounded-md border border-primary-800/20 bg-primary-800/10 px-2 py-0.5 text-xs font-semibold text-primary-800"
                 >v0.1.0</span
               >
               <nav class="flex items-center space-x-1 pl-8 text-sm font-medium">
@@ -115,7 +115,7 @@
                   class="border-b-3 px-3 py-2 transition-colors hover:text-foreground/80 {page.url.pathname.startsWith(
                     '/docs'
                   )
-                    ? 'border-orange-500/75'
+                    ? 'border-primary-800'
                     : 'border-transparent'}">Docs</a
                 >
                 <a
@@ -123,7 +123,7 @@
                   class="border-b-3 px-3 py-2 transition-colors hover:text-foreground/80 {page.url.pathname.startsWith(
                     '/playground'
                   )
-                    ? 'border-orange-500/75'
+                    ? 'border-primary-800'
                     : 'border-transparent'}">Playground</a
                 >
                 <a
@@ -131,7 +131,7 @@
                   class="border-b-3 px-3 py-2 transition-colors hover:text-foreground/80 {page.url.pathname.startsWith(
                     '/demos'
                   )
-                    ? 'border-orange-500/75'
+                    ? 'border-primary-800'
                     : 'border-transparent'}">Demos</a
                 >
                 <a
