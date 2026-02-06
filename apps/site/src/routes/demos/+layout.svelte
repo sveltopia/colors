@@ -42,7 +42,7 @@
 <div class="flex flex-col">
 	<!-- Demo Sub-Header with Brand Switcher -->
 	<div class="sticky top-14 z-40 border-b bg-background/95 backdrop-blur">
-		<div class="w-full px-4 py-3 lg:container lg:mx-auto">
+		<div class="w-full px-6 py-3 lg:container lg:mx-auto">
 			<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 				<!-- Left: Framework tabs + Integration button -->
 				<div class="flex items-center gap-2">

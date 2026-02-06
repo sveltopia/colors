@@ -16,7 +16,7 @@
 </script>
 
 <!-- Section 8: Demo Footer (follows page theme) -->
-<footer class="bg-gray-100 px-6 py-12 dark:bg-gray-50">
+<footer class="overflow-hidden bg-gray-100 px-6 py-12 dark:bg-gray-50">
 	<div class="mx-auto max-w-6xl">
 		<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-6">
 			<!-- Brand Column -->

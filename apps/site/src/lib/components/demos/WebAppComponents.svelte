@@ -10,7 +10,7 @@
 </script>
 
 <!-- Section 2: Web-App Components -->
-<section class="bg-gray-50 px-6 py-16">
+<section class="overflow-hidden bg-gray-50 px-6 py-16">
 	<div class="mx-auto max-w-6xl">
 		<div class="mb-12 text-center">
 			<h2 class="text-2xl font-bold text-gray-950 sm:text-3xl">Web App Components</h2>
@@ -18,7 +18,7 @@
 
 		<div class="grid gap-8 lg:grid-cols-2">
 			<!-- Login Form Card -->
-			<div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm">
+			<div class="min-w-0 rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm">
 				<h3 class="mb-6 text-lg font-semibold text-gray-950">Sign In</h3>
 
 				<form class="space-y-4">
@@ -112,7 +112,7 @@
 			</div>
 
 			<!-- Tabs + Alerts -->
-			<div class="space-y-6">
+			<div class="min-w-0 space-y-6">
 				<!-- Tab Navigation -->
 				<div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm">
 					<div class="mb-4 flex gap-1 rounded-lg bg-gray-200 p-1">
@@ -123,13 +123,13 @@
 						] as tab (tab.id)}
 							<button
 								onclick={() => (activeTab = tab.id)}
-								class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors {activeTab ===
+								class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors sm:px-3 {activeTab ===
 								tab.id
 									? 'bg-gray-50 text-primary-900 shadow-sm'
 									: 'text-gray-900 hover:text-gray-950'}"
 							>
-								<tab.icon class="h-4 w-4" />
-								{tab.label}
+								<tab.icon class="h-4 w-4 shrink-0" />
+								<span class="truncate">{tab.label}</span>
 							</button>
 						{/each}
 					</div>

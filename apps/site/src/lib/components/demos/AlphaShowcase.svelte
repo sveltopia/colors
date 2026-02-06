@@ -10,7 +10,7 @@
 </script>
 
 <!-- Section 4: Alpha Colors Showcase (Critical) -->
-<section class="bg-gray-50 px-6 py-16">
+<section class="overflow-hidden bg-gray-50 px-6 py-16">
 	<div class="mx-auto max-w-6xl">
 		<div class="mb-12 text-center">
 			<h2 class="text-2xl font-bold text-gray-950 sm:text-3xl">Alpha Colors in Action</h2>

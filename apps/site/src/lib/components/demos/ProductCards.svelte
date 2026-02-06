@@ -48,7 +48,7 @@
 </script>
 
 <!-- Section 3: Product Cards Grid -->
-<section class="bg-gray-100 px-6 py-16">
+<section class="overflow-hidden bg-gray-100 px-6 py-16">
 	<div class="mx-auto max-w-6xl">
 		<div class="mb-12 text-center">
 			<h2 class="text-2xl font-bold text-gray-950 sm:text-3xl">Featured Products</h2>
