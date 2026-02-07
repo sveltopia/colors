@@ -4,9 +4,10 @@
 
 <!-- Section 7: Testimonial Block (Forced Dark Mode) -->
 <section class="dark relative overflow-hidden bg-gray-50 px-6 py-16">
-	<!-- Subtle glow effect using primary color -->
+	<!-- Subtle glow effect using primary color (radial gradient for feathered edge) -->
 	<div
-		class="absolute left-1/2 top-0 h-64 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-800/10"
+		class="absolute left-1/2 top-0 h-64 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20"
+		style="background: radial-gradient(circle, var(--color-primary-800), transparent);"
 	></div>
 
 	<div class="relative mx-auto max-w-4xl">
@@ -34,7 +35,7 @@
 				</div>
 
 				<div class="text-left">
-					<div class="font-semibold text-gray-950">Jane Doe</div>
+					<div class="font-semibold text-gray-950">Jane D. Zein</div>
 					<div class="text-sm text-gray-900">Design Lead at TechCorp</div>
 				</div>
 			</div>

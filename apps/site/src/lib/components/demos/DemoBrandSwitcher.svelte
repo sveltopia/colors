@@ -26,7 +26,7 @@
 <div class="flex items-center gap-2">
 	<span class="text-sm font-medium text-muted-foreground">Brand:</span>
 	<Select.Root value={preset.current} onValueChange={handleSelect}>
-		<Select.Trigger class="w-[180px]">
+		<Select.Trigger class="w-45">
 			{#if currentPreset}
 				<div class="flex items-center gap-2">
 					<!-- Color dots -->
