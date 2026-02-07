@@ -11,7 +11,7 @@
  */
 
 import { toOklch, toHex, clampOklch } from '../utils/oklch.js';
-import { BASELINE_HUES, HUE_KEYS } from './hues.js';
+import { BASELINE_HUES, HUE_KEYS, findClosestHueWithDistance } from './hues.js';
 import {
 	generateScaleAPCA,
 	RADIX_REFERENCE_CHROMAS,
@@ -19,6 +19,7 @@ import {
 	RADIX_REFERENCE_CHROMAS_DARK,
 	RADIX_LIGHTNESS_CURVES_DARK,
 	RADIX_HUE_CURVES_DARK,
+	BRIGHT_HUES,
 	type ColorMode
 } from './generate.js';
 import { analyzeBrandColors } from './analyze.js';
@@ -176,6 +177,66 @@ function createTunedParent(
 }
 
 /**
+ * Find the closest non-bright hue slot for a given hue angle.
+ * Used to get monotonic lightness curves for high-chroma custom rows.
+ *
+ * Bright hues (yellow, lime, amber, mint, sky) have non-monotonic lightness
+ * curves where step 9 is LIGHTER than step 8. This is intentional for their
+ * natural pastel-ish appearance, but breaks high-chroma colors that need
+ * step 800 dark enough for white text contrast.
+ *
+ * @param hue - OKLCH hue angle
+ * @returns Closest non-bright hue slot key
+ */
+function findClosestNonBrightSlot(hue: number): string {
+	let closestKey = 'cyan'; // Default fallback
+	let closestDistance = Infinity;
+
+	for (const [key, def] of Object.entries(BASELINE_HUES)) {
+		// Skip bright hues and neutrals
+		if (BRIGHT_HUES.has(key) || def.category === 'neutral') continue;
+
+		const distance = Math.min(Math.abs(hue - def.hue), 360 - Math.abs(hue - def.hue));
+
+		if (distance < closestDistance) {
+			closestDistance = distance;
+			closestKey = key;
+		}
+	}
+
+	return closestKey;
+}
+
+/**
+ * Recalculate anchor step using a specific hue's lightness curve.
+ * Used when switching from a bright hue curve to a non-bright curve.
+ *
+ * @param lightness - OKLCH lightness value
+ * @param hueKey - Hue key for curve lookup
+ * @param mode - Color mode
+ * @returns Best-fit step number (1-12)
+ */
+function recalculateAnchorStep(lightness: number, hueKey: string, mode: ColorMode): number {
+	const curves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+	const curve = curves[hueKey];
+
+	if (!curve) return 9; // Fallback
+
+	let bestStep = 9;
+	let bestDiff = Infinity;
+
+	for (let i = 0; i < curve.length; i++) {
+		const diff = Math.abs(lightness - curve[i]);
+		if (diff < bestDiff) {
+			bestDiff = diff;
+			bestStep = i + 1; // Steps are 1-indexed
+		}
+	}
+
+	return bestStep;
+}
+
+/**
  * Generate a scale for a custom row (out-of-bounds chroma color).
  *
  * Key differences from standard scale generation:
@@ -184,6 +245,11 @@ function createTunedParent(
  * - Pastel colors skip hueShift (too delicate)
  * - Neon colors apply hueShift (robust enough to handle it)
  * - Hue-gap colors skip hueShift (brand's distinct hue is the whole point)
+ *
+ * IMPORTANT: For high-chroma colors, if the nearest slot is a "bright hue"
+ * (yellow, lime, amber, mint, sky), we use the next closest non-bright slot's
+ * curves instead. Bright hues have non-monotonic lightness curves (step 9
+ * lighter than step 8) which makes step 800 unusable for buttons.
  *
  * @param customRow - Custom row info from analysis
  * @param tuning - Tuning profile (for hueShift on neon rows)
@@ -204,26 +270,41 @@ function generateCustomRowScale(
 	// - hue-gap: DON'T apply hueShift (brand's distinct hue is the defining feature)
 	const effectiveHueShift = customRow.reason === 'high-chroma' ? tuning.hueShift : 0;
 
-	// Get the nearest slot's step-9 lightness for proper gamut handling
-	const nearestHue = customRow.nearestSlot;
-	const lightnessCurve = lightnessCurves[nearestHue];
-	const step9Lightness = lightnessCurve ? lightnessCurve[8] : 0.65;
+	// Determine which slot's curves to use for lightness progression
+	// For high-chroma colors: if nearest slot is a bright hue, find alternative
+	// This prevents neon colors from getting non-monotonic curves that make
+	// step 800 unusable for buttons (too light for white text contrast)
+	let curveSlot = customRow.nearestSlot;
+	let anchorStep = customRow.anchorStep;
+
+	if (customRow.reason === 'high-chroma' && BRIGHT_HUES.has(curveSlot)) {
+		curveSlot = findClosestNonBrightSlot(customRow.oklch.h);
+		// CRITICAL: Recalculate anchor step using the new curve's lightness values
+		// The original anchor was calculated using bright-hue curves where step 9
+		// is light (L≈0.86). With monotonic curves, step 9 is dark (L≈0.66),
+		// so a light brand color should anchor at a lighter step (e.g., step 5-6)
+		anchorStep = recalculateAnchorStep(customRow.oklch.l, curveSlot, mode);
+	}
+
+	// Get the curve slot's anchor step lightness for proper gamut handling
+	const lightnessCurve = lightnessCurves[curveSlot];
+	const anchorLightness = lightnessCurve ? lightnessCurve[anchorStep - 1] : 0.65;
 
 	// Create a synthetic parent with the brand's actual chroma (not clamped!)
 	// This is the key difference from standard generation
 	const syntheticParent = toHex(
 		clampOklch({
-			l: step9Lightness,
+			l: anchorLightness,
 			c: customRow.oklch.c, // Use actual brand chroma
 			h: (customRow.oklch.h + effectiveHueShift + 360) % 360
 		})
 	);
 
-	// Generate scale using the custom parent and nearest slot's curves
+	// Generate scale using the custom parent and curve slot's curves
 	const generatedScale = generateScaleAPCA({
 		parentColor: syntheticParent,
-		anchorStep: customRow.anchorStep,
-		hueKey: nearestHue, // Use nearest hue's curves for shape
+		anchorStep: anchorStep,
+		hueKey: curveSlot, // Use curve slot's curves for shape (may differ from nearest)
 		useFullCurve: false, // Respect brand's actual values at anchor
 		mode
 	});
@@ -231,7 +312,7 @@ function generateCustomRowScale(
 	const scale = toScale(generatedScale.steps);
 
 	// Replace anchor step with exact brand hex
-	scale[customRow.anchorStep as keyof Scale] = customRow.originalHex;
+	scale[anchorStep as keyof Scale] = customRow.originalHex;
 
 	return scale;
 }
