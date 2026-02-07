@@ -213,7 +213,7 @@
 						<tr class="hover:bg-gray-200/50">
 							<td class="py-3 pl-3">
 								<div class="flex items-center gap-3">
-									<div class="h-8 w-8 rounded-full bg-primary-300 flex items-center justify-center text-primary-900 font-medium text-xs">JD</div>
+									<div class="h-8 w-8 shrink-0 rounded-full bg-primary-300 flex items-center justify-center text-primary-900 font-medium text-xs">JD</div>
 									<span class="text-gray-950">Jane Doe</span>
 								</div>
 							</td>
@@ -228,7 +228,7 @@
 						<tr class="hover:bg-gray-200/50">
 							<td class="py-3 pl-3">
 								<div class="flex items-center gap-3">
-									<div class="h-8 w-8 rounded-full bg-secondary-300 flex items-center justify-center text-secondary-900 font-medium text-xs">AS</div>
+									<div class="h-8 w-8 shrink-0 rounded-full bg-secondary-300 flex items-center justify-center text-secondary-900 font-medium text-xs">AS</div>
 									<span class="text-gray-950">Alex Smith</span>
 								</div>
 							</td>
@@ -243,7 +243,7 @@
 						<tr class="hover:bg-gray-200/50">
 							<td class="py-3 pl-3">
 								<div class="flex items-center gap-3">
-									<div class="h-8 w-8 rounded-full bg-tertiary-300 flex items-center justify-center text-tertiary-900 font-medium text-xs">MJ</div>
+									<div class="h-8 w-8 shrink-0 rounded-full bg-tertiary-300 flex items-center justify-center text-tertiary-900 font-medium text-xs">MJ</div>
 									<span class="text-gray-950">Mike Johnson</span>
 								</div>
 							</td>
@@ -258,7 +258,7 @@
 						<tr class="hover:bg-gray-200/50">
 							<td class="py-3 pl-3">
 								<div class="flex items-center gap-3">
-									<div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-900 font-medium text-xs">SL</div>
+									<div class="h-8 w-8 shrink-0 rounded-full bg-gray-300 flex items-center justify-center text-gray-900 font-medium text-xs">SL</div>
 									<span class="text-gray-950">Sarah Lee</span>
 								</div>
 							</td>

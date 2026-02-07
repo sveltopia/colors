@@ -14,12 +14,12 @@
 	<!-- Light mode gradient: -900 (step 11, rich text colors) -->
 	<div
 		class="absolute inset-0 dark:hidden"
-		style="background: linear-gradient(to bottom, var(--color-secondary-900), var(--color-adjacent-900));"
+		style="background: linear-gradient(to right, var(--color-secondary-900), var(--color-adjacent-900));"
 	></div>
 	<!-- Dark mode gradient: -500 (step 6, subtle borders - darker in dark mode) -->
 	<div
 		class="absolute inset-0 hidden dark:block"
-		style="background: linear-gradient(to bottom, var(--color-secondary-500), var(--color-adjacent-500));"
+		style="background: linear-gradient(to right, var(--color-secondary-500), var(--color-adjacent-500));"
 	></div>
 
 	<!-- Decorative elements -->

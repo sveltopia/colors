@@ -63,7 +63,7 @@
 					<!-- Image Placeholder -->
 					<div class="relative aspect-square bg-linear-to-br from-primary-100 to-primary-200">
 						<div
-							class="absolute inset-0 flex items-center justify-center text-5xl sm:text-6xl lg:text-[8rem] text-gray-700"
+							class="absolute inset-0 flex items-center justify-center text-[8rem] text-gray-700"
 						>
 							{#if product.image === 'headphones'}
 								🎧

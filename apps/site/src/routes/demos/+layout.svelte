@@ -49,7 +49,7 @@
 					<nav class="flex items-center gap-1">
 						<a
 							href="/demos/tailwind"
-							class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors
+							class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors
                 {isTailwindRoute
 								? 'bg-primary/10 text-primary'
 								: 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
@@ -58,7 +58,7 @@
 						</a>
 						<a
 							href="/demos/shadcn"
-							class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors
+							class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors
                 {isShadcnRoute
 								? 'bg-primary/10 text-primary'
 								: 'text-muted-foreground hover:bg-muted hover:text-foreground'}"

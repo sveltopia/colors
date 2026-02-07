@@ -16,12 +16,12 @@
 </script>
 
 <!-- Section 8: Demo Footer (follows page theme) -->
-<footer class="overflow-hidden bg-gray-100 px-6 py-12 dark:bg-gray-50">
+<footer id="demo-footer" class="overflow-hidden bg-gray-100 px-6 py-12 dark:bg-gray-50">
 	<div class="mx-auto max-w-6xl">
-		<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-6">
+		<div class="grid gap-8 lg:grid-cols-6">
 			<!-- Brand Column -->
 			<div class="lg:col-span-2">
-				<a href="#" class="mb-4 inline-flex items-center gap-2 text-xl font-bold text-secondary-800">
+				<a href="#demo-footer" class="mb-4 inline-flex items-center gap-2 text-xl font-bold text-secondary-800">
 					<SwatchBook class="h-6 w-6" />
 					Sveltopia Colors
 				</a>
@@ -32,7 +32,7 @@
 				<div class="flex gap-4">
 					{#each socialLinks as social (social.label)}
 						<a
-							href="#"
+							href="#demo-footer"
 							class="text-secondary-800 transition-colors hover:text-secondary-900"
 							aria-label={social.label}
 						>
@@ -42,33 +42,35 @@
 				</div>
 			</div>
 
-			<!-- Link Columns -->
-			{#each Object.entries(footerLinks) as [category, links] (category)}
-				<div>
-					<h3 class="mb-4 font-semibold text-secondary-800">{category}</h3>
-					<ul class="space-y-3">
-						{#each links as link (link)}
-							<li>
-								<a
-									href="#"
-									class="text-sm text-gray-800 transition-colors hover:text-gray-950"
-								>
-									{link}
-								</a>
-							</li>
-						{/each}
-					</ul>
-				</div>
-			{/each}
+			<!-- Link Columns (2-up on mobile) -->
+			<div class="col-span-full grid grid-cols-2 gap-8 lg:col-span-4 lg:grid-cols-4">
+				{#each Object.entries(footerLinks) as [category, links] (category)}
+					<div>
+						<h3 class="mb-4 font-semibold text-secondary-800">{category}</h3>
+						<ul class="space-y-3">
+							{#each links as link (link)}
+								<li>
+									<a
+										href="#demo-footer"
+										class="text-sm text-gray-800 transition-colors hover:text-gray-950"
+									>
+										{link}
+									</a>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/each}
+			</div>
 		</div>
 
 		<!-- Bottom Bar -->
 		<div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-500 pt-8 sm:flex-row">
 			<p class="text-sm text-gray-800">
-				&copy; {new Date().getFullYear()} Sveltopia. All rights reserved.
+				&copy; {new Date().getFullYear()} <a href="https://colors.sveltopia.dev" class="text-secondary-800 hover:text-secondary-900">Sveltopia</a>. All rights reserved.
 			</p>
 			<p class="text-sm text-gray-700">
-				Built with the generated color system
+				Built with the <a href="https://github.com/sveltopia/colors" class="text-secondary-800 hover:text-secondary-900">generated color system</a>
 			</p>
 		</div>
 	</div>
