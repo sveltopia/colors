@@ -18,7 +18,7 @@ program
 	.option('-c, --colors <colors>', 'Comma-separated brand colors (e.g., "#FF4F00,#1A1A1A")')
 	.option('--config <path>', 'Path to config file (default: colors.config.json)')
 	.option('-o, --output <dir>', 'Output directory (default: ./colors)')
-	.option('-f, --format <formats>', 'Output formats: css,json,tailwind,radix,panda or "all" (default: css,json)')
+	.option('-f, --format <formats>', 'Output formats: css,json,tailwind,radix,panda,shadcn or "all" (default: css,json)')
 	.option('-p, --prefix <prefix>', 'CSS variable prefix (e.g., "my-" for --my-red-9)')
 	.option('-v, --verbose', 'Show detailed generation info (tuning profile, anchors, custom rows)')
 	.option('--dry-run', 'Preview what would be generated without writing files')

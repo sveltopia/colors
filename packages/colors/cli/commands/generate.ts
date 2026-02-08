@@ -16,7 +16,8 @@ import {
 	exportJSON,
 	exportTailwind,
 	exportRadix,
-	exportPanda
+	exportPanda,
+	exportShadcn
 } from '@sveltopia/colors';
 import type { Palette, BrandColorInfo } from '@sveltopia/colors';
 
@@ -170,6 +171,9 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
 		if (config.formats.includes('panda')) {
 			log.info(`Would write: ${resolve(config.outputDir)}/panda.preset.ts`);
 		}
+		if (config.formats.includes('shadcn')) {
+			log.info(`Would write: ${resolve(config.outputDir)}/shadcn-colors.css`);
+		}
 		log.info('');
 		log.success('Dry-run complete - no files written');
 		return;
@@ -227,6 +231,15 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
 		const pandaPath = join(outputDir, 'panda.preset.ts');
 		await writeFile(pandaPath, panda, 'utf-8');
 		s.stop(`Panda CSS preset exported to ${pandaPath}`);
+	}
+
+	// Export shadcn
+	if (config.formats.includes('shadcn')) {
+		s.start('Exporting shadcn CSS');
+		const shadcn = exportShadcn(palette);
+		const shadcnPath = join(outputDir, 'shadcn-colors.css');
+		await writeFile(shadcnPath, shadcn, 'utf-8');
+		s.stop(`shadcn CSS exported to ${shadcnPath}`);
 	}
 
 	log.success(`Palette generated successfully!`);

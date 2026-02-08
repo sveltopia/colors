@@ -498,15 +498,18 @@
 }
 
 /*
- * shadcn-svelte Semantic Tokens
+ * shadcn Semantic Token Defaults
  *
- * These map to the palette for component theming.
- * Uses primary-800 as the main accent (Radix step 9).
+ * These provide baseline values for the site chrome (layout, nav, etc.)
+ * which uses shadcn classes regardless of which demo is active.
+ *
+ * When a shadcn preset is loaded, its :root block overrides these values.
+ * When a Tailwind preset is loaded, these defaults keep the site chrome
+ * functional.
  */
 :root {
   --radius: 0.625rem;
 
-  /* Semantic tokens using Sveltopia Colors palette */
   --background: var(--color-slate-50);
   --foreground: var(--color-slate-950);
   --card: var(--color-slate-50);
@@ -574,6 +577,12 @@
   --sidebar-ring: var(--color-primary-700);
 }
 
+/*
+ * shadcn Semantic Utility Registration
+ *
+ * Maps semantic tokens to Tailwind utilities (bg-background, text-foreground, etc.).
+ * Same for ALL presets — only the token values above differ per preset.
+ */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

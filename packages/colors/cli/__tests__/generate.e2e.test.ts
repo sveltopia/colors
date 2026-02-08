@@ -168,6 +168,30 @@ describe('CLI Generate Command E2E Tests', () => {
 			expect(content).toContain('"accent":');
 		});
 
+		it('generates shadcn CSS when format is shadcn', async () => {
+			await execAsync(
+				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format shadcn`,
+				{ cwd: path.join(__dirname, '../..') }
+			);
+
+			const shadcnPath = path.join(testDir, 'shadcn-colors.css');
+			const shadcnExists = await fs.access(shadcnPath).then(() => true).catch(() => false);
+			expect(shadcnExists).toBe(true);
+
+			const content = await fs.readFile(shadcnPath, 'utf-8');
+			// Should have base Tailwind v4 color scales
+			expect(content).toContain('--color-orange-800:');
+			expect(content).toContain('@theme {');
+			// Should have shadcn semantic tokens
+			expect(content).toContain('--background: var(--color-slate-50);');
+			expect(content).toContain('--primary: var(--color-primary-800);');
+			expect(content).toContain('--destructive: var(--color-red-800);');
+			// Should have @theme inline block
+			expect(content).toContain('@theme inline {');
+			expect(content).toContain('--radius-sm:');
+			expect(content).toContain('--color-background: var(--background);');
+		});
+
 		it('generates multiple formats with comma-separated values', async () => {
 			await execAsync(
 				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format css,tailwind,radix`,
@@ -196,12 +220,14 @@ describe('CLI Generate Command E2E Tests', () => {
 			const tailwindExists = await fs.access(path.join(testDir, 'tailwind.preset.js')).then(() => true).catch(() => false);
 			const radixExists = await fs.access(path.join(testDir, 'radix-colors.js')).then(() => true).catch(() => false);
 			const pandaExists = await fs.access(path.join(testDir, 'panda.preset.ts')).then(() => true).catch(() => false);
+			const shadcnExists = await fs.access(path.join(testDir, 'shadcn-colors.css')).then(() => true).catch(() => false);
 
 			expect(cssExists).toBe(true);
 			expect(jsonExists).toBe(true);
 			expect(tailwindExists).toBe(true);
 			expect(radixExists).toBe(true);
 			expect(pandaExists).toBe(true);
+			expect(shadcnExists).toBe(true);
 		});
 	});
 

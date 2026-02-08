@@ -77,7 +77,8 @@ export async function promptForFormats(): Promise<ExportFormat[]> {
 			{ value: 'json', label: 'JSON', hint: 'Full palette data with hex, oklch, P3' },
 			{ value: 'tailwind', label: 'Tailwind', hint: 'Tailwind CSS preset (50-950 scale)' },
 			{ value: 'radix', label: 'Radix', hint: 'Drop-in @radix-ui/colors replacement' },
-			{ value: 'panda', label: 'Panda CSS', hint: 'Panda CSS preset with semantic tokens' }
+			{ value: 'panda', label: 'Panda CSS', hint: 'Panda CSS preset with semantic tokens' },
+			{ value: 'shadcn', label: 'shadcn', hint: 'Tailwind v4 CSS + shadcn semantic tokens' }
 		],
 		initialValues: ['css', 'json'],
 		required: true

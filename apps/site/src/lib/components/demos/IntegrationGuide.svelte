@@ -70,42 +70,25 @@
 
 	const shadcnSteps = [
 		{
-			title: 'Generate your preset CSS',
+			title: 'Generate your color preset',
 			code: `npx @sveltopia/colors generate \\
   --colors "#FF6A00,#43A047" \\
-  --format tailwind \\
-  --output ./src/lib/colors.css`,
-			description: 'Same command - generates Tailwind v4 preset with all color scales'
+  --format shadcn \\
+  --output ./src/lib/shadcn-colors.css`,
+			description: 'Generates color scales + all shadcn semantic tokens (background, card, primary, etc.)'
 		},
 		{
-			title: 'Map to shadcn semantic tokens',
-			code: `/* app.css - map Tailwind scales to shadcn tokens */
+			title: 'Import and done',
+			code: `/* app.css */
 @import 'tailwindcss';
-@import './lib/colors.css';
+@import './lib/shadcn-colors.css';
 
-:root {
-  /* shadcn uses semantic tokens */
-  --primary: var(--color-primary-800);
-  --primary-foreground: white;
-
-  --secondary: var(--color-slate-200);
-  --secondary-foreground: var(--color-slate-950);
-
-  --accent: var(--color-secondary-800);
-  --accent-foreground: white;
-
-  --destructive: var(--color-red-800);
-  --muted: var(--color-slate-200);
-  --muted-foreground: var(--color-slate-900);
-
-  --card: var(--color-slate-100);
-  --card-foreground: var(--color-slate-950);
-
-  --border: var(--color-slate-500);
-  --input: var(--color-slate-500);
-  --ring: var(--color-primary-700);
-}`,
-			description: 'shadcn components automatically use these semantic tokens'
+/* That's it! shadcn-colors.css includes:
+   - OKLCH color scales for light/dark mode
+   - All shadcn semantic tokens mapped automatically
+   - @theme block for Tailwind utility registration
+   No manual token mapping needed. */`,
+			description: 'One import - semantic tokens like --primary, --card, --border are all wired up'
 		},
 		{
 			title: 'Components just work',
@@ -173,12 +156,12 @@
 				</div>
 				<div>
 					<h2 class="text-xl font-bold text-gray-950">
-						{framework === 'tailwind' ? 'Tailwind CSS v4' : 'shadcn-svelte'} Integration
+						{framework === 'tailwind' ? 'Tailwind CSS v4' : 'shadcn'} Integration
 					</h2>
 					<p class="text-sm text-gray-900">
 						{framework === 'tailwind'
 							? 'Drop-in preset with real Tailwind classes'
-							: 'Map palette colors to shadcn semantic tokens'}
+							: 'Drop-in preset with shadcn semantic tokens'}
 					</p>
 				</div>
 			</div>

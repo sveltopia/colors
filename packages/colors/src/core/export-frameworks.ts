@@ -111,6 +111,42 @@ function getAdjacentHue(hue: string): string {
 	return ADJACENT_HUE_MAP[hue] || 'amber';
 }
 
+/**
+ * Resolve anchor backfill for semantic role hues.
+ *
+ * - 0 anchors: primary = secondary = tertiary = 'gray'
+ * - 1 anchor:  primary = secondary = tertiary = A1
+ * - 2 anchors: primary = secondary = A1, tertiary = A2
+ * - 3+ anchors: primary = A1, secondary = A2, tertiary = A3
+ */
+function resolveSemanticHues(anchors: Record<string, { slot: string }>) {
+	const anchorEntries = Object.entries(anchors);
+
+	let primaryHue: string;
+	let secondaryHue: string;
+	let tertiaryHue: string;
+
+	if (anchorEntries.length >= 3) {
+		primaryHue = anchorEntries[0][1].slot;
+		secondaryHue = anchorEntries[1][1].slot;
+		tertiaryHue = anchorEntries[2][1].slot;
+	} else if (anchorEntries.length === 2) {
+		primaryHue = anchorEntries[0][1].slot;
+		secondaryHue = anchorEntries[0][1].slot;
+		tertiaryHue = anchorEntries[1][1].slot;
+	} else if (anchorEntries.length === 1) {
+		primaryHue = anchorEntries[0][1].slot;
+		secondaryHue = anchorEntries[0][1].slot;
+		tertiaryHue = anchorEntries[0][1].slot;
+	} else {
+		primaryHue = 'gray';
+		secondaryHue = 'gray';
+		tertiaryHue = 'gray';
+	}
+
+	return { primaryHue, secondaryHue, tertiaryHue };
+}
+
 // =============================================================================
 // Tailwind Export
 // =============================================================================
@@ -407,45 +443,14 @@ export function exportTailwindV4CSS(
 	// Add semantic role aliases for light mode (with backfill for missing accents)
 	if (includeSemanticRoles) {
 		const anchors = safePalette._meta.tuningProfile.anchors || {};
-		const anchorEntries = Object.entries(anchors);
-
-		// Backfill logic:
-		// 1 accent: primary = secondary = tertiary
-		// 2 accents: primary = secondary = A1, tertiary = A2
-		// 3+ accents: primary = A1, secondary = A2, tertiary = A3
-		let primaryHue: string;
-		let secondaryHue: string;
-		let tertiaryHue: string;
-
-		if (anchorEntries.length >= 3) {
-			primaryHue = anchorEntries[0][1].slot;
-			secondaryHue = anchorEntries[1][1].slot;
-			tertiaryHue = anchorEntries[2][1].slot;
-		} else if (anchorEntries.length === 2) {
-			primaryHue = anchorEntries[0][1].slot;
-			secondaryHue = anchorEntries[0][1].slot;
-			tertiaryHue = anchorEntries[1][1].slot;
-		} else if (anchorEntries.length === 1) {
-			primaryHue = anchorEntries[0][1].slot;
-			secondaryHue = anchorEntries[0][1].slot;
-			tertiaryHue = anchorEntries[0][1].slot;
-		} else {
-			// No anchors - use gray as fallback
-			primaryHue = 'gray';
-			secondaryHue = 'gray';
-			tertiaryHue = 'gray';
-		}
-
-		// Adjacent hues for harmonious gradients
-		const primaryAdjacentHue = getAdjacentHue(primaryHue);
-		const secondaryAdjacentHue = getAdjacentHue(secondaryHue);
+		const { primaryHue, secondaryHue, tertiaryHue } = resolveSemanticHues(anchors);
 
 		const roleMapping = [
 			{ role: 'primary', hue: primaryHue },
 			{ role: 'secondary', hue: secondaryHue },
 			{ role: 'tertiary', hue: tertiaryHue },
-			{ role: 'primary-adjacent', hue: primaryAdjacentHue },
-			{ role: 'adjacent', hue: secondaryAdjacentHue }
+			{ role: 'primary-adjacent', hue: getAdjacentHue(primaryHue) },
+			{ role: 'adjacent', hue: getAdjacentHue(secondaryHue) }
 		];
 
 		for (const { role, hue } of roleMapping) {
@@ -477,45 +482,14 @@ export function exportTailwindV4CSS(
 	// Add semantic role aliases for dark mode (with backfill for missing accents)
 	if (includeSemanticRoles) {
 		const anchors = safePalette._meta.tuningProfile.anchors || {};
-		const anchorEntries = Object.entries(anchors);
-
-		// Backfill logic (same as light mode):
-		// 1 accent: primary = secondary = tertiary
-		// 2 accents: primary = secondary = A1, tertiary = A2
-		// 3+ accents: primary = A1, secondary = A2, tertiary = A3
-		let primaryHue: string;
-		let secondaryHue: string;
-		let tertiaryHue: string;
-
-		if (anchorEntries.length >= 3) {
-			primaryHue = anchorEntries[0][1].slot;
-			secondaryHue = anchorEntries[1][1].slot;
-			tertiaryHue = anchorEntries[2][1].slot;
-		} else if (anchorEntries.length === 2) {
-			primaryHue = anchorEntries[0][1].slot;
-			secondaryHue = anchorEntries[0][1].slot;
-			tertiaryHue = anchorEntries[1][1].slot;
-		} else if (anchorEntries.length === 1) {
-			primaryHue = anchorEntries[0][1].slot;
-			secondaryHue = anchorEntries[0][1].slot;
-			tertiaryHue = anchorEntries[0][1].slot;
-		} else {
-			// No anchors - use gray as fallback
-			primaryHue = 'gray';
-			secondaryHue = 'gray';
-			tertiaryHue = 'gray';
-		}
-
-		// Adjacent hues for harmonious gradients
-		const primaryAdjacentHue = getAdjacentHue(primaryHue);
-		const secondaryAdjacentHue = getAdjacentHue(secondaryHue);
+		const { primaryHue, secondaryHue, tertiaryHue } = resolveSemanticHues(anchors);
 
 		const roleMapping = [
 			{ role: 'primary', hue: primaryHue },
 			{ role: 'secondary', hue: secondaryHue },
 			{ role: 'tertiary', hue: tertiaryHue },
-			{ role: 'primary-adjacent', hue: primaryAdjacentHue },
-			{ role: 'adjacent', hue: secondaryAdjacentHue }
+			{ role: 'primary-adjacent', hue: getAdjacentHue(primaryHue) },
+			{ role: 'adjacent', hue: getAdjacentHue(secondaryHue) }
 		];
 
 		for (const { role, hue } of roleMapping) {
@@ -546,6 +520,234 @@ export function exportTailwindV4CSS(
 		}
 		lines.push('}');
 	}
+
+	return lines.join('\n');
+}
+
+// =============================================================================
+// shadcn Export
+// =============================================================================
+
+export interface ShadcnExportOptions {
+	/** Border radius base value (default: '0.625rem') */
+	radius?: string;
+	/** Neutral hue for background/surface tokens (default: 'slate') */
+	neutralHue?: string;
+	/** Hue for destructive tokens (default: 'red') */
+	destructiveHue?: string;
+	/** Include chart color tokens (default: true) */
+	includeCharts?: boolean;
+	/** Include sidebar tokens (default: true) */
+	includeSidebar?: boolean;
+	/** Include @theme block from base Tailwind export (default: true) */
+	includeThemeBlock?: boolean;
+	/** Include @theme inline block for semantic utility registration (default: true) */
+	includeThemeInlineBlock?: boolean;
+	/** Light mode selector (default: ':root') */
+	lightSelector?: string;
+	/** Dark mode selector (default: '.dark') */
+	darkSelector?: string;
+}
+
+/**
+ * Export palette as shadcn compatible CSS.
+ *
+ * Composes on top of `exportTailwindV4CSS` (color scales + @theme) and appends:
+ * 1. shadcn semantic tokens in :root and .dark
+ * 2. A @theme inline block for semantic utility registration + radius tokens
+ *
+ * Usage with Tailwind v4 + shadcn:
+ * ```css
+ * @import 'tailwindcss';
+ * @import './shadcn-colors.css';
+ * ```
+ */
+export function exportShadcn(
+	palette: Palette,
+	options: ShadcnExportOptions = {}
+): string {
+	const {
+		radius = '0.625rem',
+		neutralHue = 'slate',
+		destructiveHue = 'red',
+		includeCharts = true,
+		includeSidebar = true,
+		includeThemeBlock = true,
+		includeThemeInlineBlock = true,
+		lightSelector = ':root',
+		darkSelector = '.dark'
+	} = options;
+
+	// Get the base Tailwind v4 CSS (color scales + @theme block)
+	const base = exportTailwindV4CSS(palette, {
+		includeThemeBlock,
+		lightSelector,
+		darkSelector
+	});
+
+	const lines: string[] = [base];
+
+	// Resolve semantic hues from palette anchors
+	const anchors = palette._meta.tuningProfile.anchors || {};
+	const { primaryHue, secondaryHue } = resolveSemanticHues(anchors);
+
+	lines.push('');
+	lines.push('/*');
+	lines.push(' * shadcn Semantic Tokens');
+	lines.push(' *');
+	lines.push(' * These map to the palette for component theming.');
+	lines.push(` * Uses primary-800 as the main accent (Radix step 9).`);
+	lines.push(' */');
+
+	// ── Light mode semantic tokens ──
+	lines.push(`${lightSelector} {`);
+	lines.push(`  --radius: ${radius};`);
+	lines.push('');
+	lines.push('  /* Semantic tokens using Sveltopia Colors palette */');
+	lines.push(`  --background: var(--color-${neutralHue}-50);`);
+	lines.push(`  --foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --card: var(--color-${neutralHue}-50);`);
+	lines.push(`  --card-foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --popover: var(--color-${neutralHue}-50);`);
+	lines.push(`  --popover-foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --primary: var(--color-primary-800);`);
+	lines.push(`  --primary-foreground: white;`);
+	lines.push(`  --secondary: var(--color-${neutralHue}-200);`);
+	lines.push(`  --secondary-foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --muted: var(--color-${neutralHue}-200);`);
+	lines.push(`  --muted-foreground: var(--color-${neutralHue}-900);`);
+	lines.push(`  --accent: var(--color-secondary-800);`);
+	lines.push(`  --accent-foreground: white;`);
+	lines.push(`  --destructive: var(--color-${destructiveHue}-800);`);
+	lines.push(`  --border: var(--color-${neutralHue}-500);`);
+	lines.push(`  --input: var(--color-${neutralHue}-500);`);
+	lines.push(`  --ring: var(--color-primary-700);`);
+
+	if (includeCharts) {
+		lines.push(`  --chart-1: var(--color-primary-800);`);
+		lines.push(`  --chart-2: var(--color-secondary-800);`);
+		lines.push(`  --chart-3: var(--color-blue-800);`);
+		lines.push(`  --chart-4: var(--color-purple-800);`);
+		lines.push(`  --chart-5: var(--color-amber-800);`);
+	}
+
+	if (includeSidebar) {
+		lines.push(`  --sidebar: var(--color-${neutralHue}-100);`);
+		lines.push(`  --sidebar-foreground: var(--color-${neutralHue}-950);`);
+		lines.push(`  --sidebar-primary: var(--color-primary-800);`);
+		lines.push(`  --sidebar-primary-foreground: white;`);
+		lines.push(`  --sidebar-accent: var(--color-${neutralHue}-300);`);
+		lines.push(`  --sidebar-accent-foreground: var(--color-${neutralHue}-950);`);
+		lines.push(`  --sidebar-border: var(--color-${neutralHue}-500);`);
+		lines.push(`  --sidebar-ring: var(--color-primary-700);`);
+	}
+
+	lines.push('}');
+	lines.push('');
+
+	// ── Dark mode overrides ──
+	lines.push(`${darkSelector} {`);
+	lines.push(`  --background: var(--color-${neutralHue}-50);`);
+	lines.push(`  --foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --card: var(--color-${neutralHue}-100);`);
+	lines.push(`  --card-foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --popover: var(--color-${neutralHue}-100);`);
+	lines.push(`  --popover-foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --primary: var(--color-primary-800);`);
+	lines.push(`  --primary-foreground: white;`);
+	lines.push(`  --secondary: var(--color-${neutralHue}-200);`);
+	lines.push(`  --secondary-foreground: var(--color-${neutralHue}-950);`);
+	lines.push(`  --muted: var(--color-${neutralHue}-200);`);
+	lines.push(`  --muted-foreground: var(--color-${neutralHue}-900);`);
+	lines.push(`  --accent: var(--color-secondary-800);`);
+	lines.push(`  --accent-foreground: white;`);
+	lines.push(`  --destructive: var(--color-${destructiveHue}-800);`);
+	lines.push(`  --border: var(--color-${neutralHue}-500);`);
+	lines.push(`  --input: var(--color-${neutralHue}-500);`);
+	lines.push(`  --ring: var(--color-primary-700);`);
+
+	if (includeCharts) {
+		lines.push(`  --chart-1: var(--color-primary-800);`);
+		lines.push(`  --chart-2: var(--color-secondary-800);`);
+		lines.push(`  --chart-3: var(--color-blue-800);`);
+		lines.push(`  --chart-4: var(--color-purple-800);`);
+		lines.push(`  --chart-5: var(--color-amber-800);`);
+	}
+
+	if (includeSidebar) {
+		lines.push(`  --sidebar: var(--color-${neutralHue}-100);`);
+		lines.push(`  --sidebar-foreground: var(--color-${neutralHue}-950);`);
+		lines.push(`  --sidebar-primary: var(--color-primary-800);`);
+		lines.push(`  --sidebar-primary-foreground: white;`);
+		lines.push(`  --sidebar-accent: var(--color-${neutralHue}-300);`);
+		lines.push(`  --sidebar-accent-foreground: var(--color-${neutralHue}-950);`);
+		lines.push(`  --sidebar-border: var(--color-${neutralHue}-500);`);
+		lines.push(`  --sidebar-ring: var(--color-primary-700);`);
+	}
+
+	lines.push('}');
+	lines.push('');
+
+	if (!includeThemeInlineBlock) {
+		return lines.join('\n');
+	}
+
+	// ── @theme inline (semantic utility registration + radius) ──
+	lines.push('@theme inline {');
+	lines.push('  --radius-sm: calc(var(--radius) - 4px);');
+	lines.push('  --radius-md: calc(var(--radius) - 2px);');
+	lines.push('  --radius-lg: var(--radius);');
+	lines.push('  --radius-xl: calc(var(--radius) + 4px);');
+
+	// Semantic token -> utility mapping
+	const semanticTokens = [
+		'background',
+		'foreground',
+		'card',
+		'card-foreground',
+		'popover',
+		'popover-foreground',
+		'primary',
+		'primary-foreground',
+		'secondary',
+		'secondary-foreground',
+		'muted',
+		'muted-foreground',
+		'accent',
+		'accent-foreground',
+		'destructive',
+		'border',
+		'input',
+		'ring'
+	];
+
+	for (const token of semanticTokens) {
+		lines.push(`  --color-${token}: var(--${token});`);
+	}
+
+	if (includeCharts) {
+		for (let i = 1; i <= 5; i++) {
+			lines.push(`  --color-chart-${i}: var(--chart-${i});`);
+		}
+	}
+
+	if (includeSidebar) {
+		const sidebarTokens = [
+			'sidebar',
+			'sidebar-foreground',
+			'sidebar-primary',
+			'sidebar-primary-foreground',
+			'sidebar-accent',
+			'sidebar-accent-foreground',
+			'sidebar-border',
+			'sidebar-ring'
+		];
+		for (const token of sidebarTokens) {
+			lines.push(`  --color-${token}: var(--${token});`);
+		}
+	}
+
+	lines.push('}');
 
 	return lines.join('\n');
 }
