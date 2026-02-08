@@ -45,6 +45,7 @@
     "@types/node": "^22.10.2",
     "@vitest/coverage-v8": "^2.1.8",
     "tailwindcss": "^4.1.17",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   },
