@@ -15,8 +15,8 @@
 
 <svelte:head>
   <link rel="icon" href="/favicon.svg" />
-  <!-- Default color preset for the site -->
-  <link rel="stylesheet" href="/presets/sveltopia.css" />
+  <!-- Default color preset for the site (shadcn superset covers all site chrome) -->
+  <link rel="stylesheet" href="/presets/shadcn/sveltopia.css" />
 </svelte:head>
 
 <ModeWatcher />

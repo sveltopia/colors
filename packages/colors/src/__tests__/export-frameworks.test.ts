@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
 	exportTailwind,
 	exportTailwindWithCSSVars,
+	exportTailwindV4CSS,
+	exportShadcn,
 	exportRadix,
 	exportPanda
 } from '../core/export-frameworks.js';
@@ -407,6 +409,148 @@ describe('Framework Export Utilities', () => {
 			expect(output).toContain('"secondary":');
 			expect(output).toContain('{colors.grayLight.11}');
 			expect(output).toContain('{colors.grayDark.11}');
+		});
+	});
+
+	describe('shadcn Export', () => {
+		it('includes Tailwind v4 color scales from base export', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			// Base Tailwind v4 CSS content should be present
+			expect(output).toContain('--color-orange-800:');
+			expect(output).toContain('--color-gray-50:');
+			expect(output).toContain('@theme {');
+		});
+
+		it('includes shadcn semantic tokens in :root', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			expect(output).toContain('--background: var(--color-slate-50);');
+			expect(output).toContain('--foreground: var(--color-slate-950);');
+			expect(output).toContain('--primary: var(--color-primary-800);');
+			expect(output).toContain('--primary-foreground: white;');
+			expect(output).toContain('--secondary: var(--color-slate-200);');
+			expect(output).toContain('--muted: var(--color-slate-200);');
+			expect(output).toContain('--destructive: var(--color-red-800);');
+			expect(output).toContain('--border: var(--color-slate-500);');
+			expect(output).toContain('--ring: var(--color-primary-700);');
+		});
+
+		it('includes dark mode overrides with elevated surfaces', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			// Dark mode has elevated surfaces (100 instead of 50)
+			expect(output).toContain('.dark {');
+
+			// Find the .dark block after the shadcn comment (not the base Tailwind .dark)
+			const shadcnSection = output.split('shadcn Semantic Tokens')[1];
+			expect(shadcnSection).toContain('--card: var(--color-slate-100);');
+			expect(shadcnSection).toContain('--popover: var(--color-slate-100);');
+		});
+
+		it('includes @theme inline block with radius tokens', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			expect(output).toContain('@theme inline {');
+			expect(output).toContain('--radius-sm: calc(var(--radius) - 4px);');
+			expect(output).toContain('--radius-md: calc(var(--radius) - 2px);');
+			expect(output).toContain('--radius-lg: var(--radius);');
+			expect(output).toContain('--radius-xl: calc(var(--radius) + 4px);');
+		});
+
+		it('includes @theme inline with semantic utility mappings', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			expect(output).toContain('--color-background: var(--background);');
+			expect(output).toContain('--color-foreground: var(--foreground);');
+			expect(output).toContain('--color-primary: var(--primary);');
+			expect(output).toContain('--color-secondary: var(--secondary);');
+			expect(output).toContain('--color-destructive: var(--destructive);');
+			expect(output).toContain('--color-border: var(--border);');
+			expect(output).toContain('--color-ring: var(--ring);');
+		});
+
+		it('includes chart tokens by default', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			expect(output).toContain('--chart-1: var(--color-primary-800);');
+			expect(output).toContain('--chart-5: var(--color-amber-800);');
+			expect(output).toContain('--color-chart-1: var(--chart-1);');
+		});
+
+		it('excludes chart tokens when disabled', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette, { includeCharts: false });
+
+			expect(output).not.toContain('--chart-1:');
+			expect(output).not.toContain('--color-chart-1:');
+		});
+
+		it('includes sidebar tokens by default', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			expect(output).toContain('--sidebar: var(--color-slate-100);');
+			expect(output).toContain('--sidebar-foreground: var(--color-slate-950);');
+			expect(output).toContain('--color-sidebar: var(--sidebar);');
+		});
+
+		it('excludes sidebar tokens when disabled', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette, { includeSidebar: false });
+
+			expect(output).not.toContain('--sidebar:');
+			expect(output).not.toContain('--color-sidebar:');
+		});
+
+		it('uses custom radius value', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette, { radius: '0.5rem' });
+
+			expect(output).toContain('--radius: 0.5rem;');
+		});
+
+		it('uses custom neutral hue', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette, { neutralHue: 'gray' });
+
+			expect(output).toContain('--background: var(--color-gray-50);');
+			expect(output).toContain('--foreground: var(--color-gray-950);');
+		});
+
+		it('uses custom destructive hue', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette, { destructiveHue: 'crimson' });
+
+			expect(output).toContain('--destructive: var(--color-crimson-800);');
+		});
+
+		it('has two separate @theme blocks (base and inline)', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			// Should have @theme { } (from base) and @theme inline { } (for shadcn)
+			const themeMatches = output.match(/@theme\s*\{/g);
+			const themeInlineMatches = output.match(/@theme\s+inline\s*\{/g);
+
+			expect(themeMatches).not.toBeNull();
+			expect(themeMatches!.length).toBeGreaterThanOrEqual(1);
+			expect(themeInlineMatches).not.toBeNull();
+			expect(themeInlineMatches!.length).toBe(1);
+		});
+
+		it('includes header comment identifying shadcn section', () => {
+			const palette = createTestPalette();
+			const output = exportShadcn(palette);
+
+			expect(output).toContain('shadcn Semantic Tokens');
+			expect(output).toContain('primary-800 as the main accent');
 		});
 	});
 

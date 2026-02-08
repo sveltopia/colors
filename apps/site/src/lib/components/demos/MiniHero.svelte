@@ -27,7 +27,7 @@
 			<!-- Subtext -->
 			<p class="mx-auto mt-6 max-w-xl text-lg text-gray-900 dark:text-slate-900">
 				Transform any brand color into a complete, accessible color palette. Works seamlessly with
-				Tailwind CSS and shadcn-svelte.
+				Tailwind CSS and shadcn.
 			</p>
 
 			<!-- CTA Buttons -->

@@ -85,10 +85,10 @@
 </script>
 
 <svelte:head>
-	<title>shadcn-svelte Demo | Sveltopia Colors</title>
+	<title>shadcn Demo | Sveltopia Colors</title>
 	<meta
 		name="description"
-		content="See Sveltopia Colors with shadcn-svelte components. Switch brand presets to watch the UI transform."
+		content="See Sveltopia Colors with shadcn components. Switch brand presets to watch the UI transform."
 	/>
 </svelte:head>
 
@@ -113,7 +113,7 @@
 
 				<p class="mx-auto mt-6 max-w-xl text-lg text-gray-900 dark:text-slate-900">
 					Transform any brand color into a complete, accessible color palette. Works seamlessly with
-					Tailwind CSS and shadcn-svelte.
+					Tailwind CSS and shadcn.
 				</p>
 
 				<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">

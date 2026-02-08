@@ -25,8 +25,8 @@ export function setPresetId(presetId: string): void {
 /**
  * Get the stylesheet URL for a preset
  */
-export function getPresetStylesheetUrl(presetId: string): string {
-	return `/presets/${presetId}.css`;
+export function getPresetStylesheetUrl(presetId: string, framework: 'tailwind' | 'shadcn' = 'tailwind'): string {
+	return `/presets/${framework}/${presetId}.css`;
 }
 
 /**

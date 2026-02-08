@@ -92,12 +92,14 @@ export {
 	exportTailwind,
 	exportTailwindWithCSSVars,
 	exportTailwindV4CSS,
+	exportShadcn,
 	exportRadix,
 	exportPanda
 } from './core/export-frameworks.js';
 export type {
 	TailwindExportOptions,
 	TailwindV4CSSExportOptions,
+	ShadcnExportOptions,
 	RadixExportOptions,
 	PandaExportOptions
 } from './core/export-frameworks.js';

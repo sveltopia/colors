@@ -12,19 +12,19 @@
 	// Sheet state
 	let sheetOpen = $state(false);
 
-	// Preset state for stylesheet swapping
-	const preset = usePresetId();
-	const presetStylesheetUrl = $derived(getPresetStylesheetUrl(preset.current));
-
-	// Derived: current mode for display
-	const currentMode = $derived(mode.current === 'dark' ? 'dark' : 'light');
-
 	// Current route for tab highlight
 	const isTailwindRoute = $derived(page.url.pathname.includes('/tailwind'));
 	const isShadcnRoute = $derived(page.url.pathname.includes('/shadcn'));
 
-	// Current framework for integration guide
-	const currentFramework = $derived(isShadcnRoute ? 'shadcn' : 'tailwind');
+	// Current framework for integration guide + preset selection
+	const currentFramework = $derived<'tailwind' | 'shadcn'>(isShadcnRoute ? 'shadcn' : 'tailwind');
+
+	// Preset state for stylesheet swapping
+	const preset = usePresetId();
+	const presetStylesheetUrl = $derived(getPresetStylesheetUrl(preset.current, currentFramework));
+
+	// Derived: current mode for display
+	const currentMode = $derived(mode.current === 'dark' ? 'dark' : 'light');
 </script>
 
 <svelte:head>
@@ -34,7 +34,7 @@
 	<!-- Preload other presets for instant switching -->
 	{#each ['sveltopia', 'stripe', 'spotify', 'claude', 'slack', 'linear', 'figma'] as presetId}
 		{#if presetId !== preset.current}
-			<link rel="prefetch" href={getPresetStylesheetUrl(presetId)} as="style" />
+			<link rel="prefetch" href={getPresetStylesheetUrl(presetId, currentFramework)} as="style" />
 		{/if}
 	{/each}
 </svelte:head>
@@ -63,7 +63,7 @@
 								? 'bg-primary/10 text-primary'
 								: 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
 						>
-							shadcn-svelte
+							shadcn
 						</a>
 					</nav>
 
@@ -123,12 +123,12 @@
 	<Sheet.Content side="right" class="w-full overflow-y-auto sm:max-w-xl">
 		<Sheet.Header>
 			<Sheet.Title>
-				{currentFramework === 'tailwind' ? 'Tailwind CSS v4' : 'shadcn-svelte'} Integration
+				{currentFramework === 'tailwind' ? 'Tailwind CSS v4' : 'shadcn'} Integration
 			</Sheet.Title>
 			<Sheet.Description>
 				{currentFramework === 'tailwind'
 					? 'Drop-in preset with real Tailwind classes'
-					: 'Map palette colors to shadcn semantic tokens'}
+					: 'Drop-in preset with shadcn semantic tokens'}
 			</Sheet.Description>
 		</Sheet.Header>
 		<div class="mt-6 overflow-y-auto">
