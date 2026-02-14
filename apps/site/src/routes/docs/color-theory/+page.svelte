@@ -55,7 +55,7 @@
     modern displays. The generated CSS includes P3 fallbacks automatically.
   </p>
 
-  <h2>The Radix 12-step scale</h2>
+  <h2 id="the-radix-12-step-scale">The Radix 12-step scale</h2>
 
   <p>
     Radix Colors pioneered a 12-step scale where each step has a specific semantic purpose.
