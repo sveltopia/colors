@@ -11,7 +11,7 @@
  * - Semantic aliases: --color-primary-*, --color-secondary-*
  */
 
-import { generatePalette, type Palette } from '@sveltopia/colors';
+import { generatePalette, type Palette, type Scale } from '@sveltopia/colors';
 // @ts-expect-error - culori types
 import { formatCss, parse } from 'culori';
 
@@ -79,7 +79,7 @@ function generateFullPalette(colors: string[]): Palette {
  * Uses --color-{hue}-{step} naming with OKLCH values
  */
 function generateTailwindVars(
-	scales: Record<string, Record<number, string>>,
+	scales: Record<string, Scale>,
 	selector: string
 ): string {
 	const lines: string[] = [];

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Star, X } from 'lucide-svelte';
+  import { Star, X, Copy, Check } from 'lucide-svelte';
   import type { Scale } from '@sveltopia/colors';
 
   interface Props {
@@ -29,6 +29,15 @@
 
   // Popover state
   let activePopover = $state<number | null>(null);
+
+  // Listen for close events from other rows
+  $effect(() => {
+    function handleClose() {
+      activePopover = null;
+    }
+    window.addEventListener('close-swatch-popover', handleClose);
+    return () => window.removeEventListener('close-swatch-popover', handleClose);
+  });
 
   // Convert hex to RGB
   function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
@@ -119,12 +128,21 @@
     return { hex: hex.toUpperCase(), rgb, hsl, oklch };
   }
 
-  function handleSwatchClick(step: number) {
-    activePopover = activePopover === step ? null : step;
+  function handleSwatchClick(step: number, e: MouseEvent) {
+    e.stopPropagation();
+    const shouldOpen = activePopover !== step;
+    // Close popovers in all rows (including this one)
+    window.dispatchEvent(new CustomEvent('close-swatch-popover'));
+    // Then open this one (if toggling on)
+    activePopover = shouldOpen ? step : null;
   }
 
-  function closePopover() {
-    activePopover = null;
+  // Copy hex to clipboard
+  let copied = $state(false);
+  function copyHex(hex: string) {
+    navigator.clipboard.writeText(hex);
+    copied = true;
+    setTimeout(() => { copied = false; }, 1500);
   }
 </script>
 
@@ -146,7 +164,7 @@
         {@const isAnchorStep = isAnchored && anchorStep === step}
         <button
           type="button"
-          onclick={() => handleSwatchClick(step)}
+          onclick={(e) => handleSwatchClick(step, e)}
           class="group relative h-8 transition-transform first:rounded-l-md last:rounded-r-md hover:z-10 hover:scale-y-125"
           style="background-color: {color};"
         >
@@ -166,15 +184,16 @@
         {@const color = scale[activePopover as keyof typeof scale]}
         {@const info = getColorInfo(color)}
         {#if info}
-          <!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
           <div
             class="absolute top-full z-50 mt-2 w-48 rounded-lg border bg-popover p-3 shadow-lg"
             style="left: calc({((activePopover - 1) / 12) * 100}% + {100/24}%); transform: translateX(-50%);"
+            role="dialog"
             onclick={(e) => e.stopPropagation()}
+            onkeydown={(e) => e.key === 'Escape' && (activePopover = null)}
           >
             <button
               type="button"
-              onclick={closePopover}
+              onclick={() => (activePopover = null)}
               class="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
             >
               <X class="h-3 w-3" />
@@ -187,9 +206,21 @@
                 </div>
               </div>
               <div class="space-y-1 text-xs">
-                <div class="flex justify-between">
+                <div class="flex items-center justify-between">
                   <span class="text-muted-foreground">HEX</span>
-                  <span class="font-mono">{info.hex}</span>
+                  <button
+                    type="button"
+                    onclick={(e) => { e.stopPropagation(); copyHex(info.hex); }}
+                    class="flex items-center gap-1 font-mono hover:text-foreground"
+                    title="Copy to clipboard"
+                  >
+                    {info.hex}
+                    {#if copied}
+                      <Check class="h-3 w-3 text-green-600" />
+                    {:else}
+                      <Copy class="h-3 w-3 text-muted-foreground" />
+                    {/if}
+                  </button>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-muted-foreground">RGB</span>
@@ -220,7 +251,7 @@
       </div>
 
       <!-- Baseline swatches (grid for alignment) -->
-      <div class="grid flex-1 grid-cols-12 opacity-60">
+      <div class="grid flex-1 grid-cols-12">
         {#each steps as step (step)}
           {@const color = baselineScale[step]}
           <div

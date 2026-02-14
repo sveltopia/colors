@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 
-export type ExportFormat = 'css' | 'json' | 'tailwind' | 'radix' | 'panda' | 'shadcn';
+export type ExportFormat = 'css' | 'json' | 'tailwind' | 'tailwind-v3' | 'radix' | 'panda' | 'shadcn';
 
 export interface ColorsConfig {
 	brandColors: string[];
@@ -105,7 +105,7 @@ export function mergeOptions(
 
 	// CLI --format overrides config formats
 	if (cliOptions.format) {
-		const validFormats: ExportFormat[] = ['css', 'json', 'tailwind', 'radix', 'panda', 'shadcn'];
+		const validFormats: ExportFormat[] = ['css', 'json', 'tailwind', 'tailwind-v3', 'radix', 'panda', 'shadcn'];
 		const requestedFormats = cliOptions.format.split(',').map((f) => f.trim().toLowerCase());
 
 		// Handle 'all' shorthand

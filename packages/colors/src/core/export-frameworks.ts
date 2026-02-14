@@ -132,8 +132,8 @@ function resolveSemanticHues(anchors: Record<string, { slot: string }>) {
 		tertiaryHue = anchorEntries[2][1].slot;
 	} else if (anchorEntries.length === 2) {
 		primaryHue = anchorEntries[0][1].slot;
-		secondaryHue = anchorEntries[0][1].slot;
-		tertiaryHue = anchorEntries[1][1].slot;
+		secondaryHue = anchorEntries[1][1].slot;
+		tertiaryHue = anchorEntries[0][1].slot;
 	} else if (anchorEntries.length === 1) {
 		primaryHue = anchorEntries[0][1].slot;
 		secondaryHue = anchorEntries[0][1].slot;

@@ -1,0 +1,494 @@
+# @sveltopia/colors  - Full AI Reference
+
+> Algorithmic color palette generation from brand colors. Radix quality, your brand.
+> Built on OKLCH color space, Radix 12-step scale, and APCA contrast validation.
+
+## What It Does
+
+Give @sveltopia/colors 1-7 brand hex colors. It generates a complete 31-hue x 12-step palette
+where every color is tuned to harmonize with your brand inputs. Light and dark modes included.
+APCA accessibility enforced on critical pairings.
+
+---
+
+## Installation
+
+```bash
+npm install @sveltopia/colors
+```
+
+---
+
+## CLI Usage
+
+### Generate Command
+
+```bash
+npx @sveltopia/colors generate [flags]
+```
+
+Flags:
+- `-c, --colors <hex,...>`  - brand colors, comma-separated (up to 7)
+- `-f, --format <formats>`  - css, json, tailwind, tailwind-v3, shadcn, radix, panda, all
+- `-o, --output <dir>`  - output directory (default: ./colors)
+- `--config <path>`  - config file path (default: colors.config.json)
+- `-p, --prefix <prefix>`  - CSS variable prefix
+- `-v, --verbose`  - show tuning details
+- `--dry-run`  - preview without writing files
+
+Without flags, runs interactive mode with prompts for colors, format, and output.
+
+Generated files by format:
+- `css` -> colors.css (CSS custom properties, Radix 1-12 step naming)
+- `json` -> colors.json (hex, OKLCH, P3 values)
+- `tailwind` -> tailwind.css (Tailwind v4 CSS with @theme block, 50-950 mapping)
+- `tailwind-v3` -> tailwind.preset.js (Tailwind v3 JavaScript preset)
+- `shadcn` -> shadcn.css (shadcn/ui semantic tokens)
+- `radix` -> radix-colors.js (Radix Colors compatible exports)
+- `panda` -> panda-preset.ts (Panda CSS preset)
+
+### Dev Command (Live Preview)
+
+```bash
+npx @sveltopia/colors dev [flags]
+```
+
+Flags:
+- `-c, --colors <hex,...>`  - brand colors
+- `--config <path>`  - config file
+- `-p, --port <number>`  - port (default: 3141)
+- `--no-open`  - don't open browser
+
+### Config File (colors.config.json)
+
+```json
+{
+  "brandColors": ["#FF4F00"],
+  "outputDir": "./colors",
+  "formats": ["css", "json", "tailwind"]
+}
+```
+
+---
+
+## 12-Step Scale System (Radix-based)
+
+Each hue has 12 steps with semantic purposes:
+
+| Step | Tailwind | Purpose | Use For |
+|------|----------|---------|---------|
+| 1 | 50 | App background | Page backgrounds |
+| 2 | 100 | Subtle background | Card backgrounds, striped rows |
+| 3 | 200 | Component background | Card, input field, code block background |
+| 4 | 300 | Hovered component | Card hover, button hover background |
+| 5 | 400 | Active/selected | Selected items, active tabs |
+| 6 | 500 | Subtle border | Dividers, separators |
+| 7 | 600 | Strong border | Input borders, focus rings |
+| 8 | 700 | Hovered borders | Focus rings, hovered input borders |
+| 9 | 800 | Primary solid | Buttons, brand elements (anchor step) |
+| 10 | 850 | Hovered solid | Button hover states |
+| 11 | 900 | Low-contrast text | Secondary text, labels |
+| 12 | 950 | High-contrast text | Headings, body text |
+
+Note: Step 850 is not a standard Tailwind value. It's added to preserve the full Radix 12-step
+system (step 10 = hovered solid) which has no Tailwind equivalent between 800 and 900.
+
+## Accessible Color Pairings
+
+### Safe combinations (APCA-validated)
+[OK] Steps 11-12 text on steps 1-2 backgrounds (enforced  - auto-corrected during generation)
+[OK] Step 12 text on steps 3-5 backgrounds (by design)
+[OK] White text on step 9 at large font sizes (validated as warning)
+[OK] Steps 6-7 borders on steps 1-2 backgrounds (by design)
+
+### Avoid
+[X] Adjacent steps as text/background pairs (e.g., step 6 text on step 5 bg)
+[X] Light text on light backgrounds (steps 1-5 on steps 1-5)
+[X] Dark text on dark backgrounds (steps 8-12 on steps 8-12)
+
+### APCA Thresholds
+- Body text (14-16px): >= 75
+- Large text / UI elements (18px+): >= 60
+- Decorative / non-essential: >= 45
+
+### Auto-Remediation
+The generator enforces contrast for critical pairings:
+- Steps 11-12 are checked against steps 1-2. If contrast falls below APCA thresholds,
+  lightness is automatically adjusted while preserving hue and chroma.
+- Step 9 is checked for white text readability (APCA >= 60). Flagged as warning only  -
+  saturated hues like yellow and lime intentionally use dark text.
+
+---
+
+## Programmatic API
+
+All exports from `@sveltopia/colors`.
+
+### generatePalette(options)
+
+Returns a single-mode LightPalette. Call once per mode.
+
+```typescript
+import { generatePalette } from '@sveltopia/colors';
+
+const light = generatePalette({
+  brandColors: ['#FF4F00', '#1A1A1A'],
+  mode: 'light',            // 'light' (default) | 'dark'
+  tuningProfile: undefined  // optional override
+});
+
+// light.scales['orange'][9] -> '#FF4F00' (or close)
+// light.meta.tuningProfile -> { hueShift, chromaMultiplier, ... }
+// light.meta.anchoredSlots -> ['orange']
+
+const dark = generatePalette({
+  brandColors: ['#FF4F00', '#1A1A1A'],
+  mode: 'dark'
+});
+```
+
+### analyzeBrandColors(colors, mode?)
+
+Analyzes brand colors and returns a tuning profile.
+
+```typescript
+import { analyzeBrandColors } from '@sveltopia/colors';
+
+const profile = analyzeBrandColors(['#FF4F00']);
+// profile.hueShift -> average hue offset from baseline
+// profile.chromaMultiplier -> brand chroma relative to baseline
+// profile.anchors -> { '#FF4F00': { slot: 'orange', step: 9 } }
+```
+
+---
+
+## Export Functions
+
+All export functions take a Palette (with both light and dark scales) and return a formatted string.
+
+To build a Palette from two LightPalette results:
+
+```typescript
+const palette = {
+  light: light.scales,
+  dark: dark.scales,
+  _meta: {
+    tuningProfile: light.meta.tuningProfile,
+    inputColors: ['#FF4F00'],
+    generatedAt: new Date().toISOString()
+  }
+};
+```
+
+### exportCSS(palette, options?)
+
+CSS custom properties using Radix 1-12 step naming.
+
+```typescript
+const css = exportCSS(palette, {
+  lightSelector: ':root',              // default
+  darkSelector: '.dark, .dark-theme',  // default
+  includeAlpha: true,                  // default
+  includeP3: true,                     // default
+  includeSemantic: true,               // default
+  scales: undefined,                   // all scales, or ['orange', 'blue']
+  prefix: '',                          // CSS variable prefix
+  mode: 'both'                         // 'light' | 'dark' | 'both'
+});
+```
+
+Output variables: `--orange-1` through `--orange-12`, `--orange-a1` through `--orange-a12` (alpha).
+
+### exportJSON(palette, options?)
+
+Structured JSON with hex, OKLCH, and P3 formats.
+
+```typescript
+const data = exportJSON(palette, {
+  scales: undefined,
+  includeAlpha: true,
+  includeP3: true,
+  includeSemantic: true
+});
+// data.light['orange']['9'] -> { hex: '#FF4F00', oklch: '...', p3: '...' }
+```
+
+### exportTailwindV4CSS(palette, options?)
+
+Tailwind v4 CSS with @theme block. Maps Radix steps to Tailwind naming (50-950).
+
+```typescript
+const css = exportTailwindV4CSS(palette, {
+  includeSemanticRoles: true,   // primary, secondary, tertiary
+  darkSelector: '.dark',
+  lightSelector: ':root',
+  includeThemeBlock: true       // @theme {} registration
+});
+```
+
+Output: `--color-orange-50` through `--color-orange-950` in @theme block.
+Use as: `bg-orange-800`, `text-primary-950`, `border-blue-600`.
+
+### exportTailwind(palette, options?)
+
+Tailwind v3 JavaScript preset. Use `--format tailwind-v3` in CLI.
+
+```typescript
+const js = exportTailwind(palette, {
+  scale: '50-950',        // '50-950' | '1-12'
+  darkMode: 'class',      // 'class' | 'media'
+  includeAlpha: false      // include alpha variants (default: false)
+});
+```
+
+### exportShadcn(palette, options?)
+
+shadcn/ui compatible CSS with semantic tokens.
+
+```typescript
+const css = exportShadcn(palette, {
+  radius: '0.625rem',
+  neutralHue: 'slate',
+  destructiveHue: 'red',
+  includeCharts: true,
+  includeSidebar: true,
+  includeThemeBlock: true,
+  includeThemeInlineBlock: true,
+  lightSelector: ':root',
+  darkSelector: '.dark'
+});
+```
+
+Token mapping:
+- `--primary` ← first brand color (step 800)
+- `--accent` ← second brand color (step 800)
+- `--secondary` ← neutral (slate-200, always neutral)
+- `--muted` ← neutral (slate-200)
+- `--destructive` ← destructiveHue (default: red)
+
+### exportRadix(palette, options?)
+
+Radix Colors compatible JavaScript exports.
+
+```typescript
+const js = exportRadix(palette, {
+  format: 'esm',         // 'esm' | 'cjs'
+  includeAlpha: true,
+  includeP3: true
+});
+```
+
+Drop-in replacement for @radix-ui/colors. Same named exports, alpha variants, P3 support.
+
+### exportPanda(palette, brandColorInfo, options?)
+
+Panda CSS preset. Requires brand color info for semantic token mapping.
+
+```typescript
+const brandColorInfo = [
+  { hex: '#FF4F00', hue: 'orange', anchorStep: 9, isCustomRow: false }
+];
+
+const ts = exportPanda(palette, brandColorInfo, {
+  includeSemantic: true   // default: true
+});
+```
+
+---
+
+## Validation API
+
+### calculateAPCA(textHex, bgHex)
+
+Returns APCA contrast value (0-108). Higher = more contrast.
+
+```typescript
+import { calculateAPCA } from '@sveltopia/colors';
+const contrast = calculateAPCA('#1A1A1A', '#FFFFFF'); // ~106
+```
+
+### validatePaletteContrast(palette, options?)
+
+Validates all critical step pairings against APCA thresholds.
+
+```typescript
+import { validatePaletteContrast, formatContrastReport } from '@sveltopia/colors';
+
+const report = validatePaletteContrast(palette, {
+  hues: undefined,       // all hues, or ['orange', 'blue']
+  errorsOnly: false      // true to suppress warnings
+});
+
+// report.passed -> boolean
+// report.totalChecks -> number
+// report.passedChecks -> number
+// report.issues -> [{ hue, mode, textStep, bgStep, expected, actual, severity }]
+
+if (!report.passed) {
+  console.error(formatContrastReport(report));
+}
+```
+
+---
+
+## Key Types
+
+```typescript
+interface OklchColor {
+  l: number;      // Lightness (0-1)
+  c: number;      // Chroma (0-~0.4)
+  h: number;      // Hue (0-360)
+  alpha?: number;
+}
+
+interface Scale {
+  1: string;   // lightest (backgrounds)
+  2: string;
+  3: string;
+  4: string;
+  5: string;
+  6: string;
+  7: string;
+  8: string;
+  9: string;   // primary solid (brand anchor)
+  10: string;
+  11: string;
+  12: string;  // darkest (text)
+}
+
+interface Palette {
+  light: Record<string, Scale>;
+  dark: Record<string, Scale>;
+  _meta: {
+    tuningProfile: TuningProfile;
+    inputColors: string[];
+    generatedAt: string;
+  };
+}
+
+interface LightPalette {
+  scales: Record<string, Scale>;
+  meta: {
+    tuningProfile: TuningProfile;
+    anchoredSlots: string[];
+    // ...additional metadata
+  };
+}
+
+interface TuningProfile {
+  hueShift: number;
+  chromaMultiplier: number;
+  lightnessShift: number;
+  anchors: Record<string, AnchorInfo>;
+  customRows?: CustomRowInfo[];
+}
+
+interface ContrastReport {
+  passed: boolean;
+  totalChecks: number;
+  passedChecks: number;
+  issues: ContrastIssue[];
+}
+```
+
+---
+
+## Common Patterns
+
+### Generate + export for Tailwind v4
+
+```typescript
+import { generatePalette, exportTailwindV4CSS } from '@sveltopia/colors';
+
+const light = generatePalette({ brandColors: ['#FF4F00'] });
+const dark = generatePalette({ brandColors: ['#FF4F00'], mode: 'dark' });
+
+const palette = {
+  light: light.scales,
+  dark: dark.scales,
+  _meta: {
+    tuningProfile: light.meta.tuningProfile,
+    inputColors: ['#FF4F00'],
+    generatedAt: new Date().toISOString()
+  }
+};
+
+const css = exportTailwindV4CSS(palette);
+// Write to tailwind.css and import in your app
+```
+
+### CI accessibility validation
+
+```typescript
+import { generatePalette, validatePaletteContrast, formatContrastReport } from '@sveltopia/colors';
+
+const light = generatePalette({ brandColors: ['#FF4F00'] });
+const dark = generatePalette({ brandColors: ['#FF4F00'], mode: 'dark' });
+const palette = { light: light.scales, dark: dark.scales, _meta: { ... } };
+
+const report = validatePaletteContrast(palette);
+if (!report.passed) {
+  console.error(formatContrastReport(report));
+  process.exit(1);
+}
+```
+
+### Analyze brand colors before generating
+
+```typescript
+import { analyzeBrandColors } from '@sveltopia/colors';
+
+const profile = analyzeBrandColors(['#FF4F00', '#2563EB']);
+// profile.anchors shows which baseline hues each brand color maps to
+// profile.hueShift shows average offset applied to all hues
+```
+
+---
+
+## 31 Baseline Hues (Radix order)
+
+gray, mauve, slate, sage, olive, sand, tomato, red, ruby, crimson, pink, plum, purple, violet,
+iris, indigo, blue, cyan, teal, jade, green, grass, lime, mint, sky, amber, yellow, gold, bronze,
+brown, orange
+
+Grays first (gray, mauve, slate, sage, olive, sand), then chromatic hues in color wheel order.
+
+---
+
+## Semantic Roles
+
+When using Tailwind v4 or Panda exports with semantic roles enabled:
+- `primary`  - maps to first brand color's hue
+- `secondary`  - maps to second brand color's hue (or first if only one provided)
+- `tertiary`  - maps to remaining brand color or first
+
+These give you classes like `bg-primary-800`, `text-secondary-950`, `border-tertiary-600`.
+
+---
+
+## Tailwind v4 Integration Notes
+
+Importing the generated tailwind.css adds your palette alongside Tailwind's built-in colors.
+Where hue names overlap (orange, blue), your palette wins. Tailwind defaults with no overlap
+(emerald, fuchsia) remain available.
+
+To replace all Tailwind defaults with only your palette:
+
+```css
+@import 'tailwindcss';
+@theme {
+  --color-*: initial;
+}
+@import './colors/tailwind.css';
+```
+
+## Alpha Colors
+
+Alpha variants are semi-transparent RGBA values that visually match the solid color when
+composited over white (light mode) or black (dark mode). Included by default in CSS, JSON,
+and Radix exports. Not included in Tailwind or shadcn exports.
+
+Tailwind users: use Tailwind's built-in opacity modifier instead (e.g., `bg-blue-200/20`).
+This works with every color in the generated palette automatically.
+
+CSS variable naming: `--orange-a3` (alpha step 3 for orange).

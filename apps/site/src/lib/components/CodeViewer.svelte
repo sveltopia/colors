@@ -31,7 +31,7 @@
 </script>
 
 <!-- Force dark mode for code blocks using our Sveltopia Colors palette -->
-<div class="code-viewer dark not-prose min-w-0 max-w-full overflow-hidden rounded-lg border border-border bg-background">
+<div class="code-viewer dark not-prose min-w-0 max-w-full overflow-hidden rounded-lg border border-border bg-background mb-6">
   <div
     class="flex items-center justify-between border-b border-border bg-card px-3 py-2 md:px-4"
   >
