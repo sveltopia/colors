@@ -34,7 +34,7 @@
   </KeyConcept>
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h2>When to use alpha colors</h2>
 
   <ul>
@@ -75,7 +75,7 @@ result = background × (1 - alpha) + foreground × alpha
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <p>
     The computation targets the closest possible RGBA match in sRGB (0–255 precision). P3
     wide-gamut versions are also generated for modern displays.
@@ -106,7 +106,11 @@ result = background × (1 - alpha) + foreground × alpha
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
+  <p class="text-sm text-muted-foreground">
+    These examples use the default CSS export naming (Radix 1–12 steps). If you're using the Tailwind export, the equivalent of <code>--color-blue-3</code> would be <code>--color-blue-200</code>. See the <a href="/docs/color-theory#the-radix-12-step-scale">Radix 12-step scale</a> for the full step mapping.
+  </p>
+
   <h3>With Radix export</h3>
 </div>
 
@@ -120,7 +124,7 @@ element.style.backgroundColor = blueA.blueA3;`}
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h2>Formats</h2>
 
   <p>
@@ -134,8 +138,19 @@ element.style.backgroundColor = blueA.blueA3;`}
     <li><strong>Panda CSS</strong> — included in the preset</li>
   </ul>
 
+  <h3>What about Tailwind?</h3>
+
   <p>
-    The CSS and JSON exports include alpha colors by default. Use the
+    Tailwind's built-in opacity modifier (<code>bg-blue-200/20</code>) gives you runtime alpha
+    control over every color in your palette — no special export needed. For most use cases
+    (hover states, overlays, tinted backgrounds), this is all you need.
+  </p>
+
+  <p>
+    The pre-computed alpha variants above are a different thing: mathematically solved RGBA values
+    that produce an <em>exact visual match</em> to the solid color when composited over a known
+    background (white in light mode, black in dark mode). These are primarily useful in the CSS,
+    JSON, and Radix exports for projects that need precise alpha-composite matching. Use the
     <code>includeAlpha</code> option to control this in the programmatic API.
   </p>
 </div>

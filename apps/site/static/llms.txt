@@ -1,0 +1,69 @@
+# @sveltopia/colors
+
+> Algorithmic color palette generation from brand colors. Radix quality, your brand.
+
+## Overview
+
+@sveltopia/colors generates a complete, accessible color system from 1-7 brand hex colors. Built on OKLCH color space, Radix 12-step scale semantics, and APCA contrast validation. Every hue in the palette is tuned to harmonize with your brand inputs.
+
+## Quick Links
+
+- Documentation: https://colors.sveltopia.dev/docs
+- Full AI Reference: https://colors.sveltopia.dev/llms-full.txt
+- GitHub: https://github.com/sveltopia/colors
+- npm: https://www.npmjs.com/package/@sveltopia/colors
+
+## Installation
+
+```bash
+npm install @sveltopia/colors
+```
+
+## CLI Quick Start
+
+```bash
+# Generate with interactive prompts
+npx @sveltopia/colors generate
+
+# Generate directly
+npx @sveltopia/colors generate --colors "#FF4F00" --format tailwind
+
+# Live preview
+npx @sveltopia/colors dev --colors "#FF4F00"
+```
+
+## Export Formats
+
+- `css`  - CSS custom properties (Radix 1-12 step naming)
+- `json`  - Structured palette data (hex, OKLCH, P3)
+- `tailwind`  - Tailwind v4 CSS with @theme block (50-950 mapping)
+- `tailwind-v3`  - Tailwind v3 JavaScript preset
+- `shadcn`  - shadcn/ui semantic tokens
+- `radix`  - Radix Colors compatible JS exports
+- `panda`  - Panda CSS preset with semantic tokens
+
+## Core API
+
+```typescript
+import {
+  generatePalette,        // (opts) => LightPalette (single mode)
+  analyzeBrandColors,     // (colors, mode?) => TuningProfile
+  exportCSS,              // (palette, opts?) => string
+  exportJSON,             // (palette, opts?) => JSONOutput
+  exportTailwindV4CSS,    // (palette, opts?) => string
+  exportTailwind,         // (palette, opts?) => string (v3 preset)
+  exportShadcn,           // (palette, opts?) => string
+  exportRadix,            // (palette, opts?) => string
+  exportPanda,            // (palette, brandColorInfo, opts?) => string
+  calculateAPCA,          // (textHex, bgHex) => number
+  validatePaletteContrast // (palette, opts?) => ContrastReport
+} from '@sveltopia/colors';
+```
+
+## 31 Baseline Hues
+
+gray, mauve, slate, sage, olive, sand, tomato, red, ruby, crimson, pink, plum, purple, violet, iris, indigo, blue, cyan, teal, jade, green, grass, lime, mint, sky, amber, yellow, gold, bronze, brown, orange
+
+## For Complete Documentation
+
+See the full AI reference at: https://colors.sveltopia.dev/llms-full.txt

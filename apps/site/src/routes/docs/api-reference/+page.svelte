@@ -24,22 +24,29 @@
   <CodeViewer
     code={`import { generatePalette } from '@sveltopia/colors';
 
-const palette = generatePalette({
+// Returns a single-mode LightPalette — call once per mode
+const light = generatePalette({
   brandColors: ['#FF4F00', '#1A1A1A'],
+  // Optional: 'light' (default) | 'dark'
+  mode: 'light',
   // Optional: override the auto-detected tuning profile
-  tuningProfile: undefined,
-  // Optional: 'light' | 'dark' (generates both by default)
-  mode: undefined
+  tuningProfile: undefined
 });
 
-// palette.scales['orange'][9] → '#FF4F00' (or close to it)
-// palette.meta.anchoredSlots → ['orange']
-// palette.meta.tuningProfile → { hueShift, chromaMultiplier, ... }`}
+// light.scales['orange'][9] → '#FF4F00' (or close to it)
+// light.meta.anchoredSlots → ['orange']
+// light.meta.tuningProfile → { hueShift, chromaMultiplier, ... }
+
+// Generate dark mode with the same inputs
+const dark = generatePalette({
+  brandColors: ['#FF4F00', '#1A1A1A'],
+  mode: 'dark'
+});`}
     language="typescript"
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h3><code>analyzeBrandColors(colors, mode?)</code></h3>
 
   <p>
@@ -62,7 +69,7 @@ const profile = analyzeBrandColors(['#FF4F00']);
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-8 max-w-none dark:prose-invert">
   <h2>Export functions</h2>
 
   <p>All export functions take a <code>Palette</code> (with both light and dark scales) and return
@@ -78,8 +85,8 @@ const profile = analyzeBrandColors(['#FF4F00']);
     code={`import { exportCSS } from '@sveltopia/colors';
 
 const css = exportCSS(palette, {
-  lightSelector: ':root',         // default
-  darkSelector: '.dark',          // default
+  lightSelector: ':root',              // default
+  darkSelector: '.dark, .dark-theme',  // default
   includeAlpha: true,             // default
   includeP3: true,                // default
   includeSemantic: true,          // default
@@ -91,7 +98,7 @@ const css = exportCSS(palette, {
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h3><code>exportJSON(palette, options?)</code></h3>
 
   <p>Structured JSON with hex, OKLCH, and P3 formats for each color.</p>
@@ -113,7 +120,7 @@ const data = exportJSON(palette, {
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h3><code>exportTailwindV4CSS(palette, options?)</code></h3>
 
   <p>Tailwind v4 CSS with <code>@theme</code> block for first-class utility support.</p>
@@ -133,7 +140,31 @@ const css = exportTailwindV4CSS(palette, {
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
+  <h3><code>exportTailwind(palette, options?)</code></h3>
+
+  <p>Tailwind v3 JavaScript preset. Use this if you're still on Tailwind v3 (<code>--format tailwind-v3</code> in the CLI).</p>
+</div>
+
+<div class="not-prose mt-4">
+  <CodeViewer
+    code={`import { exportTailwind } from '@sveltopia/colors';
+
+const js = exportTailwind(palette, {
+  scale: '50-950',          // '50-950' | '1-12'
+  darkMode: 'class',        // 'class' | 'media'
+  includeAlpha: false        // include alpha variants
+});`}
+    language="typescript"
+  />
+</div>
+
+<div class="prose mt-6 max-w-none dark:prose-invert">
+  <p class="text-sm text-muted-foreground">
+    <code>exportTailwindWithCSSVars</code> is also available — same options, but outputs CSS
+    custom properties instead of hardcoded hex values.
+  </p>
+
   <h3><code>exportShadcn(palette, options?)</code></h3>
 
   <p>shadcn/ui compatible CSS with semantic tokens.</p>
@@ -150,13 +181,15 @@ const css = exportShadcn(palette, {
   includeCharts: true,
   includeSidebar: true,
   includeThemeBlock: true,
-  includeThemeInlineBlock: true
+  includeThemeInlineBlock: true,
+  lightSelector: ':root',
+  darkSelector: '.dark'
 });`}
     language="typescript"
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h3><code>exportRadix(palette, options?)</code></h3>
 
   <p>Radix Colors compatible JavaScript export.</p>
@@ -175,26 +208,28 @@ const js = exportRadix(palette, {
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
-  <h3><code>exportPanda(palette, options?)</code></h3>
+<div class="prose mt-6 max-w-none dark:prose-invert">
+  <h3><code>exportPanda(palette, brandColorInfo, options?)</code></h3>
 
-  <p>Panda CSS preset.</p>
+  <p>Panda CSS preset. Requires brand color info for semantic token mapping.</p>
 </div>
 
 <div class="not-prose mt-4">
   <CodeViewer
     code={`import { exportPanda } from '@sveltopia/colors';
 
-const ts = exportPanda(palette, {
-  format: 'esm',         // 'esm' | 'cjs'
-  includeAlpha: true,
-  includeP3: true
+const brandColorInfo = [
+  { hex: '#FF4F00', hue: 'orange', anchorStep: 9, isCustomRow: false }
+];
+
+const ts = exportPanda(palette, brandColorInfo, {
+  includeSemantic: true   // include semantic tokens (default: true)
 });`}
     language="typescript"
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-8 max-w-none dark:prose-invert">
   <h2>Validation</h2>
 
   <h3><code>calculateAPCA(textHex, bgHex)</code></h3>
@@ -215,7 +250,7 @@ const contrast = calculateAPCA('#1A1A1A', '#FFFFFF');
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h3><code>validatePaletteContrast(palette, options?)</code></h3>
 
   <p>
@@ -241,7 +276,7 @@ const report = validatePaletteContrast(palette, {
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-8 max-w-none dark:prose-invert">
   <h2>Key types</h2>
 </div>
 
@@ -297,7 +332,7 @@ interface ContrastReport {
   />
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <p>
     For the full type definitions, see the
     <a href="https://github.com/sveltopia/colors" target="_blank" rel="noopener noreferrer">TypeScript source</a>.

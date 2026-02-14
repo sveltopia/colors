@@ -10,7 +10,7 @@
 
   <p class="lead">
     Sveltopia Colors is built on three foundations: the OKLCH color space, the Radix 12-step scale
-    system, and APCA contrast validation. Here's why each matters.
+    system, and APCA contrast validation. Here's why each matters:
   </p>
 
   <h2>Why OKLCH?</h2>
@@ -49,7 +49,7 @@
   </KeyConcept>
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <p>
     OKLCH also supports the P3 wide-gamut color space, giving you access to more vivid colors on
     modern displays. The generated CSS includes P3 fallbacks automatically.
@@ -90,7 +90,7 @@
           <td>3</td>
           <td>200</td>
           <td>Component background</td>
-          <td>Card, well, input field background</td>
+          <td>Card, input field, code block background</td>
         </tr>
         <tr>
           <td>4</td>
@@ -119,8 +119,8 @@
         <tr>
           <td>8</td>
           <td>700</td>
-          <td>Solid backgrounds</td>
-          <td>Badges, tags, indicators</td>
+          <td>Hovered borders</td>
+          <td>Focus rings, hovered input borders</td>
         </tr>
         <tr>
           <td>9</td>
@@ -130,7 +130,7 @@
         </tr>
         <tr>
           <td>10</td>
-          <td>850</td>
+          <td>850*</td>
           <td>Hovered solid</td>
           <td>Button hover states</td>
         </tr>
@@ -149,6 +149,10 @@
       </tbody>
     </table>
   </div>
+
+  <p class="text-sm text-muted-foreground">
+    *850 is not part of Tailwind's default color scale. We added it to preserve the full Radix 12-step system — without it, the "hovered solid" state (step 10) would have no Tailwind equivalent.
+  </p>
 </div>
 
 <div class="not-prose mt-4">
@@ -162,7 +166,7 @@
   </KeyConcept>
 </div>
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="prose mt-6 max-w-none dark:prose-invert">
   <h2>APCA contrast</h2>
 
   <p>
@@ -225,8 +229,7 @@
   </div>
 
   <p>
-    Every step in every scale is validated against these thresholds during generation. If a color
-    doesn't meet the required contrast, the generator adjusts it automatically. See the
+    Critical text contrast pairs — steps 11–12 (text colors) against steps 1–2 (backgrounds) — are validated and auto-adjusted during generation to meet these thresholds. Button solid steps (9–10) are validated but flagged as warnings rather than auto-corrected, since saturated hues naturally have lower contrast that APCA accounts for through font size and weight. See the
     <a href="/docs/accessibility">Accessibility</a> page for safe combination guidelines.
   </p>
 
