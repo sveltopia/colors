@@ -15,6 +15,7 @@ import {
 	exportCSS,
 	exportJSON,
 	exportTailwind,
+	exportTailwindV4CSS,
 	exportRadix,
 	exportPanda,
 	exportShadcn
@@ -163,6 +164,9 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
 			log.info(`Would write: ${resolve(config.outputDir)}/colors.json`);
 		}
 		if (config.formats.includes('tailwind')) {
+			log.info(`Would write: ${resolve(config.outputDir)}/tailwind.css`);
+		}
+		if (config.formats.includes('tailwind-v3')) {
 			log.info(`Would write: ${resolve(config.outputDir)}/tailwind.preset.js`);
 		}
 		if (config.formats.includes('radix')) {
@@ -206,13 +210,22 @@ export async function generateCommand(options: GenerateOptions): Promise<void> {
 		s.stop(`JSON exported to ${jsonPath}`);
 	}
 
-	// Export Tailwind
+	// Export Tailwind v4 (default "tailwind" format)
 	if (config.formats.includes('tailwind')) {
-		s.start('Exporting Tailwind preset');
+		s.start('Exporting Tailwind v4 CSS');
+		const tailwind = exportTailwindV4CSS(palette);
+		const tailwindPath = join(outputDir, 'tailwind.css');
+		await writeFile(tailwindPath, tailwind, 'utf-8');
+		s.stop(`Tailwind v4 CSS exported to ${tailwindPath}`);
+	}
+
+	// Export Tailwind v3 (legacy JS preset)
+	if (config.formats.includes('tailwind-v3')) {
+		s.start('Exporting Tailwind v3 preset');
 		const tailwind = exportTailwind(palette, { scale: '50-950' });
 		const tailwindPath = join(outputDir, 'tailwind.preset.js');
 		await writeFile(tailwindPath, tailwind, 'utf-8');
-		s.stop(`Tailwind preset exported to ${tailwindPath}`);
+		s.stop(`Tailwind v3 preset exported to ${tailwindPath}`);
 	}
 
 	// Export Radix

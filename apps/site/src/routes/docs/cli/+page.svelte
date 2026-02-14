@@ -49,7 +49,7 @@
         <tr>
           <td><code>--format</code></td>
           <td><code>-f</code></td>
-          <td>Output formats: <code>css</code>, <code>json</code>, <code>tailwind</code>, <code>radix</code>, <code>panda</code>, <code>shadcn</code>, <code>all</code></td>
+          <td>Output formats: <code>css</code>, <code>json</code>, <code>tailwind</code>, <code>tailwind-v3</code>, <code>radix</code>, <code>panda</code>, <code>shadcn</code>, <code>all</code></td>
           <td><code>css,json</code></td>
         </tr>
         <tr>
@@ -115,7 +115,12 @@
         <tr>
           <td><code>tailwind</code></td>
           <td><code>tailwind.css</code></td>
-          <td>Tailwind v4 CSS with <code>@theme</code> block</td>
+          <td>Tailwind v4 CSS with <code>@theme</code> block (50–950 scale)</td>
+        </tr>
+        <tr>
+          <td><code>tailwind-v3</code></td>
+          <td><code>tailwind.preset.js</code></td>
+          <td>Tailwind v3 JS preset (50–950 scale)</td>
         </tr>
         <tr>
           <td><code>shadcn</code></td>
@@ -218,7 +223,7 @@
     </table>
   </div>
 
-  <h2>Interactive vs flag-based</h2>
+  <h2 id="interactive-vs-flag-based">Interactive vs flag-based</h2>
 
   <p>
     The CLI supports two workflows:

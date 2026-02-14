@@ -18,8 +18,66 @@
       mobileMenuOpen = !mobileMenuOpen;
     }
     window.addEventListener('toggle-mobile-menu', handleToggle);
+
+    // Auto-link headings in docs content
+    function linkifyHeadings() {
+      const article = document.querySelector('article');
+      if (!article) return;
+
+      const headings = article.querySelectorAll('h2, h3');
+      headings.forEach((heading) => {
+        // Skip if already linkified
+        if (heading.querySelector('.heading-anchor')) return;
+
+        // Generate ID from text if not already set
+        if (!heading.id) {
+          heading.id = heading.textContent
+            ?.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '') ?? '';
+        }
+
+        // Wrap contents in an anchor link (Radix-style)
+        const anchor = document.createElement('a');
+        anchor.href = `#${heading.id}`;
+        anchor.className = 'heading-anchor';
+        anchor.setAttribute('aria-label', `Link to ${heading.textContent}`);
+
+        // Move heading's children into the anchor
+        while (heading.firstChild) {
+          anchor.appendChild(heading.firstChild);
+        }
+
+        // Add the link icon SVG
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '16');
+        svg.setAttribute('height', '16');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor');
+        svg.setAttribute('stroke-width', '2');
+        svg.setAttribute('stroke-linecap', 'round');
+        svg.setAttribute('stroke-linejoin', 'round');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.classList.add('heading-anchor-icon');
+        svg.innerHTML = '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+        anchor.appendChild(svg);
+
+        heading.appendChild(anchor);
+      });
+    }
+
+    // Run on initial mount and after navigation
+    linkifyHeadings();
+    const observer = new MutationObserver(linkifyHeadings);
+    const article = document.querySelector('article');
+    if (article) {
+      observer.observe(article, { childList: true, subtree: true });
+    }
+
     return () => {
       window.removeEventListener('toggle-mobile-menu', handleToggle);
+      observer.disconnect();
     };
   });
 

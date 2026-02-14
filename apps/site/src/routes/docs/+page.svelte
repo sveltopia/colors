@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowRight, Terminal, Palette, Layers, Accessibility } from 'lucide-svelte';
+  import { ArrowRight, Terminal, Palette, Layers, Images } from 'lucide-svelte';
   import PrevNext from '$lib/components/PrevNext.svelte';
 </script>
 
@@ -7,32 +7,40 @@
   <h1>Sveltopia Colors</h1>
 
   <p class="lead">
-    A perceptually uniform color system that generates accessible, beautiful palettes from your brand
-    colors. Built on OKLCH and the Radix 12-step scale, with APCA contrast validation baked in.
+    Generate a harmonious, accessible color palette tuned to your brand. One command gives you a
+    drop-in replacement for the colors in your Tailwind or shadcn project.
   </p>
 
-  <ul>
-    <li>
-      <strong>Brand-first generation</strong> — feed in your hex colors, get a full 31-hue palette
-      tuned to your brand
-    </li>
-    <li>
-      <strong>Perceptually uniform</strong> — OKLCH ensures consistent lightness and chroma across
-      hues, unlike HSL/RGB
-    </li>
-    <li>
-      <strong>Accessibility built in</strong> — every step is APCA-validated so you never ship
-      inaccessible color combinations
-    </li>
-    <li>
-      <strong>Framework-ready exports</strong> — Tailwind v4, shadcn/ui, Radix, and Panda CSS out of
-      the box
-    </li>
-    <li>
-      <strong>Light + dark mode</strong> — both modes generated automatically with proper contrast in
-      each
-    </li>
-  </ul>
+  <p>
+    Libraries like <a href="https://tailwindcss.com/docs/colors" target="_blank" rel="noopener noreferrer">Tailwind</a> and <a href="https://www.radix-ui.com/colors" target="_blank" rel="noopener noreferrer">Radix</a> already provide well designed color palettes, crafted
+    for contrast and accessibility. These palettes are like a big box of crayons &mdash; comprehensive, beautiful, and ready to use. But
+    the crayons aren't designed to adapt to your brand.
+  </p>
+
+  <p>
+    Your options are to pick the closest existing color and hope it feels right, or use a
+    tool like Radix's <a href="https://www.radix-ui.com/colors/custom" target="_blank" rel="noopener noreferrer">custom color generator</a>
+    to create a single hue family that matches your brand input. The latter is a great step
+    in the right direction, but when you drop that custom row into the rest of the
+    palette there's no guarantee that it will harmonize with the other ~30 hue families.
+  </p>
+
+  <p>
+    Sveltopia Colors solves this by finding the closest perceptual match in the Radix baseline,
+    or generating a custom row if it can't find an ideal match. Then it tunes
+    the entire palette so every hue shifts to harmonize with your inputs. The shifts are subtle and
+    dampened, so that everything across the full palette shares a "family resemblance" with your brand
+    while maintaining the original cohesiveness of the Radix color choices.
+    The result is a complete 31-hue system with light and dark mode, every step APCA-validated for
+    accessibility, that feels like it was designed for you from the start.
+  </p>
+
+  <h2>Why Radix?</h2>
+
+  <p>We chose Radix's 12-step scale as our foundation because each step has a clear semantic purpose:
+    backgrounds, borders, solids, and text which take the guesswork out of choosing the right shade
+    for a given UI context. The light/dark mode pairing is solved at the scale level, and twelve steps
+    hits the sweet spot between flexibility and decision fatigue.</p>
 
   <h2>Get Started</h2>
 </div>
@@ -84,7 +92,7 @@
     <div>
       <div class="font-semibold text-foreground">Frameworks</div>
       <div class="mt-1 text-sm text-muted-foreground">
-        Integration guides for Tailwind, shadcn/ui, Radix, and Panda CSS.
+        Integration guides for Tailwind and shadcn/ui.
       </div>
     </div>
   </a>
@@ -109,9 +117,9 @@
 
 <div class="not-prose mt-8 rounded-lg border border-primary-800/20 bg-primary-800/5 p-6">
   <div class="flex items-start gap-3">
-    <Accessibility class="mt-0.5 h-5 w-5 shrink-0 text-primary-800 dark:text-primary-600" />
+    <Images class="mt-0.5 h-5 w-5 shrink-0 text-primary-800 dark:text-primary-600" />
     <div>
-      <div class="font-semibold text-foreground">Looking for examples?</div>
+      <div class="font-semibold text-foreground">Need examples?</div>
       <div class="mt-1 text-sm text-muted-foreground">
         Try the <a href="/playground" class="font-medium text-primary-800 underline hover:text-primary-700 dark:text-primary-600 dark:hover:text-primary-500">Playground</a> to generate
         palettes interactively, or check the <a href="/demos/tailwind" class="font-medium text-primary-800 underline hover:text-primary-700 dark:text-primary-600 dark:hover:text-primary-500">Demos</a> to see them in action.

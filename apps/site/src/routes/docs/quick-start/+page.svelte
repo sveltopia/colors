@@ -8,10 +8,6 @@
 <div class="prose max-w-none dark:prose-invert">
   <h1>Quick Start</h1>
 
-  <p class="lead">
-    Get from zero to a working color palette in three steps.
-  </p>
-
   <h2>1. Install</h2>
 </div>
 
@@ -28,22 +24,22 @@
 </div>
 
 <div class="not-prose mt-4">
-  <CodeViewer code='npx @sveltopia/colors generate --colors "#FF4F00"' language="bash" />
+  <CodeViewer code='npx @sveltopia/colors generate --colors "#FF6A00,#43A047"' language="bash" />
 </div>
 
 <div class="not-prose mt-4">
   <KeyConcept icon={Info}>
     <p>
       <strong>Prefer interactive mode?</strong> Run <code class="rounded bg-muted px-1.5 py-0.5 text-xs">npx @sveltopia/colors generate</code> without flags
-      and the CLI will walk you through color selection, format choices, and output directory.
+      and the CLI will walk you through each option. See <a href="/docs/cli#interactive-vs-flag-based" class="font-medium text-primary-800 underline hover:text-primary-700 dark:text-primary-600 dark:hover:text-primary-500">Interactive vs flag-based</a> in the CLI reference.
     </p>
   </KeyConcept>
 </div>
 
 <div class="prose max-w-none dark:prose-invert">
   <p>
-    This generates a full palette in <code>./colors/</code> with CSS and JSON by default. To also
-    generate framework-specific files:
+    This generates a full palette in <code>./colors/</code> with CSS and JSON by default. To
+    generate framework-specific files add the <code>--format</code> flag:
   </p>
 </div>
 
@@ -57,16 +53,23 @@
 <div class="prose max-w-none dark:prose-invert">
   <h2>3. Use your colors</h2>
 
-  <p>Import the generated CSS into your app:</p>
+  <p>Import the generated CSS into your project's main stylesheet:</p>
 </div>
 
 <div class="not-prose mt-4">
   <CodeViewer
-    code={`/* app.css */
+    code={`/* Your main stylesheet (e.g., app.css, globals.css) */
 @import './colors/colors.css';`}
     language="css"
-    filename="app.css"
   />
+</div>
+
+<div class="not-prose mt-4">
+  <KeyConcept icon={Info}>
+    <p>
+      Using Tailwind or shadcn? The <a href="/docs/frameworks" class="font-medium text-primary-800 underline hover:text-primary-700 dark:text-primary-600 dark:hover:text-primary-500">Frameworks</a> guide covers how to import your generated palette so it cleanly replaces the default framework colors.
+    </p>
+  </KeyConcept>
 </div>
 
 <div class="prose max-w-none dark:prose-invert">
@@ -75,33 +78,17 @@
 
 <div class="not-prose mt-4">
   <CodeViewer
-    code={`<!-- CSS custom properties -->
-<div style="background-color: var(--color-orange-3); color: var(--color-orange-11);">
+    code={`<!-- CSS custom properties (from colors.css) -->
+<div style="background-color: var(--orange-3); color: var(--orange-11);">
   Brand surface with accessible text
 </div>
 
-<!-- Tailwind classes (if using --format tailwind) -->
-<div class="bg-orange-300 text-orange-950">
+<!-- Tailwind classes (from --format tailwind) -->
+<div class="bg-orange-200 text-orange-900">
   Brand surface with accessible text
 </div>`}
     language="html"
   />
-</div>
-
-<div class="prose max-w-none dark:prose-invert">
-  <h2>What's next?</h2>
-
-  <ul>
-    <li>
-      <a href="/docs/cli">CLI Reference</a> — all flags and config file options
-    </li>
-    <li>
-      <a href="/docs/frameworks">Frameworks</a> — detailed Tailwind and shadcn/ui integration
-    </li>
-    <li>
-      <a href="/docs/color-theory">Color Theory</a> — understand the system behind the scales
-    </li>
-  </ul>
 </div>
 
 <div class="mt-12">

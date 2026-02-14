@@ -115,9 +115,24 @@ describe('CLI Generate Command E2E Tests', () => {
 			expect(jsonExists).toBe(true);
 		});
 
-		it('generates Tailwind preset when format is tailwind', async () => {
+		it('generates Tailwind v4 CSS when format is tailwind', async () => {
 			await execAsync(
 				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format tailwind`,
+				{ cwd: path.join(__dirname, '../..') }
+			);
+
+			const tailwindPath = path.join(testDir, 'tailwind.css');
+			const tailwindExists = await fs.access(tailwindPath).then(() => true).catch(() => false);
+			expect(tailwindExists).toBe(true);
+
+			const content = await fs.readFile(tailwindPath, 'utf-8');
+			expect(content).toContain('@theme {');
+			expect(content).toContain('--color-'); // CSS custom properties
+		});
+
+		it('generates Tailwind v3 preset when format is tailwind-v3', async () => {
+			await execAsync(
+				`npx tsx ${cliPath} generate --colors "#FF4F00" --output ${testDir} --format tailwind-v3`,
 				{ cwd: path.join(__dirname, '../..') }
 			);
 
@@ -199,7 +214,7 @@ describe('CLI Generate Command E2E Tests', () => {
 			);
 
 			const cssExists = await fs.access(path.join(testDir, 'colors.css')).then(() => true).catch(() => false);
-			const tailwindExists = await fs.access(path.join(testDir, 'tailwind.preset.js')).then(() => true).catch(() => false);
+			const tailwindExists = await fs.access(path.join(testDir, 'tailwind.css')).then(() => true).catch(() => false);
 			const radixExists = await fs.access(path.join(testDir, 'radix-colors.js')).then(() => true).catch(() => false);
 			const jsonExists = await fs.access(path.join(testDir, 'colors.json')).then(() => true).catch(() => false);
 
@@ -217,14 +232,16 @@ describe('CLI Generate Command E2E Tests', () => {
 
 			const cssExists = await fs.access(path.join(testDir, 'colors.css')).then(() => true).catch(() => false);
 			const jsonExists = await fs.access(path.join(testDir, 'colors.json')).then(() => true).catch(() => false);
-			const tailwindExists = await fs.access(path.join(testDir, 'tailwind.preset.js')).then(() => true).catch(() => false);
+			const tailwindV4Exists = await fs.access(path.join(testDir, 'tailwind.css')).then(() => true).catch(() => false);
+			const tailwindV3Exists = await fs.access(path.join(testDir, 'tailwind.preset.js')).then(() => true).catch(() => false);
 			const radixExists = await fs.access(path.join(testDir, 'radix-colors.js')).then(() => true).catch(() => false);
 			const pandaExists = await fs.access(path.join(testDir, 'panda.preset.ts')).then(() => true).catch(() => false);
 			const shadcnExists = await fs.access(path.join(testDir, 'shadcn-colors.css')).then(() => true).catch(() => false);
 
 			expect(cssExists).toBe(true);
 			expect(jsonExists).toBe(true);
-			expect(tailwindExists).toBe(true);
+			expect(tailwindV4Exists).toBe(true);
+			expect(tailwindV3Exists).toBe(true);
 			expect(radixExists).toBe(true);
 			expect(pandaExists).toBe(true);
 			expect(shadcnExists).toBe(true);

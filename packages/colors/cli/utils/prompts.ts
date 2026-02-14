@@ -75,7 +75,8 @@ export async function promptForFormats(): Promise<ExportFormat[]> {
 		options: [
 			{ value: 'css', label: 'CSS', hint: 'CSS custom properties with light/dark mode' },
 			{ value: 'json', label: 'JSON', hint: 'Full palette data with hex, oklch, P3' },
-			{ value: 'tailwind', label: 'Tailwind', hint: 'Tailwind CSS preset (50-950 scale)' },
+			{ value: 'tailwind', label: 'Tailwind v4', hint: 'Tailwind v4 CSS with @theme block (50-950 scale)' },
+			{ value: 'tailwind-v3', label: 'Tailwind v3', hint: 'Tailwind v3 JS preset (50-950 scale)' },
 			{ value: 'radix', label: 'Radix', hint: 'Drop-in @radix-ui/colors replacement' },
 			{ value: 'panda', label: 'Panda CSS', hint: 'Panda CSS preset with semantic tokens' },
 			{ value: 'shadcn', label: 'shadcn', hint: 'Tailwind v4 CSS + shadcn semantic tokens' }
