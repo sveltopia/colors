@@ -5,6 +5,13 @@
   import { Lightbulb } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+  <title>Alpha Colors | Sveltopia Colors</title>
+  <meta name="description" content="Learn about alpha (transparent) color variants in Sveltopia Colors. Use semi-transparent colors for overlays, backgrounds, and layered UI." />
+  <meta property="og:title" content="Alpha Colors | Sveltopia Colors" />
+  <meta property="og:description" content="Learn about alpha (transparent) color variants in Sveltopia Colors. Use semi-transparent colors for overlays, backgrounds, and layered UI." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>Alpha Colors</h1>
 

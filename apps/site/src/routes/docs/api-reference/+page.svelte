@@ -3,6 +3,13 @@
   import PrevNext from '$lib/components/PrevNext.svelte';
 </script>
 
+<svelte:head>
+  <title>API Reference | Sveltopia Colors</title>
+  <meta name="description" content="Complete API reference for @sveltopia/colors. All exported functions, types, and configuration options." />
+  <meta property="og:title" content="API Reference | Sveltopia Colors" />
+  <meta property="og:description" content="Complete API reference for @sveltopia/colors. All exported functions, types, and configuration options." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>API Reference</h1>
 

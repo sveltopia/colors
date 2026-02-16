@@ -4,6 +4,10 @@
   import HueSpectrum from '$lib/components/HueSpectrum.svelte';
   import { Palette, Moon, Accessibility, Layers, Sparkles, Zap, ArrowDown } from 'lucide-svelte';
 
+  const seoTitle = 'Sveltopia Colors \u2014 Accessible Color Palettes from Your Brand';
+  const seoDescription =
+    'Generate a harmonious, APCA-accessible color palette tuned to your brand. One command gives you a drop-in replacement for Tailwind or shadcn projects.';
+
   const generateExample = `npx @sveltopia/colors generate \\
   --colors "#FF6A00,#43A047,#1A1A1A" \\
   --format css \\
@@ -81,6 +85,13 @@
     return classes[color] || classes.orange;
   }
 </script>
+
+<svelte:head>
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
+  <meta property="og:title" content={seoTitle} />
+  <meta property="og:description" content={seoDescription} />
+</svelte:head>
 
 <!-- Hero Section — subtle warm tint -->
 <section class="bg-orange-500/30 dark:bg-gray-100">

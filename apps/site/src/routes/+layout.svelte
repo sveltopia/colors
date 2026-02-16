@@ -17,6 +17,12 @@
   <link rel="icon" href="/favicon.svg" />
   <!-- Default color preset for the site (shadcn superset covers all site chrome) -->
   <link rel="stylesheet" href="/presets/shadcn/sveltopia.css" />
+  <!-- Site-wide OG defaults -->
+  <meta property="og:site_name" content="Sveltopia Colors" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#1a1a2e" />
 </svelte:head>
 
 <ModeWatcher />

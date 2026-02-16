@@ -5,6 +5,13 @@
   import { CheckCircle, XCircle, Shield, Info } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+  <title>Accessibility | Sveltopia Colors</title>
+  <meta name="description" content="How Sveltopia Colors ensures APCA-compliant contrast at every step. Understand the accessibility guarantees built into every generated palette." />
+  <meta property="og:title" content="Accessibility | Sveltopia Colors" />
+  <meta property="og:description" content="How Sveltopia Colors ensures APCA-compliant contrast at every step. Understand the accessibility guarantees built into every generated palette." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>Accessibility</h1>
 
