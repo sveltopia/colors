@@ -35,7 +35,7 @@
 <div class="space-y-3">
   <div class="flex items-center gap-2">
     <Anchor class="h-4 w-4 text-muted-foreground" />
-    <h3 class="text-sm font-medium">Color Analysis</h3>
+    <h2 class="text-sm font-medium">Color Analysis</h2>
   </div>
 
   <p class="text-xs text-muted-foreground">

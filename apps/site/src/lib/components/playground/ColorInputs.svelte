@@ -58,7 +58,7 @@
 <div class="space-y-3">
   <div class="flex items-center gap-2">
     <Pipette class="h-4 w-4 text-muted-foreground" />
-    <h3 class="text-sm font-medium">Brand Colors</h3>
+    <h2 class="text-sm font-medium">Brand Colors</h2>
   </div>
 
   <div class="space-y-2">
@@ -73,6 +73,7 @@
               value={getSafePickerValue(color)}
               onchange={(e) => handlePickerChange(index, e)}
               class="absolute -inset-2 h-14 w-14 cursor-pointer"
+              aria-label="Color picker for brand color {index + 1}"
             />
           {/if}
           <div
@@ -88,6 +89,7 @@
           oninput={(e) => handleColorChange(index, (e.target as HTMLInputElement).value)}
           placeholder="#FF6A00"
           maxlength={7}
+          aria-label="Hex value for brand color {index + 1}"
           class="h-9 flex-1 rounded-md border bg-background px-3 font-mono text-sm uppercase placeholder:text-muted-foreground {!isValid && color.length > 1 ? 'border-red-500' : 'border-border'}"
         />
 

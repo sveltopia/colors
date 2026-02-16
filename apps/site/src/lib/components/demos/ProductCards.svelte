@@ -80,6 +80,7 @@
 						<button
 							onclick={() => toggleFavorite(product.id)}
 							class="absolute right-3 top-3 rounded-full bg-white/90 p-2 shadow-sm transition-all hover:bg-white hover:shadow-md"
+							aria-label="Toggle favorite"
 						>
 							<Heart
 								class="h-5 w-5 transition-colors {favorites.includes(product.id)

@@ -52,6 +52,9 @@
 					<div class="flex items-center gap-2">
 						<button
 							type="button"
+							role="checkbox"
+							aria-checked={rememberMe}
+							aria-label="Remember me"
 							onclick={() => (rememberMe = !rememberMe)}
 							class="flex h-5 w-5 items-center justify-center rounded border transition-colors {rememberMe
 								? 'border-primary-800 bg-primary-800'

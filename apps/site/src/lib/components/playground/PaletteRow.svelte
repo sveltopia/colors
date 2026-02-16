@@ -167,6 +167,7 @@
           onclick={(e) => handleSwatchClick(step, e)}
           class="group relative h-8 transition-transform first:rounded-l-md last:rounded-r-md hover:z-10 hover:scale-y-125"
           style="background-color: {color};"
+          aria-label="{hueName} step {step}"
         >
           {#if isAnchorStep}
             <div class="absolute inset-0 flex items-center justify-center">
@@ -196,6 +197,7 @@
               type="button"
               onclick={() => (activePopover = null)}
               class="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
+              aria-label="Close"
             >
               <X class="h-3 w-3" />
             </button>
