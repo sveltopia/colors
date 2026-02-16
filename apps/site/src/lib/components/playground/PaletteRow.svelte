@@ -188,6 +188,7 @@
             class="absolute top-full z-50 mt-2 w-48 rounded-lg border bg-popover p-3 shadow-lg"
             style="left: calc({((activePopover - 1) / 12) * 100}% + {100/24}%); transform: translateX(-50%);"
             role="dialog"
+            tabindex="-1"
             onclick={(e) => e.stopPropagation()}
             onkeydown={(e) => e.key === 'Escape' && (activePopover = null)}
           >

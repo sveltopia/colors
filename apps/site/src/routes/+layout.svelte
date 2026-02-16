@@ -2,15 +2,40 @@
   import '../app.css';
   import { ModeWatcher } from 'mode-watcher';
   import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
+  import SearchButton from '$lib/components/SearchButton.svelte';
+  import SearchModal from '$lib/components/SearchModal.svelte';
   import Logo from '$lib/components/Logo.svelte';
   import { Menu } from 'lucide-svelte';
   import { page } from '$app/state';
+  import { onMount } from 'svelte';
 
   let { children } = $props();
+
+  let searchOpen = $state(false);
+  let pagefindReady = $state(false);
 
   function toggleMobileMenu() {
     window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
   }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      searchOpen = !searchOpen;
+    }
+  }
+
+  onMount(async () => {
+    try {
+      // Dynamic import with string concat to bypass Vite bundling
+      const pagefindPath = '/pagefind/pagefind' + '.js';
+      window.pagefind = await import(/* @vite-ignore */ pagefindPath);
+      await window.pagefind?.init();
+      pagefindReady = true;
+    } catch {
+      // Pagefind not available (dev mode) — search will show dev message
+    }
+  });
 </script>
 
 <svelte:head>
@@ -24,6 +49,8 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#1a1a2e" />
 </svelte:head>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <ModeWatcher />
 
@@ -92,6 +119,7 @@
           >
         </nav>
         <div class="flex items-center gap-1">
+          <SearchButton iconOnly onclick={() => (searchOpen = true)} />
           <ThemeSwitcher />
         </div>
       </div>
@@ -148,8 +176,9 @@
               </nav>
             </div>
 
-            <!-- Right: mode -->
+            <!-- Right: search, mode -->
             <div class="flex items-center gap-2">
+              <SearchButton onclick={() => (searchOpen = true)} />
               <ThemeSwitcher />
             </div>
           </div>
@@ -180,3 +209,5 @@
     </div>
   </footer>
 </div>
+
+<SearchModal bind:open={searchOpen} {pagefindReady} onclose={() => (searchOpen = false)} />
