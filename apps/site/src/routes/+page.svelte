@@ -4,6 +4,10 @@
   import HueSpectrum from '$lib/components/HueSpectrum.svelte';
   import { Palette, Moon, Accessibility, Layers, Sparkles, Zap, ArrowDown } from 'lucide-svelte';
 
+  const seoTitle = 'Sveltopia Colors \u2014 Accessible Color Palettes from Your Brand';
+  const seoDescription =
+    'Generate a harmonious, APCA-accessible color palette tuned to your brand. One command gives you a drop-in replacement for Tailwind or shadcn projects.';
+
   const generateExample = `npx @sveltopia/colors generate \\
   --colors "#FF6A00,#43A047,#1A1A1A" \\
   --format css \\
@@ -81,6 +85,13 @@
     return classes[color] || classes.orange;
   }
 </script>
+
+<svelte:head>
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
+  <meta property="og:title" content={seoTitle} />
+  <meta property="og:description" content={seoDescription} />
+</svelte:head>
 
 <!-- Hero Section — subtle warm tint -->
 <section class="bg-orange-500/30 dark:bg-gray-100">
@@ -238,33 +249,33 @@
       <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">1</span>
-          <h4 class="font-semibold text-white">Input your brand colors</h4>
+          <h3 class="font-semibold text-white">Input your brand colors</h3>
         </div>
-        <p class="text-sm text-white/80">1-7 hex colors that define your brand identity.</p>
+        <p class="text-sm text-white/90">1-7 hex colors that define your brand identity.</p>
       </div>
 
       <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">2</span>
-          <h4 class="font-semibold text-white">Algorithm finds best matches</h4>
+          <h3 class="font-semibold text-white">Algorithm finds best matches</h3>
         </div>
-        <p class="text-sm text-white/80">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
+        <p class="text-sm text-white/90">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
       </div>
 
       <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">3</span>
-          <h4 class="font-semibold text-white">Full scales generated</h4>
+          <h3 class="font-semibold text-white">Full scales generated</h3>
         </div>
-        <p class="text-sm text-white/80">12-step tint scales for each hue, tuned to your brand color profiles, light/dark modes, plus semantic tokens.</p>
+        <p class="text-sm text-white/90">12-step tint scales for each hue, tuned to your brand color profiles, light/dark modes, plus semantic tokens.</p>
       </div>
 
       <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">4</span>
-          <h4 class="font-semibold text-white">Export and use</h4>
+          <h3 class="font-semibold text-white">Export and use</h3>
         </div>
-        <p class="text-sm text-white/80">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
+        <p class="text-sm text-white/90">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
       </div>
     </div>
   </div>

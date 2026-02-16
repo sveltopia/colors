@@ -3,6 +3,13 @@
   import PrevNext from '$lib/components/PrevNext.svelte';
 </script>
 
+<svelte:head>
+  <title>Introduction | Sveltopia Colors</title>
+  <meta name="description" content="Documentation for Sveltopia Colors. Learn how to generate accessible, brand-tuned color palettes for Tailwind and shadcn projects." />
+  <meta property="og:title" content="Introduction | Sveltopia Colors" />
+  <meta property="og:description" content="Documentation for Sveltopia Colors. Learn how to generate accessible, brand-tuned color palettes for Tailwind and shadcn projects." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>Sveltopia Colors</h1>
 

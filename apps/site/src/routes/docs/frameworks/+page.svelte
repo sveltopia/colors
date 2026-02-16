@@ -23,6 +23,13 @@
 </Card.Root>`;
 </script>
 
+<svelte:head>
+  <title>Frameworks | Sveltopia Colors</title>
+  <meta name="description" content="Integration guides for using Sveltopia Colors with Tailwind CSS v4 and shadcn-svelte. Step-by-step setup for each framework." />
+  <meta property="og:title" content="Frameworks | Sveltopia Colors" />
+  <meta property="og:description" content="Integration guides for using Sveltopia Colors with Tailwind CSS v4 and shadcn-svelte. Step-by-step setup for each framework." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
 	<h1>Frameworks</h1>
 

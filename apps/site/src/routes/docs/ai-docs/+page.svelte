@@ -3,6 +3,13 @@
   import { FileText, Download, ExternalLink, Bot, Sparkles } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+  <title>AI Docs | Sveltopia Colors</title>
+  <meta name="description" content="Machine-readable documentation for LLMs. Use llms.txt and llms-full.txt to give AI assistants full context about Sveltopia Colors." />
+  <meta property="og:title" content="AI Docs | Sveltopia Colors" />
+  <meta property="og:description" content="Machine-readable documentation for LLMs. Use llms.txt and llms-full.txt to give AI assistants full context about Sveltopia Colors." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>AI-Optimized Documentation</h1>
   <p class="lead">

@@ -5,6 +5,13 @@
   import { Info } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+  <title>Quick Start | Sveltopia Colors</title>
+  <meta name="description" content="Install @sveltopia/colors, generate your first palette, and integrate it into your Tailwind or shadcn project in under 5 minutes." />
+  <meta property="og:title" content="Quick Start | Sveltopia Colors" />
+  <meta property="og:description" content="Install @sveltopia/colors, generate your first palette, and integrate it into your Tailwind or shadcn project in under 5 minutes." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>Quick Start</h1>
 

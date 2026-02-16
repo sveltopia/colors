@@ -48,10 +48,13 @@
 
 <!-- Drawer backdrop + panel -->
 {#if isOpen}
-  <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
   <div
     class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden"
     onclick={handleBackdropClick}
+    onkeydown={(e) => e.key === 'Escape' && close()}
+    role="button"
+    tabindex="-1"
+    aria-label="Close drawer"
   >
     <!-- Drawer panel -->
     <div

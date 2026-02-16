@@ -17,7 +17,7 @@
 <div class="rounded-lg border bg-card p-6">
   <div class="flex items-center gap-2 mb-4">
     <Terminal class="h-5 w-5 text-muted-foreground" />
-    <h3 class="font-semibold">Use the Library</h3>
+    <h2 class="font-semibold">Use the Library</h2>
   </div>
 
   <p class="mb-4 text-sm text-muted-foreground">
@@ -34,7 +34,7 @@
   <!-- CTA buttons -->
   <div class="flex flex-wrap gap-3">
     <a
-      href="/docs"
+      href="/docs/quick-start"
       class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
     >
       <Terminal class="h-4 w-4" />

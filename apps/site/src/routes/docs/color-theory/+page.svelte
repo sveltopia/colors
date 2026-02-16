@@ -5,6 +5,13 @@
   import { Lightbulb, ExternalLink } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+  <title>Color Theory | Sveltopia Colors</title>
+  <meta name="description" content="Why OKLCH, the Radix 12-step scale, and APCA contrast. Understand the color science behind Sveltopia Colors." />
+  <meta property="og:title" content="Color Theory | Sveltopia Colors" />
+  <meta property="og:description" content="Why OKLCH, the Radix 12-step scale, and APCA contrast. Understand the color science behind Sveltopia Colors." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>Color Theory</h1>
 

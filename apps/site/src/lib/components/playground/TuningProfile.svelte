@@ -49,7 +49,7 @@
 <div class="space-y-4">
   <div class="flex items-center gap-2">
     <Sliders class="h-4 w-4 text-muted-foreground" />
-    <h3 class="text-sm font-medium">Tuning Profile</h3>
+    <h2 class="text-sm font-medium">Tuning Profile</h2>
   </div>
 
   <p class="text-xs text-muted-foreground">

@@ -20,7 +20,7 @@
 <div class="space-y-3">
   <div class="flex items-center gap-2">
     <Palette class="h-4 w-4 text-muted-foreground" />
-    <h3 class="text-sm font-medium">Brand Presets</h3>
+    <h2 class="text-sm font-medium">Brand Presets</h2>
   </div>
 
   <div class="space-y-1">

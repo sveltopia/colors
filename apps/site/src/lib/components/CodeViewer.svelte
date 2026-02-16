@@ -45,6 +45,7 @@
     <button
       onclick={copyCode}
       class="flex h-8 shrink-0 cursor-pointer items-center gap-1 rounded px-2 text-muted-foreground hover:bg-secondary hover:text-foreground"
+      aria-label="Copy code"
     >
       {#if copied}
         <Check class="h-4 w-4" />

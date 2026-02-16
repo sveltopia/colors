@@ -167,6 +167,7 @@
           onclick={(e) => handleSwatchClick(step, e)}
           class="group relative h-8 transition-transform first:rounded-l-md last:rounded-r-md hover:z-10 hover:scale-y-125"
           style="background-color: {color};"
+          aria-label="{hueName} step {step}"
         >
           {#if isAnchorStep}
             <div class="absolute inset-0 flex items-center justify-center">
@@ -188,6 +189,7 @@
             class="absolute top-full z-50 mt-2 w-48 rounded-lg border bg-popover p-3 shadow-lg"
             style="left: calc({((activePopover - 1) / 12) * 100}% + {100/24}%); transform: translateX(-50%);"
             role="dialog"
+            tabindex="-1"
             onclick={(e) => e.stopPropagation()}
             onkeydown={(e) => e.key === 'Escape' && (activePopover = null)}
           >
@@ -195,6 +197,7 @@
               type="button"
               onclick={() => (activePopover = null)}
               class="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
+              aria-label="Close"
             >
               <X class="h-3 w-3" />
             </button>

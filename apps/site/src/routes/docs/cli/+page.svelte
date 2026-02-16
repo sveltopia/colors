@@ -5,6 +5,13 @@
   import { Info } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+  <title>CLI Reference | Sveltopia Colors</title>
+  <meta name="description" content="Complete reference for the @sveltopia/colors CLI. All generate and dev commands with every flag explained." />
+  <meta property="og:title" content="CLI Reference | Sveltopia Colors" />
+  <meta property="og:description" content="Complete reference for the @sveltopia/colors CLI. All generate and dev commands with every flag explained." />
+</svelte:head>
+
 <div class="prose max-w-none dark:prose-invert">
   <h1>CLI Reference</h1>
 

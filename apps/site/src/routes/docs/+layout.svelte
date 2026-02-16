@@ -151,7 +151,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <article class="flex-1 lg:w-0" data-pagefind-meta="category:Documentation">
+    <article class="flex-1 lg:w-0" data-pagefind-body data-pagefind-meta="category:Documentation">
       <div class="w-full px-4 py-12 lg:max-w-5xl">
         {@render children()}
       </div>
