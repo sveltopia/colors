@@ -161,7 +161,7 @@ const js = exportTailwind(palette, {
 
 <div class="prose mt-6 max-w-none dark:prose-invert">
   <p class="text-sm text-muted-foreground">
-    <code>exportTailwindWithCSSVars</code> is also available — same options, but outputs CSS
+    <code>exportTailwindWithCSSVars</code> is also available &mdash; same options, but outputs CSS
     custom properties instead of hardcoded hex values.
   </p>
 

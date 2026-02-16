@@ -13,20 +13,28 @@ Generate complete, accessible color palettes from 1-7 brand colors. Drop-in comp
 
 ## Quick Start
 
+Generate a palette (no install needed):
+
 ```bash
-npm install @sveltopia/colors
+npx @sveltopia/colors generate
 ```
 
-Generate a palette with the CLI:
+Or pass brand colors directly:
 
 ```bash
 npx @sveltopia/colors generate --colors "#FF4F00"
 ```
 
-Or preview interactively:
+Preview interactively with the dev server:
 
 ```bash
-npx @sveltopia/colors dev --colors "#FF4F00"
+npx @sveltopia/colors dev
+```
+
+To pin a version for your team, install as a dev dependency:
+
+```bash
+npm install -D @sveltopia/colors
 ```
 
 ## Repository Structure

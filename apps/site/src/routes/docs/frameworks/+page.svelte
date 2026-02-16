@@ -50,7 +50,7 @@
 
 				<div class="prose max-w-none dark:prose-invert">
 					<p>
-						This creates <code>tailwind.css</code> in your output directory — a self-contained
+						This creates <code>tailwind.css</code> in your output directory &mdash; a self-contained
 						file with CSS variables for light and dark mode, plus a <code>@theme</code> block that
 						registers every color as a Tailwind utility.
 					</p>
@@ -151,7 +151,7 @@
 
 				<div class="prose max-w-none dark:prose-invert">
 					<p>
-						This creates <code>shadcn-colors.css</code> — it includes everything from the Tailwind
+						This creates <code>shadcn-colors.css</code> &mdash; it includes everything from the Tailwind
 						export (color scales + <code>@theme</code> block) plus all the semantic tokens shadcn
 						expects: <code>--background</code>, <code>--foreground</code>,
 						<code>--primary</code>, <code>--secondary</code>, <code>--accent</code>,
@@ -174,7 +174,7 @@
 					<p>
 						Since the shadcn export already includes the full Tailwind color registration, you
 						don't need to import both <code>tailwind.css</code> and
-						<code>shadcn-colors.css</code> — just use the shadcn file.
+						<code>shadcn-colors.css</code> &mdash; just use the shadcn file.
 					</p>
 				</div>
 			</Step>
@@ -215,7 +215,7 @@
 
 				<div class="prose max-w-none dark:prose-invert">
 					<p>
-						This creates <code>radix-colors.js</code> — a drop-in replacement for
+						This creates <code>radix-colors.js</code> &mdash; a drop-in replacement for
 						<code>@radix-ui/colors</code> with the same export structure: named exports for each
 						scale, alpha variants, P3 wide gamut, and dark mode variants.
 					</p>
@@ -255,7 +255,7 @@ orangeDark.orangeDark9 // Dark mode equivalent`}
 
 				<KeyConcept icon={Info}>
 					<p>
-						The generated file includes all 31 hue scales — not just your brand colors. Every scale
+						The generated file includes all 31 hue scales &mdash; not just your brand colors. Every scale
 						is tuned to harmonize with your brand inputs, so the entire palette feels cohesive even
 						for colors you didn't explicitly provide.
 					</p>
@@ -272,7 +272,7 @@ orangeDark.orangeDark9 // Dark mode equivalent`}
 
 				<div class="prose max-w-none dark:prose-invert">
 					<p>
-						This creates <code>panda.preset.ts</code> — a Panda CSS preset with all color scales
+						This creates <code>panda.preset.ts</code> &mdash; a Panda CSS preset with all color scales
 						registered as tokens and semantic tokens, including automatic light/dark mode switching.
 					</p>
 				</div>
@@ -340,7 +340,7 @@ const button = css({
 
 	<p>
 		Not using a framework? The default <code>--format css</code> export gives you CSS custom
-		properties that work anywhere — no build tools required. See the
+		properties that work anywhere &mdash; no build tools required. See the
 		<a href="/docs/quick-start">Quick Start</a> for usage. The <code>--format json</code> export
 		provides structured palette data (hex, OKLCH, and P3 values) for use in design tools, scripts,
 		or custom integrations.

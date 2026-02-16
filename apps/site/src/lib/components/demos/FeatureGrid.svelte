@@ -98,7 +98,7 @@
 		<div class="mb-16 text-center">
 			<h2 class="text-2xl font-bold text-gray-950 sm:text-3xl">Every Color, Perfectly Tuned</h2>
 			<p class="mx-auto mt-3 max-w-2xl text-gray-800">
-				The complete palette harmonizes with your brand. Use any hue confidently — they're all
+				The complete palette harmonizes with your brand. Use any hue confidently &mdash; they're all
 				designed to work together.
 			</p>
 		</div>

@@ -10,18 +10,24 @@
 
   <p class="lead">
     The <code>@sveltopia/colors</code> CLI generates palettes from the command line or interactively.
+    Run it with <code>npx</code> &mdash; no install needed.
   </p>
 
   <h2>generate</h2>
 
   <p>
-    Generates a complete color palette from your brand colors.
+    Generates a complete color palette from your brand colors. Run without flags for interactive
+    mode, or pass flags for scripted usage:
   </p>
 </div>
 
 <div class="not-prose mt-4">
   <CodeViewer
-    code='npx @sveltopia/colors generate --colors "#FF4F00,#1A1A1A" --format tailwind,shadcn'
+    code={`# Interactive — prompts for colors, format, and output directory
+npx @sveltopia/colors generate
+
+# Flag-based — for scripts and CI
+npx @sveltopia/colors generate --colors "#FF4F00,#1A1A1A" --format tailwind,shadcn`}
     language="bash"
   />
 </div>
@@ -163,7 +169,7 @@
 
 <div class="prose max-w-none dark:prose-invert">
   <p>
-    Then run <code>npx @sveltopia/colors generate</code> with no flags — the CLI reads the config
+    Then run <code>npx @sveltopia/colors generate</code> with no flags &mdash; the CLI reads the config
     automatically.
   </p>
 
@@ -176,7 +182,10 @@
 
 <div class="not-prose mt-4">
   <CodeViewer
-    code='npx @sveltopia/colors dev --colors "#FF4F00"'
+    code={`npx @sveltopia/colors dev
+
+# Or with brand colors pre-loaded
+npx @sveltopia/colors dev --colors "#FF4F00"`}
     language="bash"
   />
 </div>

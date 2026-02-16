@@ -13,8 +13,11 @@ APCA accessibility enforced on critical pairings.
 
 ## Installation
 
+No install required -- use npx to run the CLI directly. To pin a version for your team,
+install as a dev dependency:
+
 ```bash
-npm install @sveltopia/colors
+npm install -D @sveltopia/colors
 ```
 
 ---

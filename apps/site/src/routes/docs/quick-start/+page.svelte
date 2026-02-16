@@ -8,50 +8,49 @@
 <div class="prose max-w-none dark:prose-invert">
   <h1>Quick Start</h1>
 
-  <h2>1. Install</h2>
-</div>
-
-<div class="not-prose mt-4">
-  <CodeViewer code="npm install @sveltopia/colors" language="bash" />
-</div>
-
-<div class="prose max-w-none dark:prose-invert">
-  <h2>2. Generate your palette</h2>
+  <h2>1. Generate your palette</h2>
 
   <p>
-    Pass your brand color(s) to the CLI. You can provide up to 7 hex colors.
+    Run the generator with <code>npx</code> &mdash; no install needed. The CLI will walk you through
+    choosing your brand colors, output formats, and directory:
   </p>
 </div>
 
 <div class="not-prose mt-4">
-  <CodeViewer code='npx @sveltopia/colors generate --colors "#FF6A00,#43A047"' language="bash" />
+  <CodeViewer code="npx @sveltopia/colors generate" language="bash" />
+</div>
+
+<div class="prose mt-6 max-w-none dark:prose-invert">
+  <p>
+    Or pass everything as flags for a one-liner (up to 7 hex colors):
+  </p>
+</div>
+
+<div class="not-prose mt-4">
+  <CodeViewer code='npx @sveltopia/colors generate --colors "#FF6A00,#43A047" --format tailwind,shadcn' language="bash" />
+</div>
+
+<div class="prose mt-6 max-w-none dark:prose-invert">
+  <p>
+    This generates a full palette in <code>./colors/</code> with CSS and JSON by default. Add
+    <code>--format</code> to generate framework-specific files. See the
+    <a href="/docs/cli">CLI Reference</a> for all flags.
+  </p>
 </div>
 
 <div class="not-prose mt-4">
   <KeyConcept icon={Info}>
     <p>
-      <strong>Prefer interactive mode?</strong> Run <code class="rounded bg-muted px-1.5 py-0.5 text-xs">npx @sveltopia/colors generate</code> without flags
-      and the CLI will walk you through each option. See <a href="/docs/cli#interactive-vs-flag-based" class="font-medium text-primary-800 underline hover:text-primary-700 dark:text-primary-600 dark:hover:text-primary-500">Interactive vs flag-based</a> in the CLI reference.
+      <strong>Want to add it to your project?</strong> Install as a dev dependency with
+      <code class="rounded bg-muted px-1.5 py-0.5 text-xs">npm install -D @sveltopia/colors</code>
+      to pin a version and make it available to your team. The <code class="rounded bg-muted px-1.5 py-0.5 text-xs">npx</code> commands above
+      still work &mdash; they'll use the local install instead of downloading each time.
     </p>
   </KeyConcept>
 </div>
 
 <div class="prose max-w-none dark:prose-invert">
-  <p>
-    This generates a full palette in <code>./colors/</code> with CSS and JSON by default. To
-    generate framework-specific files add the <code>--format</code> flag:
-  </p>
-</div>
-
-<div class="not-prose mt-4">
-  <CodeViewer
-    code='npx @sveltopia/colors generate --colors "#FF4F00" --format tailwind,shadcn'
-    language="bash"
-  />
-</div>
-
-<div class="prose max-w-none dark:prose-invert">
-  <h2>3. Use your colors</h2>
+  <h2>2. Use your colors</h2>
 
   <p>Import the generated CSS into your project's main stylesheet:</p>
 </div>
