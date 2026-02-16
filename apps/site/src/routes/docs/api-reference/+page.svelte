@@ -342,7 +342,7 @@ interface ContrastReport {
 <div class="prose mt-6 max-w-none dark:prose-invert">
   <p>
     For the full type definitions, see the
-    <a href="https://github.com/sveltopia/colors" target="_blank" rel="noopener noreferrer">TypeScript source</a>.
+    <a href="https://github.com/sveltopia/colors/blob/main/packages/colors/src/types.ts" target="_blank" rel="noopener noreferrer">TypeScript source</a>.
   </p>
 </div>
 
