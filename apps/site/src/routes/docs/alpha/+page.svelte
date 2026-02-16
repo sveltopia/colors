@@ -39,20 +39,20 @@
 
   <ul>
     <li>
-      <strong>Overlays</strong> — tinted overlays on images or content that blend naturally
+      <strong>Overlays</strong> &mdash; tinted overlays on images or content that blend naturally
     </li>
     <li>
-      <strong>Glassmorphism</strong> — frosted glass effects where content shows through
+      <strong>Glassmorphism</strong> &mdash; frosted glass effects where content shows through
     </li>
     <li>
-      <strong>Tinted backgrounds</strong> — subtle color washes over varying backgrounds
+      <strong>Tinted backgrounds</strong> &mdash; subtle color washes over varying backgrounds
     </li>
     <li>
-      <strong>Layered surfaces</strong> — stacking surfaces where underlying content should remain
+      <strong>Layered surfaces</strong> &mdash; stacking surfaces where underlying content should remain
       visible
     </li>
     <li>
-      <strong>Hover/focus states</strong> — transparent tints that work over any background
+      <strong>Hover/focus states</strong> &mdash; transparent tints that work over any background
     </li>
   </ul>
 
@@ -132,17 +132,17 @@ element.style.backgroundColor = blueA.blueA3;`}
   </p>
 
   <ul>
-    <li><strong>CSS</strong> — as 8-digit hex values (e.g., <code>#0064FF14</code>)</li>
-    <li><strong>JSON</strong> — includes hex and P3 alpha formats</li>
-    <li><strong>Radix</strong> — named exports like <code>blueA</code>, <code>orangeA</code></li>
-    <li><strong>Panda CSS</strong> — included in the preset</li>
+    <li><strong>CSS</strong> &mdash; as 8-digit hex values (e.g., <code>#0064FF14</code>)</li>
+    <li><strong>JSON</strong> &mdash; includes hex and P3 alpha formats</li>
+    <li><strong>Radix</strong> &mdash; named exports like <code>blueA</code>, <code>orangeA</code></li>
+    <li><strong>Panda CSS</strong> &mdash; included in the preset</li>
   </ul>
 
   <h3>What about Tailwind?</h3>
 
   <p>
     Tailwind's built-in opacity modifier (<code>bg-blue-200/20</code>) gives you runtime alpha
-    control over every color in your palette — no special export needed. For most use cases
+    control over every color in your palette &mdash; no special export needed. For most use cases
     (hover states, overlays, tinted backgrounds), this is all you need.
   </p>
 

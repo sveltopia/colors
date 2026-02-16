@@ -18,12 +18,14 @@ Generate complete, accessible color palettes from 1-7 brand colors. Drop-in comp
 
 ## Installation
 
+No install required &mdash; just use `npx` to run the CLI. To pin a version for your team, install as a dev dependency:
+
 ```bash
-npm install @sveltopia/colors
+npm install -D @sveltopia/colors
 # or
-pnpm add @sveltopia/colors
+pnpm add -D @sveltopia/colors
 # or
-yarn add @sveltopia/colors
+yarn add -D @sveltopia/colors
 ```
 
 ## Quick Start
@@ -69,15 +71,15 @@ Generate color palettes from brand colors.
 npx @sveltopia/colors generate [options]
 ```
 
-| Option | Description |
-|--------|-------------|
-| `-c, --colors <colors>` | Comma-separated brand colors (e.g., `"#FF4F00,#1A1A1A"`) |
-| `--config <path>` | Path to config file (default: `colors.config.json`) |
-| `-o, --output <dir>` | Output directory (default: `./colors`) |
+| Option                   | Description                                                           |
+| ------------------------ | --------------------------------------------------------------------- |
+| `-c, --colors <colors>`  | Comma-separated brand colors (e.g., `"#FF4F00,#1A1A1A"`)              |
+| `--config <path>`        | Path to config file (default: `colors.config.json`)                   |
+| `-o, --output <dir>`     | Output directory (default: `./colors`)                                |
 | `-f, --format <formats>` | Output formats: `css`, `json`, `tailwind`, `radix`, `panda`, or `all` |
-| `-p, --prefix <prefix>` | CSS variable prefix (e.g., `"my-"` for `--my-red-9`) |
-| `-v, --verbose` | Show detailed generation info |
-| `--dry-run` | Preview output without writing files |
+| `-p, --prefix <prefix>`  | CSS variable prefix (e.g., `"my-"` for `--my-red-9`)                  |
+| `-v, --verbose`          | Show detailed generation info                                         |
+| `--dry-run`              | Preview output without writing files                                  |
 
 ### `dev`
 
@@ -87,12 +89,12 @@ Start a local dev server to preview palettes.
 npx @sveltopia/colors dev [options]
 ```
 
-| Option | Description |
-|--------|-------------|
-| `-c, --colors <colors>` | Comma-separated brand colors |
-| `--config <path>` | Path to config file |
-| `-p, --port <port>` | Port to run server on (default: `3000`) |
-| `--no-open` | Don't open browser automatically |
+| Option                  | Description                             |
+| ----------------------- | --------------------------------------- |
+| `-c, --colors <colors>` | Comma-separated brand colors            |
+| `--config <path>`       | Path to config file                     |
+| `-p, --port <port>`     | Port to run server on (default: `3000`) |
+| `--no-open`             | Don't open browser automatically        |
 
 ### Config File
 
@@ -129,7 +131,7 @@ CSS custom properties with light/dark mode support:
 
 @media (color-gamut: p3) {
   :root {
-    --red-9: color(display-p3 0.8941 0.2824 0.3020);
+    --red-9: color(display-p3 0.8941 0.2824 0.302);
   }
 }
 ```
@@ -140,18 +142,18 @@ Drop-in Tailwind preset with 50-950 scale:
 
 ```js
 // tailwind.config.js
-import sveltopiaColors from './colors/tailwind.preset.js'
+import sveltopiaColors from "./colors/tailwind.preset.js";
 
 export default {
   presets: [sveltopiaColors],
   // ...
-}
+};
 ```
 
 Use in your markup:
 
 ```html
-<div class="bg-red-500 text-red-950 dark:bg-red-800">
+<div class="bg-red-500 text-red-950 dark:bg-red-800"></div>
 ```
 
 ### Radix
@@ -160,10 +162,10 @@ Drop-in replacement for `@radix-ui/colors`:
 
 ```js
 // Replace this:
-import { red, redA, redDark, redDarkA } from '@radix-ui/colors'
+import { red, redA, redDark, redDarkA } from "@radix-ui/colors";
 
 // With this:
-import { red, redA, redDark, redDarkA } from './colors/radix-colors.js'
+import { red, redA, redDark, redDarkA } from "./colors/radix-colors.js";
 ```
 
 Includes all 8 variants per hue: base, alpha, P3, P3Alpha × light/dark.
@@ -174,12 +176,12 @@ Panda CSS preset with semantic tokens:
 
 ```ts
 // panda.config.ts
-import { sveltopiaColors } from './colors/panda.preset'
+import { sveltopiaColors } from "./colors/panda.preset";
 
 export default defineConfig({
   presets: [sveltopiaColors],
   // ...
-})
+});
 ```
 
 Automatic dark mode via semantic tokens — just use `colors.red.9` and it switches automatically.
@@ -193,34 +195,34 @@ import {
   generatePalette,
   exportCSS,
   exportTailwind,
-  exportRadix
-} from '@sveltopia/colors'
+  exportRadix,
+} from "@sveltopia/colors";
 
 // Generate a palette from brand colors
 const result = generatePalette({
-  brandColors: ['#FF4F00']
-})
+  brandColors: ["#FF4F00"],
+});
 
-console.log(result.scales.red[9])  // '#e5484d'
-console.log(result.meta.anchoredSlots)  // ['tomato']
+console.log(result.scales.red[9]); // '#e5484d'
+console.log(result.meta.anchoredSlots); // ['tomato']
 
 // Export to different formats
-const css = exportCSS(result)
-const tailwind = exportTailwind(result, { scale: '50-950' })
+const css = exportCSS(result);
+const tailwind = exportTailwind(result, { scale: "50-950" });
 ```
 
 ### Key Exports
 
-| Export | Description |
-|--------|-------------|
-| `generatePalette(options)` | Generate a full palette from brand colors |
-| `analyzeBrandColors(colors)` | Analyze brand colors and create tuning profile |
-| `exportCSS(palette, options)` | Export as CSS custom properties |
-| `exportJSON(palette)` | Export as JSON with hex, oklch, and P3 values |
-| `exportTailwind(palette, options)` | Export as Tailwind preset |
-| `exportRadix(palette, options)` | Export as Radix-compatible module |
-| `exportPanda(palette, brandInfo, options)` | Export as Panda CSS preset |
-| `validateColor(input)` | Validate hex color with helpful error messages |
+| Export                                     | Description                                    |
+| ------------------------------------------ | ---------------------------------------------- |
+| `generatePalette(options)`                 | Generate a full palette from brand colors      |
+| `analyzeBrandColors(colors)`               | Analyze brand colors and create tuning profile |
+| `exportCSS(palette, options)`              | Export as CSS custom properties                |
+| `exportJSON(palette)`                      | Export as JSON with hex, oklch, and P3 values  |
+| `exportTailwind(palette, options)`         | Export as Tailwind preset                      |
+| `exportRadix(palette, options)`            | Export as Radix-compatible module              |
+| `exportPanda(palette, brandInfo, options)` | Export as Panda CSS preset                     |
+| `validateColor(input)`                     | Validate hex color with helpful error messages |
 
 ## How It Works
 
@@ -234,6 +236,7 @@ The algorithm preserves the relationships between steps (backgrounds, borders, t
 ### Why OKLCH?
 
 OKLCH is a perceptually uniform color space — equal numeric changes produce equal visual changes. This means:
+
 - Smooth gradients without muddy midtones
 - Consistent chroma across different hues
 - Predictable lightness for accessibility
@@ -241,6 +244,7 @@ OKLCH is a perceptually uniform color space — equal numeric changes produce eq
 ### Why APCA?
 
 APCA (Advanced Perceptual Contrast Algorithm) is the next-generation contrast standard. It's more accurate than WCAG 2.x contrast ratios, especially for:
+
 - Dark mode interfaces
 - Large text vs small text
 - Colored backgrounds
@@ -254,6 +258,7 @@ The palette includes all Radix hue scales:
 **Colors:** tomato, red, ruby, crimson, pink, plum, purple, violet, iris, indigo, blue, cyan, teal, jade, green, grass, bronze, gold, brown, orange, amber, yellow, lime, mint, sky
 
 Each scale has 12 steps designed for specific UI purposes:
+
 - **1-2**: App/subtle backgrounds
 - **3-5**: Component backgrounds
 - **6-8**: Borders

@@ -27,14 +27,14 @@
 
   <ul>
     <li>
-      <strong>L (Lightness)</strong> — 0 to 1. Two colors with the same L value actually look
+      <strong>L (Lightness)</strong> &mdash; 0 to 1. Two colors with the same L value actually look
       equally bright.
     </li>
     <li>
-      <strong>C (Chroma)</strong> — 0 to ~0.4. How vivid the color is. Zero is gray.
+      <strong>C (Chroma)</strong> &mdash; 0 to ~0.4. How vivid the color is. Zero is gray.
     </li>
     <li>
-      <strong>H (Hue)</strong> — 0 to 360 degrees. The color wheel position.
+      <strong>H (Hue)</strong> &mdash; 0 to 360 degrees. The color wheel position.
     </li>
   </ul>
 </div>
@@ -151,7 +151,7 @@
   </div>
 
   <p class="text-sm text-muted-foreground">
-    *850 is not part of Tailwind's default color scale. We added it to preserve the full Radix 12-step system — without it, the "hovered solid" state (step 10) would have no Tailwind equivalent.
+    *850 is not part of Tailwind's default color scale. We added it to preserve the full Radix 12-step system &mdash; without it, the "hovered solid" state (step 10) would have no Tailwind equivalent.
   </p>
 </div>
 
@@ -159,7 +159,7 @@
   <KeyConcept variant="neutral">
     <p>
       <strong>Why 12 steps?</strong> Fewer steps (like 5 or 7) don't provide enough granularity
-      for real UI work — you end up needing "between" values. More than 12 creates decision
+      for real UI work &mdash; you end up needing "between" values. More than 12 creates decision
       paralysis without meaningful perceptual differences. Twelve is the sweet spot that covers
       every UI need with clear semantic purpose for each step.
     </p>
@@ -182,15 +182,15 @@
 
   <ul>
     <li>
-      <strong>Polarity</strong> — dark text on light backgrounds is perceived differently than light
+      <strong>Polarity</strong> &mdash; dark text on light backgrounds is perceived differently than light
       text on dark backgrounds
     </li>
     <li>
-      <strong>Font size and weight</strong> — larger, bolder text needs less contrast than small body
+      <strong>Font size and weight</strong> &mdash; larger, bolder text needs less contrast than small body
       text
     </li>
     <li>
-      <strong>Perceptual lightness</strong> — uses the OKLCH model for accurate luminance
+      <strong>Perceptual lightness</strong> &mdash; uses the OKLCH model for accurate luminance
       calculations
     </li>
   </ul>
@@ -229,7 +229,7 @@
   </div>
 
   <p>
-    Critical text contrast pairs — steps 11–12 (text colors) against steps 1–2 (backgrounds) — are validated and auto-adjusted during generation to meet these thresholds. Button solid steps (9–10) are validated but flagged as warnings rather than auto-corrected, since saturated hues naturally have lower contrast that APCA accounts for through font size and weight. See the
+    Critical text contrast pairs &mdash; steps 11–12 (text colors) against steps 1–2 (backgrounds) &mdash; are validated and auto-adjusted during generation to meet these thresholds. Button solid steps (9–10) are validated but flagged as warnings rather than auto-corrected, since saturated hues naturally have lower contrast that APCA accounts for through font size and weight. See the
     <a href="/docs/accessibility">Accessibility</a> page for safe combination guidelines.
   </p>
 
@@ -237,13 +237,13 @@
 
   <ul>
     <li>
-      <a href="https://oklch.com" target="_blank" rel="noopener noreferrer">oklch.com</a> — interactive OKLCH color picker
+      <a href="https://oklch.com" target="_blank" rel="noopener noreferrer">oklch.com</a> &mdash; interactive OKLCH color picker
     </li>
     <li>
-      <a href="https://www.radix-ui.com/colors" target="_blank" rel="noopener noreferrer">Radix Colors</a> — the 12-step scale system we build on
+      <a href="https://www.radix-ui.com/colors" target="_blank" rel="noopener noreferrer">Radix Colors</a> &mdash; the 12-step scale system we build on
     </li>
     <li>
-      <a href="https://git.apcacontrast.com" target="_blank" rel="noopener noreferrer">APCA Contrast</a> — the accessible contrast algorithm
+      <a href="https://git.apcacontrast.com" target="_blank" rel="noopener noreferrer">APCA Contrast</a> &mdash; the accessible contrast algorithm
     </li>
   </ul>
 </div>

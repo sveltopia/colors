@@ -13,23 +13,25 @@
 - GitHub: https://github.com/sveltopia/colors
 - npm: https://www.npmjs.com/package/@sveltopia/colors
 
-## Installation
-
-```bash
-npm install @sveltopia/colors
-```
-
 ## CLI Quick Start
 
+No install required -- use npx to run directly:
+
 ```bash
-# Generate with interactive prompts
+# Generate with interactive prompts (recommended for first use)
 npx @sveltopia/colors generate
 
-# Generate directly
+# Generate directly with flags
 npx @sveltopia/colors generate --colors "#FF4F00" --format tailwind
 
-# Live preview
-npx @sveltopia/colors dev --colors "#FF4F00"
+# Live preview dev server
+npx @sveltopia/colors dev
+```
+
+To pin a version for your team, install as a dev dependency:
+
+```bash
+npm install -D @sveltopia/colors
 ```
 
 ## Export Formats

@@ -29,20 +29,70 @@
   --orange-9: #ff6a00;
   /* Auto-generated dark mode */
 }`;
+
+  const features = [
+    {
+      icon: Palette,
+      title: '31 Hue Scales',
+      description: 'Full Radix Colors compatibility. Your brand colors anchor key scales, baseline colors fill the gaps.',
+      color: 'orange'
+    },
+    {
+      icon: Moon,
+      title: 'Auto Dark Mode',
+      description: 'Light and dark variants generated automatically with perceptually uniform transitions.',
+      color: 'blue'
+    },
+    {
+      icon: Accessibility,
+      title: 'APCA Contrast',
+      description: 'Modern contrast algorithm ensures text readability across all generated scales.',
+      color: 'purple'
+    },
+    {
+      icon: Sparkles,
+      title: 'P3 Wide Gamut',
+      description: 'OKLCH color space with Display P3 support for vivid colors on modern screens.',
+      color: 'green'
+    },
+    {
+      icon: Layers,
+      title: 'Multiple Formats',
+      description: 'Output as CSS variables, Tailwind preset, or JSON. Works with any framework.',
+      color: 'cyan'
+    },
+    {
+      icon: Zap,
+      title: 'Dev Server',
+      description: 'Interactive UI for exploring and adjusting your palette before committing.',
+      color: 'pink'
+    }
+  ];
+
+  function getColorClasses(color: string) {
+    const classes: Record<string, { iconBg: string; icon: string }> = {
+      orange: { iconBg: 'bg-orange-200 dark:bg-orange-300/20', icon: 'text-orange-800' },
+      blue: { iconBg: 'bg-blue-200 dark:bg-blue-300/20', icon: 'text-blue-800' },
+      purple: { iconBg: 'bg-purple-200 dark:bg-purple-300/20', icon: 'text-purple-800' },
+      green: { iconBg: 'bg-green-200 dark:bg-green-300/20', icon: 'text-green-800' },
+      cyan: { iconBg: 'bg-cyan-200 dark:bg-cyan-300/20', icon: 'text-cyan-800' },
+      pink: { iconBg: 'bg-pink-200 dark:bg-pink-300/20', icon: 'text-pink-800' }
+    };
+    return classes[color] || classes.orange;
+  }
 </script>
 
-<div class="w-full px-4 py-8 sm:py-12 md:container md:mx-auto md:max-w-5xl md:py-16">
-  <div class="space-y-16 sm:space-y-24">
-    <!-- Hero Section -->
-    <section class="space-y-6 text-center">
-      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-        Generate <span class="bg-gradient-to-r from-[var(--color-grass-850)] to-[var(--color-grass-700)] bg-clip-text text-transparent">accessible</span> <span class="bg-gradient-to-r from-[var(--color-orange-800)] to-[var(--color-orange-900)] bg-clip-text text-transparent">color palettes</span> from your brand
+<!-- Hero Section — subtle warm tint -->
+<section class="bg-orange-500/30 dark:bg-gray-100">
+  <div class="w-full px-4 py-10 sm:py-12 md:container md:mx-auto md:max-w-5xl md:py-20">
+    <div class="space-y-6 text-center">
+      <h1 class="font-serif text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+        Generate <span class="bg-linear-to-r from-grass-850 to-grass-700 bg-clip-text text-transparent">accessible</span> <span class="bg-linear-to-r from-orange-800 to-orange-900 bg-clip-text text-transparent">color palettes</span> from your brand
       </h1>
       <p class="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-        Provide 1-7 hex colors, get 31 complete tint scales tuned to your brand. Radix-compatible output for Tailwind, Panda CSS, or plain CSS variables.
+        Provide your brand colors, get 31 complete tint scales tuned to your identity. Radix-compatible output for Tailwind, shadcn/ui, Panda CSS, or CSS variables.
       </p>
 
-      <!-- CTA Buttons -->
       <div class="flex flex-wrap justify-center gap-4 pt-4">
         <a
           href="/playground"
@@ -51,242 +101,217 @@
           Try the Playground
         </a>
         <a
-          href="/docs"
+          href="/docs/quick-start"
           class="inline-flex items-center justify-center rounded-lg border bg-background px-6 py-3 text-sm font-medium transition-colors hover:bg-secondary"
         >
           Quick Start
         </a>
       </div>
 
-      <!-- Quick Install -->
       <div class="mx-auto max-w-lg pt-4">
         <div class="rounded-lg border bg-card p-4">
-          <p class="mb-2 text-sm text-muted-foreground">Install and generate:</p>
+          <p class="mb-2 text-sm text-muted-foreground">Generate your palette:</p>
           <code class="block rounded bg-muted px-3 py-2 font-mono text-sm">
-            npx @sveltopia/colors generate --colors "#FF6A00"
+            npx @sveltopia/colors generate
           </code>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <!-- Palette Preview -->
-    <section class="space-y-6">
+<!-- Palette Preview — white (the palette IS the color) -->
+<section class="w-full px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
+  <div class="space-y-6">
+    <div class="text-center">
+      <h2 class="mb-6 font-serif text-2xl font-bold sm:text-3xl">Your Project Colors Should Look Like <em>You</em></h2>
+    </div>
+
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2 text-xs text-muted-foreground">
+        <span>Input:</span>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5">
+            <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #43A047;"></div>
+            <span class="hidden font-mono sm:inline">#43A047</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #FF6A00;"></div>
+            <span class="hidden font-mono sm:inline">#FF6A00</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #1A1A1A;"></div>
+            <span class="hidden font-mono sm:inline">#1A1A1A</span>
+          </div>
+        </div>
+      </div>
+
+      <ArrowDown class="h-5 w-5 text-muted-foreground" />
+
+      <span class="text-xs text-muted-foreground">Output: 31 tuned scales (3 anchored to your brand + 28 baseline hues)</span>
+    </div>
+
+    <div class="rounded-xl border bg-card p-4 shadow-sm transition-shadow hover:shadow-md sm:p-6">
+      <PalettePreview />
+
+      <div class="my-6 border-t border-border"></div>
+
+      <p class="mb-3 text-center text-sm text-muted-foreground">
+        Plus 28 more hues, all tuned to your brand
+      </p>
+      <HueSpectrum />
+    </div>
+  </div>
+</section>
+
+<!-- Features Grid — tinted background -->
+<section class="bg-gray-100">
+  <div class="w-full px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
+    <div class="space-y-6">
       <div class="text-center">
-        <h2 class="text-2xl font-bold sm:text-3xl">Your Project Colors Should Reflect Your Brand</h2>
-        <p class="mt-2 text-muted-foreground">
-          No more compromising with fixed palettes—transform your brand into complete light and dark scales.
-        </p>
+        <h2 class="mb-16 font-serif text-2xl font-bold sm:text-3xl">Built for Modern Design Systems</h2>
       </div>
-
-      <!-- Brand Input Visualization -->
-      <div class="flex flex-col items-center gap-3">
-        <!-- Input brand colors -->
-        <div class="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>Input:</span>
-          <div class="flex items-center gap-3">
-            <div class="flex items-center gap-1.5">
-              <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #43A047;"></div>
-              <span class="hidden font-mono sm:inline">#43A047</span>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-10 sm:gap-x-12 lg:grid-cols-3">
+        {#each features as feature (feature.title)}
+          {@const colors = getColorClasses(feature.color)}
+          {@const Icon = feature.icon}
+          <div class="group">
+            <div class="mb-4 inline-flex rounded-xl p-3 {colors.iconBg}">
+              <Icon class="h-7 w-7 {colors.icon}" />
             </div>
-            <div class="flex items-center gap-1.5">
-              <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #FF6A00;"></div>
-              <span class="hidden font-mono sm:inline">#FF6A00</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <div class="h-8 w-8 rounded-lg shadow-md" style="background-color: #1A1A1A;"></div>
-              <span class="hidden font-mono sm:inline">#1A1A1A</span>
-            </div>
+            <h3 class="mb-2 font-semibold">{feature.title}</h3>
+            <p class="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
           </div>
-        </div>
-
-        <!-- Arrow -->
-        <ArrowDown class="h-5 w-5 text-muted-foreground" />
-
-        <!-- Output label -->
-        <span class="text-xs text-muted-foreground">Output: 31 tuned scales (3 anchored to your brand + 28 baseline hues)</span>
+        {/each}
       </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Combined palette container -->
-      <div class="rounded-xl border bg-card p-4 sm:p-6">
-        <PalettePreview />
+<!-- Code Examples — white -->
+<section class="w-full px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
+  <div class="space-y-6">
+    <div class="text-center">
+      <h2 class="mb-16 font-serif text-2xl font-bold sm:text-3xl">Simple CLI, Production-Ready CSS</h2>
+    </div>
 
-        <!-- Divider -->
-        <div class="my-6 border-t border-border"></div>
-
-        <!-- 28 more hues -->
-        <p class="mb-3 text-center text-sm text-muted-foreground">
-          Plus 28 more hues, all tuned to your brand
-        </p>
-        <HueSpectrum />
-      </div>
-    </section>
-
-    <!-- Features Grid -->
-    <section class="space-y-6">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold sm:text-3xl">Built for Modern Design Systems</h2>
-      </div>
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-lg border bg-card p-6">
-          <div class="mb-4">
-            <Palette class="h-6 w-6 text-accent" />
-          </div>
-          <h3 class="mb-2 font-semibold">31 Hue Scales</h3>
-          <p class="text-sm text-muted-foreground">
-            Full Radix Colors compatibility. Your brand colors anchor key scales, baseline colors fill the gaps.
-          </p>
-        </div>
-
-        <div class="rounded-lg border bg-card p-6">
-          <div class="mb-4">
-            <Moon class="h-6 w-6 text-accent" />
-          </div>
-          <h3 class="mb-2 font-semibold">Auto Dark Mode</h3>
-          <p class="text-sm text-muted-foreground">
-            Light and dark variants generated automatically with perceptually uniform transitions.
-          </p>
-        </div>
-
-        <div class="rounded-lg border bg-card p-6">
-          <div class="mb-4">
-            <Accessibility class="h-6 w-6 text-accent" />
-          </div>
-          <h3 class="mb-2 font-semibold">APCA Contrast</h3>
-          <p class="text-sm text-muted-foreground">
-            Modern contrast algorithm ensures text readability across all generated scales.
-          </p>
-        </div>
-
-        <div class="rounded-lg border bg-card p-6">
-          <div class="mb-4">
-            <Sparkles class="h-6 w-6 text-accent" />
-          </div>
-          <h3 class="mb-2 font-semibold">P3 Wide Gamut</h3>
-          <p class="text-sm text-muted-foreground">
-            OKLCH color space with Display P3 support for vivid colors on modern screens.
-          </p>
-        </div>
-
-        <div class="rounded-lg border bg-card p-6">
-          <div class="mb-4">
-            <Layers class="h-6 w-6 text-accent" />
-          </div>
-          <h3 class="mb-2 font-semibold">Multiple Formats</h3>
-          <p class="text-sm text-muted-foreground">
-            Output as CSS variables, Tailwind preset, or JSON. Works with any framework.
-          </p>
-        </div>
-
-        <div class="rounded-lg border bg-card p-6">
-          <div class="mb-4">
-            <Zap class="h-6 w-6 text-accent" />
-          </div>
-          <h3 class="mb-2 font-semibold">Dev Server</h3>
-          <p class="text-sm text-muted-foreground">
-            Interactive UI for exploring and adjusting your palette before committing.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Code Examples -->
-    <section class="space-y-6">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold sm:text-3xl">Simple CLI, Rich Output</h2>
-        <p class="mt-2 text-muted-foreground">
-          Generate once, use everywhere
-        </p>
-      </div>
-
-      <div class="grid gap-6 lg:grid-cols-2">
-        <div class="space-y-3">
-          <h3 class="font-semibold">Generate your palette</h3>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="flex min-w-0 flex-col gap-3">
+        <h3 class="font-semibold">Generate your palette</h3>
+        <div class="min-w-0 flex-1 [&>.code-viewer]:mb-0 [&>.code-viewer]:h-full [&>.code-viewer]:flex [&>.code-viewer]:flex-col [&>.code-viewer_.overflow-x-auto]:flex-1">
           <CodeViewer code={generateExample} language="bash" filename="terminal" />
         </div>
-        <div class="space-y-3">
-          <h3 class="font-semibold">Get production-ready CSS</h3>
+      </div>
+      <div class="flex min-w-0 flex-col gap-3">
+        <h3 class="font-semibold">Drop the CSS into your project</h3>
+        <div class="min-w-0 flex-1 [&>.code-viewer]:mb-0 [&>.code-viewer]:h-full [&>.code-viewer]:flex [&>.code-viewer]:flex-col [&>.code-viewer_.overflow-x-auto]:flex-1">
           <CodeViewer code={cssOutputExample} language="css" filename="colors.css" />
         </div>
       </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="space-y-6">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold sm:text-3xl">How It Works</h2>
-      </div>
-      <div class="mx-auto max-w-3xl">
-        <ol class="space-y-4">
-          <li class="flex gap-4">
-            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">1</span>
-            <div>
-              <h4 class="font-semibold">Input your brand colors</h4>
-              <p class="text-sm text-muted-foreground">1-7 hex colors that define your brand identity.</p>
-            </div>
-          </li>
-          <li class="flex gap-4">
-            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">2</span>
-            <div>
-              <h4 class="font-semibold">Algorithm finds the best matches</h4>
-              <p class="text-sm text-muted-foreground">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
-            </div>
-          </li>
-          <li class="flex gap-4">
-            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">3</span>
-            <div>
-              <h4 class="font-semibold">Full scales generated</h4>
-              <p class="text-sm text-muted-foreground">12-step tint scales for each hue, light and dark modes, plus semantic tokens.</p>
-            </div>
-          </li>
-          <li class="flex gap-4">
-            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">4</span>
-            <div>
-              <h4 class="font-semibold">Export and use</h4>
-              <p class="text-sm text-muted-foreground">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
-            </div>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- Bottom CTA -->
-    <section class="rounded-xl border bg-card p-8 text-center sm:p-12">
-      <div class="space-y-8">
-        <!-- Generate command -->
-        <div>
-          <h2 class="text-2xl font-bold sm:text-3xl">One command yields a complete palette</h2>
-          <div class="mt-4">
-            <code class="inline-block rounded-lg bg-muted px-4 py-2 font-mono text-sm">
-              npx @sveltopia/colors generate --colors "#YOUR_BRAND"
-            </code>
-          </div>
-        </div>
-
-        <!-- Dev server command -->
-        <div>
-          <h3 class="text-xl font-bold sm:text-2xl">Or use the dev server to experiment</h3>
-          <div class="mt-4">
-            <code class="inline-block rounded-lg bg-muted px-4 py-2 font-mono text-sm">
-              npx @sveltopia/colors dev --colors "#YOUR_BRAND"
-            </code>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-8 flex flex-wrap justify-center gap-4">
-        <a
-          href="/playground"
-          class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Try the Playground
-        </a>
-        <a
-          href="/docs"
-          class="inline-flex items-center justify-center rounded-lg border bg-background px-6 py-3 text-sm font-medium transition-colors hover:bg-secondary"
-        >
-          Read the Docs
-        </a>
-      </div>
-    </section>
+    </div>
   </div>
-</div>
+</section>
+
+<section class="relative overflow-hidden">
+  <div
+    class="absolute inset-0 dark:hidden"
+    style="background: linear-gradient(135deg, var(--color-grass-850), var(--color-grass-900));"
+  ></div>
+  <!-- Dark mode gradient -->
+  <div
+    class="absolute inset-0 hidden dark:block"
+    style="background: linear-gradient(135deg, var(--color-grass-600), var(--color-grass-700));"
+  ></div>
+
+  <!-- Decorative blur circles -->
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute left-1/4 top-0 h-64 w-64 -translate-y-1/2 rounded-full bg-white blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 h-64 w-64 translate-y-1/2 rounded-full bg-white blur-3xl"></div>
+  </div>
+
+  <div class="relative px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
+    <div class="text-center">
+      <h2 class="font-serif text-3xl font-bold text-white sm:text-4xl">How It Works</h2>
+    </div>
+
+    <div class="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
+      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+        <div class="mb-3 flex items-center gap-3">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">1</span>
+          <h4 class="font-semibold text-white">Input your brand colors</h4>
+        </div>
+        <p class="text-sm text-white/80">1-7 hex colors that define your brand identity.</p>
+      </div>
+
+      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+        <div class="mb-3 flex items-center gap-3">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">2</span>
+          <h4 class="font-semibold text-white">Algorithm finds best matches</h4>
+        </div>
+        <p class="text-sm text-white/80">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
+      </div>
+
+      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+        <div class="mb-3 flex items-center gap-3">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">3</span>
+          <h4 class="font-semibold text-white">Full scales generated</h4>
+        </div>
+        <p class="text-sm text-white/80">12-step tint scales for each hue, tuned to your brand color profiles, light/dark modes, plus semantic tokens.</p>
+      </div>
+
+      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+        <div class="mb-3 flex items-center gap-3">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">4</span>
+          <h4 class="font-semibold text-white">Export and use</h4>
+        </div>
+        <p class="text-sm text-white/80">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bottom CTA — forced dark section -->
+<section class="dark relative overflow-hidden bg-gray-50">
+  <!-- Ambient primary glow -->
+  <div
+    class="absolute left-1/2 top-0 h-96 w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-2xl"
+    style="background: radial-gradient(circle, var(--color-primary-800), transparent);"
+  ></div>
+
+  <div class="relative px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
+    <div class="space-y-8 text-center">
+      <div>
+        <h2 class="font-serif text-2xl font-bold text-gray-950 sm:text-3xl">One command yields a complete palette</h2>
+        <div class="mt-4">
+          <code class="inline-block rounded-lg bg-gray-200 px-4 py-2 font-mono text-sm text-gray-950">
+            npx @sveltopia/colors generate
+          </code>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="font-serif text-xl font-bold text-gray-950 sm:text-2xl">Or use the dev server to experiment</h3>
+        <div class="mt-4">
+          <code class="inline-block rounded-lg bg-gray-200 px-4 py-2 font-mono text-sm text-gray-950">
+            npx @sveltopia/colors dev
+          </code>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap justify-center gap-4">
+      <a
+        href="/playground"
+        class="inline-flex items-center justify-center rounded-lg bg-primary-800 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary-850"
+      >
+        Try the Playground
+      </a>
+      <a
+        href="/docs"
+        class="inline-flex items-center justify-center rounded-lg border border-gray-500 px-6 py-3 text-sm font-medium text-gray-950 transition-colors hover:bg-gray-200"
+      >
+        Read the Docs
+      </a>
+    </div>
+  </div>
+</section>

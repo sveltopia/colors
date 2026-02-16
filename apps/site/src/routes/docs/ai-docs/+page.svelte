@@ -45,7 +45,7 @@
       <p class="mb-3 text-sm text-muted-foreground">
         Quick overview with core concepts, installation, and links to detailed documentation.
       </p>
-      <span class="text-xs text-muted-foreground">~1KB — Best for quick context</span>
+      <span class="text-xs text-muted-foreground">~1KB &mdash; Best for quick context</span>
     </a>
 
     <a
@@ -65,7 +65,7 @@
       <p class="mb-3 text-sm text-muted-foreground">
         Complete reference with all APIs, export formats, CLI usage, and accessibility guidelines.
       </p>
-      <span class="text-xs text-muted-foreground">~8KB — Full documentation</span>
+      <span class="text-xs text-muted-foreground">~8KB &mdash; Full documentation</span>
     </a>
   </div>
 
@@ -124,13 +124,13 @@
   <p>The full documentation covers:</p>
 
   <ul>
-    <li><strong>Installation & CLI</strong> — Generate and dev commands, interactive mode, config files</li>
-    <li><strong>12-Step Scale System</strong> — Radix step semantics, Tailwind mapping, safe color pairings</li>
-    <li><strong>Export Formats</strong> — CSS, JSON, Tailwind v4, Tailwind v3, shadcn, Radix, Panda CSS</li>
-    <li><strong>Programmatic API</strong> — generatePalette, analyzeBrandColors, all export functions</li>
-    <li><strong>Accessibility</strong> — APCA validation, contrast thresholds, auto-remediation</li>
-    <li><strong>Key Types</strong> — Palette, Scale, TuningProfile, ContrastReport</li>
-    <li><strong>Common Patterns</strong> — Generate + export workflows, CI validation, brand analysis</li>
+    <li><strong>Installation & CLI</strong> &mdash; Generate and dev commands, interactive mode, config files</li>
+    <li><strong>12-Step Scale System</strong> &mdash; Radix step semantics, Tailwind mapping, safe color pairings</li>
+    <li><strong>Export Formats</strong> &mdash; CSS, JSON, Tailwind v4, Tailwind v3, shadcn, Radix, Panda CSS</li>
+    <li><strong>Programmatic API</strong> &mdash; generatePalette, analyzeBrandColors, all export functions</li>
+    <li><strong>Accessibility</strong> &mdash; APCA validation, contrast thresholds, auto-remediation</li>
+    <li><strong>Key Types</strong> &mdash; Palette, Scale, TuningProfile, ContrastReport</li>
+    <li><strong>Common Patterns</strong> &mdash; Generate + export workflows, CI validation, brand analysis</li>
   </ul>
 
   <h2>About the Convention</h2>

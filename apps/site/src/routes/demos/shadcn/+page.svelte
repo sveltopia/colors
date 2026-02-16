@@ -530,7 +530,7 @@
 							<code class="rounded bg-white/20 px-1.5 py-0.5">secondary</code>
 							to
 							<code class="rounded bg-white/20 px-1.5 py-0.5">adjacent</code>
-							— using step 9 in dark mode (solid backgrounds) and step 11 in light mode (text colors) for consistent saturation.
+							&mdash; using step 9 in dark mode (solid backgrounds) and step 11 in light mode (text colors) for consistent saturation.
 						</p>
 					</Card.Content>
 				</Card.Root>
@@ -544,7 +544,7 @@
 			<div class="mb-16 text-center">
 				<h2 class="text-2xl font-bold text-gray-950 sm:text-3xl">Every Color, Perfectly Tuned</h2>
 				<p class="mx-auto mt-3 max-w-2xl text-gray-800">
-					The complete palette harmonizes with your brand. Use any hue confidently — they're all
+					The complete palette harmonizes with your brand. Use any hue confidently &mdash; they're all
 					designed to work together.
 				</p>
 			</div>

@@ -70,7 +70,7 @@
 					<code class="rounded bg-white/20 px-1.5 py-0.5">secondary</code>
 					to
 					<code class="rounded bg-white/20 px-1.5 py-0.5">adjacent</code>
-					— using step 9 in dark mode (solid backgrounds) and step 11 in light mode (text colors) for consistent saturation.
+					&mdash; using step 9 in dark mode (solid backgrounds) and step 11 in light mode (text colors) for consistent saturation.
 				</p>
 			</div>
 		</div>

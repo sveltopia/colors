@@ -72,7 +72,7 @@
   </p>
 
   <p class="text-sm text-muted-foreground">
-    Guidelines marked "by design" follow from the Radix step system's lightness progression — each
+    Guidelines marked "by design" follow from the Radix step system's lightness progression &mdash; each
     step group is spaced to maintain perceptual contrast with its intended pairings.
   </p>
 
@@ -87,7 +87,7 @@
   <div class="flex items-start gap-3 rounded-lg bg-green-500/5 p-4">
     <CheckCircle class="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
     <div class="text-sm text-foreground">
-      <strong>Text on backgrounds</strong> — Steps 11–12 text on steps 1–2 backgrounds (enforced)
+      <strong>Text on backgrounds</strong> &mdash; Steps 11–12 text on steps 1–2 backgrounds (enforced)
       <span class="text-muted-foreground">(e.g., <code class="rounded bg-muted px-1.5 py-0.5 text-xs">text-orange-950</code> on <code class="rounded bg-muted px-1.5 py-0.5 text-xs">bg-orange-50</code>)</span>
     </div>
   </div>
@@ -95,7 +95,7 @@
   <div class="flex items-start gap-3 rounded-lg bg-green-500/5 p-4">
     <CheckCircle class="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
     <div class="text-sm text-foreground">
-      <strong>Text on surfaces</strong> — Step 12 text on steps 3–5 backgrounds
+      <strong>Text on surfaces</strong> &mdash; Step 12 text on steps 3–5 backgrounds
       <span class="text-muted-foreground">(e.g., <code class="rounded bg-muted px-1.5 py-0.5 text-xs">text-blue-950</code> on <code class="rounded bg-muted px-1.5 py-0.5 text-xs">bg-blue-200</code>)</span>
     </div>
   </div>
@@ -103,15 +103,15 @@
   <div class="flex items-start gap-3 rounded-lg bg-green-500/5 p-4">
     <CheckCircle class="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
     <div class="text-sm text-foreground">
-      <strong>White text on solids</strong> — White text on step 9 at large font sizes (validated as warning)
-      <span class="text-muted-foreground">(e.g., white text on <code class="rounded bg-muted px-1.5 py-0.5 text-xs">bg-orange-800</code> — some saturated hues may need dark text instead)</span>
+      <strong>White text on solids</strong> &mdash; White text on step 9 at large font sizes (validated as warning)
+      <span class="text-muted-foreground">(e.g., white text on <code class="rounded bg-muted px-1.5 py-0.5 text-xs">bg-orange-800</code> &mdash; some saturated hues may need dark text instead)</span>
     </div>
   </div>
 
   <div class="flex items-start gap-3 rounded-lg bg-green-500/5 p-4">
     <CheckCircle class="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
     <div class="text-sm text-foreground">
-      <strong>Borders on backgrounds</strong> — Steps 6–7 borders on steps 1–2 backgrounds (by design)
+      <strong>Borders on backgrounds</strong> &mdash; Steps 6–7 borders on steps 1–2 backgrounds (by design)
       <span class="text-muted-foreground">(e.g., <code class="rounded bg-muted px-1.5 py-0.5 text-xs">border-blue-600</code> on <code class="rounded bg-muted px-1.5 py-0.5 text-xs">bg-blue-50</code>)</span>
     </div>
   </div>
@@ -125,7 +125,7 @@
   <div class="flex items-start gap-3 rounded-lg bg-red-500/5 p-4">
     <XCircle class="mt-0.5 h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
     <div class="text-sm text-foreground">
-      <strong>Adjacent steps as text/background</strong> — Steps that are close in lightness (e.g., step
+      <strong>Adjacent steps as text/background</strong> &mdash; Steps that are close in lightness (e.g., step
       6 text on step 5 background)
     </div>
   </div>
@@ -133,14 +133,14 @@
   <div class="flex items-start gap-3 rounded-lg bg-red-500/5 p-4">
     <XCircle class="mt-0.5 h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
     <div class="text-sm text-foreground">
-      <strong>Light text on light backgrounds</strong> — Steps 1–5 text on steps 1–5 backgrounds
+      <strong>Light text on light backgrounds</strong> &mdash; Steps 1–5 text on steps 1–5 backgrounds
     </div>
   </div>
 
   <div class="flex items-start gap-3 rounded-lg bg-red-500/5 p-4">
     <XCircle class="mt-0.5 h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
     <div class="text-sm text-foreground">
-      <strong>Dark text on dark backgrounds</strong> — Steps 8–12 text on steps 8–12 backgrounds
+      <strong>Dark text on dark backgrounds</strong> &mdash; Steps 8–12 text on steps 8–12 backgrounds
     </div>
   </div>
 </div>
@@ -148,7 +148,7 @@
 <div class="not-prose mt-6">
   <KeyConcept icon={Info} variant="primary">
     <p>
-      The palette gives you the building blocks for accessible interfaces — but which combinations
+      The palette gives you the building blocks for accessible interfaces &mdash; but which combinations
       you use is up to you. Follow the step semantics above and you'll produce accessible results
       without needing to think about contrast ratios.
     </p>
@@ -167,7 +167,7 @@
       It treats dark-on-light and light-on-dark identically, but human perception doesn't
     </li>
     <li>
-      It doesn't account for font size — a huge heading needs less contrast than 12px body text
+      It doesn't account for font size &mdash; a huge heading needs less contrast than 12px body text
     </li>
     <li>
       It produces false positives (passing combinations that are hard to read) and false negatives
@@ -182,7 +182,7 @@
 
   <p>
     <strong>A concrete example:</strong> white text on a saturated orange button (step 800) fails
-    WCAG 2.x with a ratio of 2.87:1 — well below the 4.5:1 threshold. But the same pairing
+    WCAG 2.x with a ratio of 2.87:1 &mdash; well below the 4.5:1 threshold. But the same pairing
     passes APCA at every practical button font size, because APCA accounts for the fact that large,
     bold text on a vivid background is perfectly readable. This is the kind of false negative that
     makes WCAG 2.x frustrating for design systems with saturated brand colors.
@@ -210,7 +210,7 @@
 
   <p>
     Other step relationships (borders against backgrounds, text on interactive surfaces) follow
-    from the Radix scale's perceptual lightness curve — each step group is spaced to maintain
+    from the Radix scale's perceptual lightness curve &mdash; each step group is spaced to maintain
     usable contrast with its intended pairings. You can verify any palette using the programmatic
     API below.
   </p>
