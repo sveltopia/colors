@@ -20,6 +20,8 @@
     "dist",
     "cli-dist",
     "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
     "!dist/**/*.test.*",
     "!dist/**/*.spec.*"
   ],
