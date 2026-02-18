@@ -371,7 +371,7 @@
   /* Highlighted search terms in excerpt */
   :global(.result-excerpt mark) {
     background-color: color-mix(in oklch, var(--color-primary-800) 20%, transparent);
-    color: var(--color-primary-900);
+    color: var(--color-primary-950);
     font-weight: 500;
     padding: 0.125rem 0.25rem;
     border-radius: 0.25rem;
@@ -396,6 +396,6 @@
 
   :global(.dark .result-excerpt mark) {
     background-color: color-mix(in oklch, var(--color-primary-800) 25%, transparent);
-    color: var(--color-primary-600);
+    color: var(--color-primary-200);
   }
 </style>
