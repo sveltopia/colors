@@ -396,6 +396,6 @@
 
   :global(.dark .result-excerpt mark) {
     background-color: color-mix(in oklch, var(--color-primary-800) 25%, transparent);
-    color: var(--color-primary-200);
+    color: var(--color-primary-50);
   }
 </style>
