@@ -5,11 +5,14 @@ on:
     branches: [main]
     paths:
       - 'apps/site/**'
+      - 'packages/colors/**'
       - '.github/workflows/deploy-site.yml'
   pull_request:
     branches: [main]
     paths:
       - 'apps/site/**'
+      - 'packages/colors/**'
+      - '.github/workflows/deploy-site.yml'
 
 jobs:
   deploy:
@@ -38,6 +41,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build library
+        run: pnpm --filter @sveltopia/colors build
 
       - name: Build site
         run: pnpm --filter site build
