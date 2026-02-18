@@ -3,16 +3,8 @@ name: Test Colors Package
 on:
   push:
     branches: ['**']
-    paths:
-      - 'packages/colors/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/test.yml'
   pull_request:
     branches: ['**']
-    paths:
-      - 'packages/colors/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/test.yml'
 
 jobs:
   test:
@@ -22,26 +14,50 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for library changes
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=${{ github.event.pull_request.base.sha }}
+          else
+            BASE=${{ github.event.before }}
+          fi
+          CHANGED=$(git diff --name-only "$BASE" HEAD -- packages/colors/ pnpm-lock.yaml .github/workflows/test.yml)
+          if [ -n "$CHANGED" ]; then
+            echo "should_test=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_test=false" >> "$GITHUB_OUTPUT"
+            echo "No library changes detected, skipping tests"
+          fi
 
       - name: Setup pnpm
+        if: steps.changes.outputs.should_test == 'true'
         uses: pnpm/action-setup@v2
         with:
           version: 9
 
       - name: Setup Node.js
+        if: steps.changes.outputs.should_test == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
       - name: Install dependencies
+        if: steps.changes.outputs.should_test == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Type Check
+        if: steps.changes.outputs.should_test == 'true'
         run: pnpm --filter @sveltopia/colors check
 
       - name: Build
+        if: steps.changes.outputs.should_test == 'true'
         run: pnpm build
 
       - name: Run Tests
+        if: steps.changes.outputs.should_test == 'true'
         run: pnpm test
