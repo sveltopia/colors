@@ -103,7 +103,7 @@
 			</p>
 		</div>
 
-		<div class="grid gap-x-12 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="grid grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-10 lg:grid-cols-3">
 			{#each features as feature (feature.title)}
 				{@const colors = getColorClasses(feature.color)}
 				<div class="group">

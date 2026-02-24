@@ -434,19 +434,19 @@
   --color-primary-adjacent-900: var(--color-amber-900);
   --color-primary-adjacent-950: var(--color-amber-950);
 
-  /* adjacent = green */
-  --color-adjacent-50: var(--color-green-50);
-  --color-adjacent-100: var(--color-green-100);
-  --color-adjacent-200: var(--color-green-200);
-  --color-adjacent-300: var(--color-green-300);
-  --color-adjacent-400: var(--color-green-400);
-  --color-adjacent-500: var(--color-green-500);
-  --color-adjacent-600: var(--color-green-600);
-  --color-adjacent-700: var(--color-green-700);
-  --color-adjacent-800: var(--color-green-800);
-  --color-adjacent-850: var(--color-green-850);
-  --color-adjacent-900: var(--color-green-900);
-  --color-adjacent-950: var(--color-green-950);
+  /* adjacent = jade */
+  --color-adjacent-50: var(--color-jade-50);
+  --color-adjacent-100: var(--color-jade-100);
+  --color-adjacent-200: var(--color-jade-200);
+  --color-adjacent-300: var(--color-jade-300);
+  --color-adjacent-400: var(--color-jade-400);
+  --color-adjacent-500: var(--color-jade-500);
+  --color-adjacent-600: var(--color-jade-600);
+  --color-adjacent-700: var(--color-jade-700);
+  --color-adjacent-800: var(--color-jade-800);
+  --color-adjacent-850: var(--color-jade-850);
+  --color-adjacent-900: var(--color-jade-900);
+  --color-adjacent-950: var(--color-jade-950);
 }
 
 .dark {
@@ -879,19 +879,19 @@
   --color-primary-adjacent-900: var(--color-amber-900);
   --color-primary-adjacent-950: var(--color-amber-950);
 
-  /* adjacent = green */
-  --color-adjacent-50: var(--color-green-50);
-  --color-adjacent-100: var(--color-green-100);
-  --color-adjacent-200: var(--color-green-200);
-  --color-adjacent-300: var(--color-green-300);
-  --color-adjacent-400: var(--color-green-400);
-  --color-adjacent-500: var(--color-green-500);
-  --color-adjacent-600: var(--color-green-600);
-  --color-adjacent-700: var(--color-green-700);
-  --color-adjacent-800: var(--color-green-800);
-  --color-adjacent-850: var(--color-green-850);
-  --color-adjacent-900: var(--color-green-900);
-  --color-adjacent-950: var(--color-green-950);
+  /* adjacent = jade */
+  --color-adjacent-50: var(--color-jade-50);
+  --color-adjacent-100: var(--color-jade-100);
+  --color-adjacent-200: var(--color-jade-200);
+  --color-adjacent-300: var(--color-jade-300);
+  --color-adjacent-400: var(--color-jade-400);
+  --color-adjacent-500: var(--color-jade-500);
+  --color-adjacent-600: var(--color-jade-600);
+  --color-adjacent-700: var(--color-jade-700);
+  --color-adjacent-800: var(--color-jade-800);
+  --color-adjacent-850: var(--color-jade-850);
+  --color-adjacent-900: var(--color-jade-900);
+  --color-adjacent-950: var(--color-jade-950);
 }
 
 /*

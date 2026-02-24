@@ -223,59 +223,43 @@
   </div>
 </section>
 
-<section class="relative overflow-hidden">
-  <div
-    class="absolute inset-0 dark:hidden"
-    style="background: linear-gradient(135deg, var(--color-grass-850), var(--color-grass-900));"
-  ></div>
-  <!-- Dark mode gradient -->
-  <div
-    class="absolute inset-0 hidden dark:block"
-    style="background: linear-gradient(135deg, var(--color-grass-600), var(--color-grass-700));"
-  ></div>
-
-  <!-- Decorative blur circles -->
-  <div class="absolute inset-0 opacity-10">
-    <div class="absolute left-1/4 top-0 h-64 w-64 -translate-y-1/2 rounded-full bg-white blur-3xl"></div>
-    <div class="absolute bottom-0 right-1/4 h-64 w-64 translate-y-1/2 rounded-full bg-white blur-3xl"></div>
-  </div>
-
-  <div class="relative px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
+<section class="overflow-hidden bg-gray-200 px-4 py-16 dark:bg-gray-100 sm:py-24">
+  <div class="md:container md:mx-auto md:max-w-5xl">
     <div class="text-center">
-      <h2 class="font-serif text-3xl font-bold text-white sm:text-4xl">How It Works</h2>
+      <h2 class="font-serif text-3xl font-bold text-gray-950 sm:text-4xl">How It Works</h2>
     </div>
 
     <div class="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
-      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
         <div class="mb-3 flex items-center gap-3">
-          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">1</span>
-          <h3 class="font-semibold text-white">Input your brand colors</h3>
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">1</span>
+          <h3 class="font-semibold text-gray-950">Input your brand colors</h3>
         </div>
-        <p class="text-sm text-white/90">1-7 hex colors that define your brand identity.</p>
+        <p class="text-sm text-gray-800">1-7 hex colors that define your brand identity.</p>
       </div>
 
-      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
         <div class="mb-3 flex items-center gap-3">
-          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">2</span>
-          <h3 class="font-semibold text-white">Algorithm finds best matches</h3>
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">2</span>
+          <h3 class="font-semibold text-gray-950">Algorithm finds best matches</h3>
         </div>
-        <p class="text-sm text-white/90">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
+        <p class="text-sm text-gray-800">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
       </div>
 
-      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
         <div class="mb-3 flex items-center gap-3">
-          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">3</span>
-          <h3 class="font-semibold text-white">Full scales generated</h3>
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">3</span>
+          <h3 class="font-semibold text-gray-950">Full scales generated</h3>
         </div>
-        <p class="text-sm text-white/90">12-step tint scales for each hue, tuned to your brand color profiles, light/dark modes, plus semantic tokens.</p>
+        <p class="text-sm text-gray-800">12-step tint scales for each hue, tuned to your brand color profiles, light/dark modes, plus semantic tokens.</p>
       </div>
 
-      <div class="rounded-xl bg-white/10 p-6 backdrop-blur-sm">
+      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
         <div class="mb-3 flex items-center gap-3">
-          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">4</span>
-          <h3 class="font-semibold text-white">Export and use</h3>
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">4</span>
+          <h3 class="font-semibold text-gray-950">Export and use</h3>
         </div>
-        <p class="text-sm text-white/90">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
+        <p class="text-sm text-gray-800">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
       </div>
     </div>
   </div>

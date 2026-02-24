@@ -48,4 +48,9 @@
       Read the Docs
     </a>
   </div>
+
+  <!-- Footnote -->
+  <p class="mt-4 text-xs text-muted-foreground">
+    * <strong>Out-of-bounds chroma</strong> means your brand color is more saturated than any standard Radix hue at that position in the scale. Instead of clipping it to the nearest match, the library generates a custom scale that preserves your color's full vibrancy.
+  </p>
 </div>

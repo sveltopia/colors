@@ -19,7 +19,7 @@
 	<!-- Dark mode gradient: -500 (step 6, subtle borders - darker in dark mode) -->
 	<div
 		class="absolute inset-0 hidden dark:block"
-		style="background: linear-gradient(to right, var(--color-secondary-500), var(--color-adjacent-500));"
+		style="background: linear-gradient(to right, var(--color-secondary-700), var(--color-adjacent-700));"
 	></div>
 
 	<!-- Decorative elements -->
@@ -70,7 +70,7 @@
 					<code class="rounded bg-white/20 px-1.5 py-0.5">secondary</code>
 					to
 					<code class="rounded bg-white/20 px-1.5 py-0.5">adjacent</code>
-					&mdash; using step 9 in dark mode (solid backgrounds) and step 11 in light mode (text colors) for consistent saturation.
+					&mdash; using step 8 in dark mode and step 11 in light mode for rich, saturated gradients.
 				</p>
 			</div>
 		</div>

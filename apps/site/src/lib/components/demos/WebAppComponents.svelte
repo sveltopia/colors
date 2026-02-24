@@ -84,7 +84,7 @@
 							aria-label="Toggle notifications"
 							onclick={() => (notificationsEnabled = !notificationsEnabled)}
 							class="relative h-6 w-11 rounded-full transition-colors {notificationsEnabled
-								? 'bg-secondary-800'
+								? 'bg-primary-800'
 								: 'bg-gray-500'}"
 						>
 							<span
@@ -101,7 +101,7 @@
 							aria-label="Toggle marketing emails"
 							onclick={() => (marketingEnabled = !marketingEnabled)}
 							class="relative h-6 w-11 rounded-full transition-colors {marketingEnabled
-								? 'bg-secondary-800'
+								? 'bg-primary-800'
 								: 'bg-gray-500'}"
 						>
 							<span
@@ -217,10 +217,10 @@
 							<td class="min-w-35 py-3 pl-3 pr-4">
 								<div class="flex items-center gap-3">
 									<div class="h-8 w-8 shrink-0 rounded-full bg-primary-300 flex items-center justify-center text-primary-900 font-medium text-xs">JD</div>
-									<span class="text-gray-950">Jane D. Zein</span>
+									<span class="text-gray-950">Jane DePloi</span>
 								</div>
 							</td>
-							<td class="py-3 pr-4 text-gray-900">Admin</td>
+							<td class="py-3 pr-4 text-gray-900">DevOps</td>
 							<td class="py-3 pr-4">
 								<span class="inline-flex items-center rounded-full bg-green-200/50 px-2 py-0.5 text-xs font-medium text-green-900">Active</span>
 							</td>
@@ -232,7 +232,7 @@
 							<td class="min-w-35 py-3 pl-3 pr-4">
 								<div class="flex items-center gap-3">
 									<div class="h-8 w-8 shrink-0 rounded-full bg-secondary-300 flex items-center justify-center text-secondary-900 font-medium text-xs">AS</div>
-									<span class="text-gray-950">Alex Smith</span>
+									<span class="text-gray-950">Alex Ternary</span>
 								</div>
 							</td>
 							<td class="py-3 pr-4 text-gray-900">Developer</td>
@@ -247,7 +247,7 @@
 							<td class="min-w-35 py-3 pl-3 pr-4">
 								<div class="flex items-center gap-3">
 									<div class="h-8 w-8 shrink-0 rounded-full bg-tertiary-300 flex items-center justify-center text-tertiary-900 font-medium text-xs">MJ</div>
-									<span class="text-gray-950">Mike Johnson</span>
+									<span class="text-gray-950">Mike Kern</span>
 								</div>
 							</td>
 							<td class="py-3 pr-4 text-gray-900">Designer</td>
@@ -262,7 +262,7 @@
 							<td class="min-w-35 py-3 pl-3 pr-4">
 								<div class="flex items-center gap-3">
 									<div class="h-8 w-8 shrink-0 rounded-full bg-gray-300 flex items-center justify-center text-gray-900 font-medium text-xs">SL</div>
-									<span class="text-gray-950">Sarah Lee</span>
+									<span class="text-gray-950">Val Propp</span>
 								</div>
 							</td>
 							<td class="py-3 pr-4 text-gray-900">Marketing</td>

@@ -180,7 +180,7 @@
 								aria-label="Toggle notifications"
 								onclick={() => (notificationsEnabled = !notificationsEnabled)}
 								class="relative h-6 w-11 rounded-full transition-colors {notificationsEnabled
-									? 'bg-secondary-800'
+									? 'bg-primary-800'
 									: 'bg-gray-500'}"
 							>
 								<span
@@ -197,7 +197,7 @@
 								aria-label="Toggle marketing emails"
 								onclick={() => (marketingEnabled = !marketingEnabled)}
 								class="relative h-6 w-11 rounded-full transition-colors {marketingEnabled
-									? 'bg-secondary-800'
+									? 'bg-primary-800'
 									: 'bg-gray-500'}"
 							>
 								<span
@@ -549,7 +549,7 @@
 				</p>
 			</div>
 
-			<div class="grid gap-x-12 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+			<div class="grid grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-10 lg:grid-cols-3">
 				{#each features as feature (feature.title)}
 					{@const colors = getColorVars(feature.color)}
 					{@const Icon = feature.icon}
@@ -618,7 +618,7 @@
 						</Avatar.Fallback>
 					</Avatar.Root>
 					<div class="text-left">
-						<div class="font-semibold text-gray-950">Jane D. Zein</div>
+						<div class="font-semibold text-gray-950">Greta D. Zein</div>
 						<div class="text-sm text-gray-900">Design Lead at TechCorp</div>
 					</div>
 				</div>
