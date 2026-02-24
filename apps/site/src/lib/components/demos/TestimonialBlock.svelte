@@ -35,7 +35,7 @@
 				</div>
 
 				<div class="text-left">
-					<div class="font-semibold text-gray-950">Jane D. Zein</div>
+					<div class="font-semibold text-gray-950">Greta D. Zein</div>
 					<div class="text-sm text-gray-900">Design Lead at TechCorp</div>
 				</div>
 			</div>

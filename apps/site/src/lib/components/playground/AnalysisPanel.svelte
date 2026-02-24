@@ -73,7 +73,7 @@
   {#if tuningProfile.customRows && tuningProfile.customRows.length > 0}
     <p class="text-xs text-muted-foreground">
       <Sparkles class="mr-1 inline h-3 w-3 text-amber-500" />
-      Custom row created for out-of-bounds chroma
+      Custom row created for out-of-bounds chroma*
     </p>
   {/if}
 </div>

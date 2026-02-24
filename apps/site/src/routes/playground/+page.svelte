@@ -1,6 +1,6 @@
 <script lang="ts">
   import { mode, setMode } from 'mode-watcher';
-  import { Sun, Moon, Info } from 'lucide-svelte';
+  import { Sun, Moon, Info, Palette } from 'lucide-svelte';
   import { generatePalette, RADIX_SCALES, RADIX_SCALES_DARK, TEST_PALETTES, type LightPalette, type TestPalette } from '@sveltopia/colors';
   import PresetSelector from '$lib/components/playground/PresetSelector.svelte';
   import ColorInputs from '$lib/components/playground/ColorInputs.svelte';
@@ -76,6 +76,10 @@
     <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Playground</h1>
     <p class="mt-2 text-muted-foreground">
       See how Sveltopia Colors transforms brand colors into complete palettes.
+    </p>
+    <p class="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground lg:hidden">
+      <Palette class="h-3.5 w-3.5 text-primary" />
+      Tap the <span class="font-medium text-primary">orange button</span> to view your generated palette.
     </p>
   </div>
 

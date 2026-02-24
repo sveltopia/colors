@@ -134,7 +134,7 @@
   <!-- Custom rows (out-of-bounds chroma) - dashed border -->
   {#if allRows.customRows.length > 0}
     <div class="rounded-lg border border-dashed bg-card/50 p-4">
-      <div class="mb-3 text-xs font-medium text-muted-foreground">Custom Scales (out-of-bounds chroma)</div>
+      <div class="mb-3 text-xs font-medium text-muted-foreground">Custom Scales (out-of-bounds chroma*)</div>
       <div class="space-y-3">
         {#each allRows.customRows as row (row.hueName)}
           <PaletteRow
