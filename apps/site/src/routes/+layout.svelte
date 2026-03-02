@@ -206,6 +206,13 @@
           class="font-medium underline underline-offset-4">GitHub</a
         >.
       </p>
+      <a
+        href="https://sveltopia.dev/ai-usage"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+        >AI Usage</a
+      >
     </div>
   </footer>
 </div>
