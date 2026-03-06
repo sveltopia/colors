@@ -94,7 +94,7 @@
 </svelte:head>
 
 <!-- Hero Section — subtle warm tint -->
-<section class="bg-orange-500/30 dark:bg-gray-100">
+<section class="bg-orange-500/30 dark:bg-slate-100">
   <div class="w-full px-4 py-10 sm:py-12 md:container md:mx-auto md:max-w-5xl md:py-20">
     <div class="space-y-6 text-center">
       <h1 class="font-serif text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
@@ -176,7 +176,7 @@
 </section>
 
 <!-- Features Grid — tinted background -->
-<section class="bg-gray-100">
+<section class="bg-slate-100">
   <div class="w-full px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
     <div class="space-y-6">
       <div class="text-center">
@@ -223,50 +223,50 @@
   </div>
 </section>
 
-<section class="overflow-hidden bg-gray-200 px-4 py-16 dark:bg-gray-100 sm:py-24">
+<section class="overflow-hidden bg-slate-200 px-4 py-16 dark:bg-slate-100 sm:py-24">
   <div class="md:container md:mx-auto md:max-w-5xl">
     <div class="text-center">
-      <h2 class="font-serif text-3xl font-bold text-gray-950 sm:text-4xl">How It Works</h2>
+      <h2 class="font-serif text-3xl font-bold text-slate-950 sm:text-4xl">How It Works</h2>
     </div>
 
     <div class="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
-      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
+      <div class="rounded-xl border border-slate-500 bg-slate-100 p-6 shadow-sm dark:bg-slate-200">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">1</span>
-          <h3 class="font-semibold text-gray-950">Input your brand colors</h3>
+          <h3 class="font-semibold text-slate-950">Input your brand colors</h3>
         </div>
-        <p class="text-sm text-gray-800">1-7 hex colors that define your brand identity.</p>
+        <p class="text-sm text-slate-800">1-7 hex colors that define your brand identity.</p>
       </div>
 
-      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
+      <div class="rounded-xl border border-slate-500 bg-slate-100 p-6 shadow-sm dark:bg-slate-200">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">2</span>
-          <h3 class="font-semibold text-gray-950">Algorithm finds best matches</h3>
+          <h3 class="font-semibold text-slate-950">Algorithm finds best matches</h3>
         </div>
-        <p class="text-sm text-gray-800">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
+        <p class="text-sm text-slate-800">Each brand color anchors a Radix scale at the perceptually closest hue. If no close match exists, a custom scale is generated.</p>
       </div>
 
-      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
+      <div class="rounded-xl border border-slate-500 bg-slate-100 p-6 shadow-sm dark:bg-slate-200">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">3</span>
-          <h3 class="font-semibold text-gray-950">Full scales generated</h3>
+          <h3 class="font-semibold text-slate-950">Full scales generated</h3>
         </div>
-        <p class="text-sm text-gray-800">12-step tint scales for each hue, tuned to your brand color profiles, light/dark modes, plus semantic tokens.</p>
+        <p class="text-sm text-slate-800">12-step tint scales for each hue, tuned to your brand color profiles, light/dark modes, plus semantic tokens.</p>
       </div>
 
-      <div class="rounded-xl border border-gray-500 bg-gray-100 p-6 shadow-sm dark:bg-gray-200">
+      <div class="rounded-xl border border-slate-500 bg-slate-100 p-6 shadow-sm dark:bg-slate-200">
         <div class="mb-3 flex items-center gap-3">
           <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-200 text-sm font-bold text-primary-900 dark:bg-primary-300/20">4</span>
-          <h3 class="font-semibold text-gray-950">Export and use</h3>
+          <h3 class="font-semibold text-slate-950">Export and use</h3>
         </div>
-        <p class="text-sm text-gray-800">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
+        <p class="text-sm text-slate-800">Drop the output into your project. Compatible with Tailwind, Panda CSS, shadcn/ui, and more.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Bottom CTA — forced dark section -->
-<section class="dark relative overflow-hidden bg-gray-50">
+<section class="dark relative overflow-hidden bg-slate-50">
   <!-- Ambient primary glow -->
   <div
     class="absolute left-1/2 top-0 h-96 w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-2xl"
@@ -276,18 +276,18 @@
   <div class="relative px-4 py-16 sm:py-24 md:container md:mx-auto md:max-w-5xl">
     <div class="space-y-8 text-center">
       <div>
-        <h2 class="font-serif text-2xl font-bold text-gray-950 sm:text-3xl">One command yields a complete palette</h2>
+        <h2 class="font-serif text-2xl font-bold text-slate-950 sm:text-3xl">One command yields a complete palette</h2>
         <div class="mt-4">
-          <code class="inline-block rounded-lg bg-gray-200 px-4 py-2 font-mono text-sm text-gray-950">
+          <code class="inline-block rounded-lg bg-slate-200 px-4 py-2 font-mono text-sm text-slate-950">
             npx @sveltopia/colors generate
           </code>
         </div>
       </div>
 
       <div>
-        <h3 class="font-serif text-xl font-bold text-gray-950 sm:text-2xl">Or use the dev server to experiment</h3>
+        <h3 class="font-serif text-xl font-bold text-slate-950 sm:text-2xl">Or use the dev server to experiment</h3>
         <div class="mt-4">
-          <code class="inline-block rounded-lg bg-gray-200 px-4 py-2 font-mono text-sm text-gray-950">
+          <code class="inline-block rounded-lg bg-slate-200 px-4 py-2 font-mono text-sm text-slate-950">
             npx @sveltopia/colors dev
           </code>
         </div>
@@ -303,7 +303,7 @@
       </a>
       <a
         href="/docs"
-        class="inline-flex items-center justify-center rounded-lg border border-gray-500 px-6 py-3 text-sm font-medium text-gray-950 transition-colors hover:bg-gray-200"
+        class="inline-flex items-center justify-center rounded-lg border border-slate-500 px-6 py-3 text-sm font-medium text-slate-950 transition-colors hover:bg-slate-200"
       >
         Read the Docs
       </a>
