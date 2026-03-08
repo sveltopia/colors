@@ -16,6 +16,10 @@ Generate complete, accessible color palettes from 1-7 brand colors. Drop-in comp
 - **Light + Dark Mode** — Both modes generated automatically
 - **P3 Wide Gamut** — Display P3 colors included for modern displays
 
+## Architecture
+
+For a deep dive into how the library works &mdash; color science foundations, Radix curve extraction, brand analysis, palette generation, APCA validation, and the export pipeline &mdash; see [ARCHITECTURE.md](./ARCHITECTURE.md).
+
 ## Installation
 
 No install required &mdash; just use `npx` to run the CLI. To pin a version for your team, install as a dev dependency:
