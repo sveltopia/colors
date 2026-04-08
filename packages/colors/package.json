@@ -1,6 +1,6 @@
 {
   "name": "@sveltopia/colors",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Generate accessible color palettes from brand colors. Drop-in compatible with Radix, Tailwind, and Panda CSS.",
   "type": "module",
   "main": "./dist/index.js",

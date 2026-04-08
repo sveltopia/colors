@@ -71,7 +71,7 @@
             <span class="font-semibold">Colors</span>
             <span
               class="rounded-md border border-primary-800/20 bg-primary-800/10 px-2 py-0.5 text-xs font-semibold text-primary-800"
-              >v0.1.0</span
+              >v0.2.0</span
             >
           </div>
         </div>
@@ -141,7 +141,7 @@
               <span class="font-semibold">Colors</span>
               <span
                 class="rounded-md border border-primary-800/20 bg-primary-800/10 px-2 py-0.5 text-xs font-semibold text-primary-800"
-                >v0.1.0</span
+                >v0.2.0</span
               >
               <nav class="flex items-center space-x-1 pl-8 text-sm font-medium pt-0.5">
                 <a
