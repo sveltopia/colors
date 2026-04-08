@@ -1315,3 +1315,125 @@ function hexToOklch(hex: string): string {
   const h = oklch.h !== undefined ? oklch.h.toFixed(2) : "0";
   return `oklch(${l} ${c} ${h})`;
 }
+
+// =============================================================================
+// Sveltopia UI Export
+// =============================================================================
+
+/**
+ * Color value in multiple formats for maximum consumer flexibility.
+ */
+export interface ColorValue {
+  /** OKLCH CSS string — primary format for modern browsers */
+  oklch: string;
+  /** Hex string — fallback for legacy contexts */
+  hex: string;
+}
+
+/**
+ * Structured data export for @sveltopia/ui consumption.
+ *
+ * This is NOT a Panda preset or CSS file — it's a framework-agnostic data
+ * object that the @sveltopia/ui CLI and factory function consume to build
+ * Panda presets. This keeps @sveltopia/colors free of Panda-specific knowledge.
+ */
+export interface SveltopiaUIExport {
+  /** Full color palette — all hue rows, 12 steps each, light + dark */
+  palette: {
+    light: Record<string, Record<string, ColorValue>>;
+    dark: Record<string, Record<string, ColorValue>>;
+  };
+  /** Brand role assignments — which row name each role points to */
+  roles: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  };
+  /** Generation metadata */
+  meta: {
+    inputColors: string[];
+    neutralHue: string;
+    generatedAt: string;
+  };
+}
+
+export interface SveltopiaUIExportOptions {
+  /** Neutral hue family for surface/border/text tokens (default: 'gray') */
+  neutralHue?: string;
+}
+
+/**
+ * Export palette as structured data for @sveltopia/ui.
+ *
+ * Returns a data object containing the full palette (all hues, light + dark,
+ * oklch + hex), brand role assignments (which row each role points to), and
+ * generation metadata. The @sveltopia/ui CLI consumes this to build Panda presets.
+ *
+ * @example
+ * ```ts
+ * const palette = generatePalette({ brandColors: ['#FF4F00', '#1B998B'] });
+ * const data = exportSveltopiaUI(fullPalette, { neutralHue: 'slate' });
+ *
+ * // data.roles.primary === 'orange' (anchored to closest Radix hue)
+ * // data.palette.light.orange['9'].oklch === 'oklch(0.7 0.2 45)'
+ * ```
+ */
+export function exportSveltopiaUI(
+  palette: Palette,
+  options: SveltopiaUIExportOptions = {},
+): SveltopiaUIExport {
+  const safePalette = ensureAccessibility(palette);
+  const { neutralHue = "gray" } = options;
+
+  // Resolve brand role assignments from palette anchors
+  const anchors = safePalette._meta.tuningProfile.anchors;
+  const { primaryHue, secondaryHue, tertiaryHue } =
+    resolveSemanticHues(anchors);
+
+  // Build the full palette data with both oklch and hex formats
+  const lightPalette: Record<string, Record<string, ColorValue>> = {};
+  const darkPalette: Record<string, Record<string, ColorValue>> = {};
+
+  for (const [hueName, scale] of Object.entries(safePalette.light)) {
+    lightPalette[hueName] = {};
+    for (let step = 1; step <= 12; step++) {
+      const hex = scale[step as keyof Scale];
+      if (hex) {
+        lightPalette[hueName][String(step)] = {
+          oklch: hexToOklch(hex),
+          hex,
+        };
+      }
+    }
+  }
+
+  for (const [hueName, scale] of Object.entries(safePalette.dark)) {
+    darkPalette[hueName] = {};
+    for (let step = 1; step <= 12; step++) {
+      const hex = scale[step as keyof Scale];
+      if (hex) {
+        darkPalette[hueName][String(step)] = {
+          oklch: hexToOklch(hex),
+          hex,
+        };
+      }
+    }
+  }
+
+  return {
+    palette: {
+      light: lightPalette,
+      dark: darkPalette,
+    },
+    roles: {
+      primary: primaryHue,
+      secondary: secondaryHue,
+      tertiary: tertiaryHue,
+    },
+    meta: {
+      inputColors: safePalette._meta.inputColors,
+      neutralHue,
+      generatedAt: safePalette._meta.generatedAt,
+    },
+  };
+}

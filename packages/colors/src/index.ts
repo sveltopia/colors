@@ -5,128 +5,144 @@
 
 // Types
 export type {
-	OklchColor,
-	Scale,
-	ScaleStep,
-	TuningProfile,
-	AnchorInfo,
-	CustomRowInfo,
-	Palette,
-	ContrastResult,
-	ValidationReport,
-	GeneratedScale,
-	GeneratedScaleStep
-} from './types.js';
+  OklchColor,
+  Scale,
+  ScaleStep,
+  TuningProfile,
+  AnchorInfo,
+  CustomRowInfo,
+  Palette,
+  ContrastResult,
+  ValidationReport,
+  GeneratedScale,
+  GeneratedScaleStep,
+} from "./types.js";
 
 // OKLCH utilities
-export { toOklch, toHex, toCss, parseColor, isValidColor, validateColor, clampOklch } from './utils/oklch.js';
-export type { ColorValidationResult } from './utils/oklch.js';
+export {
+  toOklch,
+  toHex,
+  toCss,
+  parseColor,
+  isValidColor,
+  validateColor,
+  clampOklch,
+} from "./utils/oklch.js";
+export type { ColorValidationResult } from "./utils/oklch.js";
 
 // Baseline hues (extracted from Radix Colors)
 export {
-	BASELINE_HUES,
-	HUE_KEYS,
-	HUE_COUNT,
-	SNAP_THRESHOLD,
-	findClosestHue,
-	findClosestHueWithDistance,
-	shouldSnapToSlot,
-	getHuesSortedByAngle,
-	getHuesByCategory
-} from './core/hues.js';
-export type { HueDefinition } from './core/hues.js';
+  BASELINE_HUES,
+  HUE_KEYS,
+  HUE_COUNT,
+  SNAP_THRESHOLD,
+  findClosestHue,
+  findClosestHueWithDistance,
+  shouldSnapToSlot,
+  getHuesSortedByAngle,
+  getHuesByCategory,
+} from "./core/hues.js";
+export type { HueDefinition } from "./core/hues.js";
 
 // Brand analysis
 export {
-	analyzeColor,
-	analyzeBrandColors,
-	createDefaultProfile,
-	getAnalysisReport
-} from './core/analyze.js';
-export type { ColorAnalysis } from './core/analyze.js';
+  analyzeColor,
+  analyzeBrandColors,
+  createDefaultProfile,
+  getAnalysisReport,
+} from "./core/analyze.js";
+export type { ColorAnalysis } from "./core/analyze.js";
 
 // Scale generation
 export {
-	generateScale,
-	generateScaleAPCA,
-	validateScale,
-	RADIX_APCA_TARGETS,
-	RADIX_LIGHTNESS_TARGETS,
-	CHROMA_CURVE
-} from './core/generate.js';
-export type { GenerateScaleOptions } from './core/generate.js';
+  generateScale,
+  generateScaleAPCA,
+  validateScale,
+  RADIX_APCA_TARGETS,
+  RADIX_LIGHTNESS_TARGETS,
+  CHROMA_CURVE,
+} from "./core/generate.js";
+export type { GenerateScaleOptions } from "./core/generate.js";
 
 // Full palette generation
-export { generatePalette, getPaletteStats } from './core/palette.js';
-export type { GeneratePaletteOptions, LightPalette } from './core/palette.js';
+export { generatePalette, getPaletteStats } from "./core/palette.js";
+export type { GeneratePaletteOptions, LightPalette } from "./core/palette.js";
 
 // Export utilities (CSS + JSON)
 export {
-	exportCSS,
-	exportJSON,
-	getAlphaColor,
-	getAlphaColorSrgb,
-	getAlphaColorP3,
-	formatOklchCss,
-	formatP3Css,
-	formatAlphaHex,
-	formatAlphaP3,
-	getContrastColor,
-	getSurfaceColor,
-	getSemanticTokens
-} from './core/export.js';
+  exportCSS,
+  exportJSON,
+  getAlphaColor,
+  getAlphaColorSrgb,
+  getAlphaColorP3,
+  formatOklchCss,
+  formatP3Css,
+  formatAlphaHex,
+  formatAlphaP3,
+  getContrastColor,
+  getSurfaceColor,
+  getSemanticTokens,
+} from "./core/export.js";
 export type {
-	CSSExportOptions,
-	JSONExportOptions,
-	ColorFormats,
-	AlphaColorFormats,
-	SemanticTokens,
-	JSONScale,
-	JSONAlphaScale,
-	JSONOutput,
-	BrandColorInfo
-} from './core/export.js';
+  CSSExportOptions,
+  JSONExportOptions,
+  ColorFormats,
+  AlphaColorFormats,
+  SemanticTokens,
+  JSONScale,
+  JSONAlphaScale,
+  JSONOutput,
+  BrandColorInfo,
+} from "./core/export.js";
 
 // Framework-specific exports (Tailwind, Radix, Panda CSS)
 export {
-	exportTailwind,
-	exportTailwindWithCSSVars,
-	exportTailwindV4CSS,
-	exportShadcn,
-	exportRadix,
-	exportPanda
-} from './core/export-frameworks.js';
+  exportTailwind,
+  exportTailwindWithCSSVars,
+  exportTailwindV4CSS,
+  exportShadcn,
+  exportRadix,
+  exportPanda,
+  exportSveltopiaUI,
+} from "./core/export-frameworks.js";
 export type {
-	TailwindExportOptions,
-	TailwindV4CSSExportOptions,
-	ShadcnExportOptions,
-	RadixExportOptions,
-	PandaExportOptions
-} from './core/export-frameworks.js';
+  TailwindExportOptions,
+  TailwindV4CSSExportOptions,
+  ShadcnExportOptions,
+  RadixExportOptions,
+  PandaExportOptions,
+  SveltopiaUIExportOptions,
+  SveltopiaUIExport,
+  ColorValue,
+} from "./core/export-frameworks.js";
 
 // APCA Validation
 export {
-	APCA_THRESHOLDS,
-	calculateAPCA,
-	getAbsoluteContrast,
-	meetsContrastThreshold,
-	validatePaletteContrast,
-	formatContrastReport,
-	isPaletteAccessible,
-	boostLightnessUntilContrast,
-	ensureAccessibility
-} from './core/validate.js';
+  APCA_THRESHOLDS,
+  calculateAPCA,
+  getAbsoluteContrast,
+  meetsContrastThreshold,
+  validatePaletteContrast,
+  formatContrastReport,
+  isPaletteAccessible,
+  boostLightnessUntilContrast,
+  ensureAccessibility,
+} from "./core/validate.js";
 export type {
-	ContrastSeverity,
-	ContrastIssue,
-	ContrastReport
-} from './core/validate.js';
+  ContrastSeverity,
+  ContrastIssue,
+  ContrastReport,
+} from "./core/validate.js";
 
 // Radix Reference Scales (for comparison/visualization)
-export { RADIX_SCALES, RADIX_SCALE_ORDER } from './reference/radix-scales.js';
-export { RADIX_SCALES_DARK } from './reference/radix-scales-dark.js';
-export type { RadixScale } from './reference/radix-scales.js';
+export { RADIX_SCALES, RADIX_SCALE_ORDER } from "./reference/radix-scales.js";
+export { RADIX_SCALES_DARK } from "./reference/radix-scales-dark.js";
+export type { RadixScale } from "./reference/radix-scales.js";
 
 // Test Palettes (for presets/demos)
-export { TEST_PALETTES, getTestPalette, getPalettesByCategory } from './reference/test-palettes.js';
-export type { TestPalette } from './reference/test-palettes.js';
+export {
+  TEST_PALETTES,
+  getTestPalette,
+  getPalettesByCategory,
+} from "./reference/test-palettes.js";
+export type { TestPalette } from "./reference/test-palettes.js";
