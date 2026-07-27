@@ -36,18 +36,15 @@ declare global {
     init: () => Promise<void>;
     search: (
       query: string,
-      options?: { filters?: Record<string, string> },
+      options?: { filters?: Record<string, string> }
     ) => Promise<PagefindSearchResponse>;
     debouncedSearch: (
       query: string,
       options?: { filters?: Record<string, string> },
-      debounceMs?: number,
+      debounceMs?: number
     ) => Promise<PagefindSearchResponse | null>;
     filters: () => Promise<Record<string, Record<string, number>>>;
-    preload: (
-      query: string,
-      options?: { filters?: Record<string, string> },
-    ) => Promise<void>;
+    preload: (query: string, options?: { filters?: Record<string, string> }) => Promise<void>;
   }
 
   namespace App {

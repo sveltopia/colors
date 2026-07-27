@@ -4,258 +4,258 @@ import { resolve, join } from 'node:path';
 import { spinner, log } from '@clack/prompts';
 import { loadConfig, mergeOptions, type ColorsConfig } from '../utils/config.js';
 import {
-	promptForColors,
-	promptForFormats,
-	promptForOutput,
-	promptForInteractiveMode,
-	validateColors
+  promptForColors,
+  promptForFormats,
+  promptForOutput,
+  promptForInteractiveMode,
+  validateColors
 } from '../utils/prompts.js';
 import {
-	generatePalette,
-	exportCSS,
-	exportJSON,
-	exportTailwind,
-	exportTailwindV4CSS,
-	exportRadix,
-	exportPanda,
-	exportShadcn
+  generatePalette,
+  exportCSS,
+  exportJSON,
+  exportTailwind,
+  exportTailwindV4CSS,
+  exportRadix,
+  exportPanda,
+  exportShadcn
 } from '@sveltopia/colors';
 import type { Palette, BrandColorInfo } from '@sveltopia/colors';
 
 export interface GenerateOptions {
-	colors?: string;
-	config?: string;
-	output?: string;
-	format?: string;
-	prefix?: string;
-	verbose?: boolean;
-	dryRun?: boolean;
+  colors?: string;
+  config?: string;
+  output?: string;
+  format?: string;
+  prefix?: string;
+  verbose?: boolean;
+  dryRun?: boolean;
 }
 
 interface PaletteResult {
-	palette: Palette;
-	brandColorInfo: BrandColorInfo[];
+  palette: Palette;
+  brandColorInfo: BrandColorInfo[];
 }
 
 /**
  * Generate palette from brand colors
  */
 function createPalette(brandColors: string[]): PaletteResult {
-	// Generate light mode palette
-	const lightPalette = generatePalette({
-		brandColors,
-		mode: 'light'
-	});
+  // Generate light mode palette
+  const lightPalette = generatePalette({
+    brandColors,
+    mode: 'light'
+  });
 
-	// Generate dark mode palette
-	const darkPalette = generatePalette({
-		brandColors,
-		mode: 'dark'
-	});
+  // Generate dark mode palette
+  const darkPalette = generatePalette({
+    brandColors,
+    mode: 'dark'
+  });
 
-	// Build BrandColorInfo from the tuning profile anchors
-	const brandColorInfo: BrandColorInfo[] = [];
-	const anchors = lightPalette.meta.tuningProfile.anchors;
-	for (const [hex, anchor] of Object.entries(anchors)) {
-		brandColorInfo.push({
-			hex,
-			hue: anchor.slot,
-			anchorStep: anchor.step,
-			isCustomRow: anchor.isCustomRow ?? false
-		});
-	}
+  // Build BrandColorInfo from the tuning profile anchors
+  const brandColorInfo: BrandColorInfo[] = [];
+  const anchors = lightPalette.meta.tuningProfile.anchors;
+  for (const [hex, anchor] of Object.entries(anchors)) {
+    brandColorInfo.push({
+      hex,
+      hue: anchor.slot,
+      anchorStep: anchor.step,
+      isCustomRow: anchor.isCustomRow ?? false
+    });
+  }
 
-	// Combine into full Palette
-	const palette: Palette = {
-		light: lightPalette.scales,
-		dark: darkPalette.scales,
-		_meta: {
-			tuningProfile: lightPalette.meta.tuningProfile,
-			inputColors: brandColors,
-			generatedAt: new Date().toISOString()
-		}
-	};
+  // Combine into full Palette
+  const palette: Palette = {
+    light: lightPalette.scales,
+    dark: darkPalette.scales,
+    _meta: {
+      tuningProfile: lightPalette.meta.tuningProfile,
+      inputColors: brandColors,
+      generatedAt: new Date().toISOString()
+    }
+  };
 
-	return { palette, brandColorInfo };
+  return { palette, brandColorInfo };
 }
 
 /**
  * Main generate command handler
  */
 export async function generateCommand(options: GenerateOptions): Promise<void> {
-	const s = spinner();
+  const s = spinner();
 
-	// Load and merge config
-	s.start('Loading configuration');
-	let config: ColorsConfig;
-	try {
-		config = await loadConfig(options.config);
-		config = mergeOptions(config, {
-			colors: options.colors,
-			output: options.output,
-			format: options.format,
-			prefix: options.prefix
-		});
-	} catch (error) {
-		s.stop('Configuration failed');
-		throw error;
-	}
-	s.stop('Configuration loaded');
+  // Load and merge config
+  s.start('Loading configuration');
+  let config: ColorsConfig;
+  try {
+    config = await loadConfig(options.config);
+    config = mergeOptions(config, {
+      colors: options.colors,
+      output: options.output,
+      format: options.format,
+      prefix: options.prefix
+    });
+  } catch (error) {
+    s.stop('Configuration failed');
+    throw error;
+  }
+  s.stop('Configuration loaded');
 
-	// Prompt for colors if none provided
-	if (config.brandColors.length === 0) {
-		log.info('No brand colors specified in config or --colors flag');
-		config.brandColors = await promptForColors();
+  // Prompt for colors if none provided
+  if (config.brandColors.length === 0) {
+    log.info('No brand colors specified in config or --colors flag');
+    config.brandColors = await promptForColors();
 
-		// In interactive mode, ask if user wants to customize other settings
-		const customize = await promptForInteractiveMode();
-		if (customize) {
-			config.formats = await promptForFormats();
-			config.outputDir = await promptForOutput();
-		}
-	}
+    // In interactive mode, ask if user wants to customize other settings
+    const customize = await promptForInteractiveMode();
+    if (customize) {
+      config.formats = await promptForFormats();
+      config.outputDir = await promptForOutput();
+    }
+  }
 
-	// Validate colors with helpful error messages
-	validateColors(config.brandColors);
+  // Validate colors with helpful error messages
+  validateColors(config.brandColors);
 
-	log.info(`Brand colors: ${config.brandColors.join(', ')}`);
+  log.info(`Brand colors: ${config.brandColors.join(', ')}`);
 
-	// Generate palette
-	s.start('Generating palette');
-	const { palette, brandColorInfo } = createPalette(config.brandColors);
-	const scaleCount = Object.keys(palette.light).length;
-	s.stop(`Generated ${scaleCount} scales (light + dark)`);
+  // Generate palette
+  s.start('Generating palette');
+  const { palette, brandColorInfo } = createPalette(config.brandColors);
+  const scaleCount = Object.keys(palette.light).length;
+  s.stop(`Generated ${scaleCount} scales (light + dark)`);
 
-	// Verbose output: show detailed generation info
-	if (options.verbose) {
-		log.info('');
-		log.info('┌─ Tuning Profile ─────────────────────────────────────');
-		const tuning = palette._meta.tuningProfile;
-		log.info(`│ Hue shift:          ${tuning.hueShift ?? 0}°`);
-		log.info(`│ Chroma multiplier:  ${tuning.chromaMultiplier ?? 1}x`);
-		log.info(`│ Lightness shift:    ${tuning.lightnessShift ?? 0}`);
-		log.info('├─ Brand Color Anchors ────────────────────────────────');
-		for (const info of brandColorInfo) {
-			const rowType = info.isCustomRow ? '(custom row)' : '(fitted to existing)';
-			log.info(`│ ${info.hex} → ${info.hue} step ${info.anchorStep} ${rowType}`);
-		}
-		log.info('├─ Hue Coverage ────────────────────────────────────────');
-		const anchoredHues = new Set(brandColorInfo.map((b) => b.hue));
-		const customHues = Object.keys(palette.light).filter((h) => h.startsWith('custom-'));
-		const baselineHues = Object.keys(palette.light).filter(
-			(h) => !anchoredHues.has(h) && !h.startsWith('custom-')
-		);
-		log.info(`│ Brand-anchored: ${[...anchoredHues].join(', ') || 'none'}`);
-		log.info(`│ Custom rows:    ${customHues.join(', ') || 'none'}`);
-		log.info(`│ Baseline:       ${baselineHues.length} scales`);
-		log.info('└───────────────────────────────────────────────────────');
-		log.info('');
-	}
+  // Verbose output: show detailed generation info
+  if (options.verbose) {
+    log.info('');
+    log.info('┌─ Tuning Profile ─────────────────────────────────────');
+    const tuning = palette._meta.tuningProfile;
+    log.info(`│ Hue shift:          ${tuning.hueShift ?? 0}°`);
+    log.info(`│ Chroma multiplier:  ${tuning.chromaMultiplier ?? 1}x`);
+    log.info(`│ Lightness shift:    ${tuning.lightnessShift ?? 0}`);
+    log.info('├─ Brand Color Anchors ────────────────────────────────');
+    for (const info of brandColorInfo) {
+      const rowType = info.isCustomRow ? '(custom row)' : '(fitted to existing)';
+      log.info(`│ ${info.hex} → ${info.hue} step ${info.anchorStep} ${rowType}`);
+    }
+    log.info('├─ Hue Coverage ────────────────────────────────────────');
+    const anchoredHues = new Set(brandColorInfo.map((b) => b.hue));
+    const customHues = Object.keys(palette.light).filter((h) => h.startsWith('custom-'));
+    const baselineHues = Object.keys(palette.light).filter(
+      (h) => !anchoredHues.has(h) && !h.startsWith('custom-')
+    );
+    log.info(`│ Brand-anchored: ${[...anchoredHues].join(', ') || 'none'}`);
+    log.info(`│ Custom rows:    ${customHues.join(', ') || 'none'}`);
+    log.info(`│ Baseline:       ${baselineHues.length} scales`);
+    log.info('└───────────────────────────────────────────────────────');
+    log.info('');
+  }
 
-	// Dry-run mode: show what would be generated without writing
-	if (options.dryRun) {
-		log.warn('Dry-run mode: no files will be written');
-		log.info('');
-		log.info(`Would create output directory: ${resolve(config.outputDir)}`);
-		if (config.formats.includes('css')) {
-			log.info(`Would write: ${resolve(config.outputDir)}/colors.css`);
-		}
-		if (config.formats.includes('json')) {
-			log.info(`Would write: ${resolve(config.outputDir)}/colors.json`);
-		}
-		if (config.formats.includes('tailwind')) {
-			log.info(`Would write: ${resolve(config.outputDir)}/tailwind.css`);
-		}
-		if (config.formats.includes('tailwind-v3')) {
-			log.info(`Would write: ${resolve(config.outputDir)}/tailwind.preset.js`);
-		}
-		if (config.formats.includes('radix')) {
-			log.info(`Would write: ${resolve(config.outputDir)}/radix-colors.js`);
-		}
-		if (config.formats.includes('panda')) {
-			log.info(`Would write: ${resolve(config.outputDir)}/panda.preset.ts`);
-		}
-		if (config.formats.includes('shadcn')) {
-			log.info(`Would write: ${resolve(config.outputDir)}/shadcn-colors.css`);
-		}
-		log.info('');
-		log.success('Dry-run complete - no files written');
-		return;
-	}
+  // Dry-run mode: show what would be generated without writing
+  if (options.dryRun) {
+    log.warn('Dry-run mode: no files will be written');
+    log.info('');
+    log.info(`Would create output directory: ${resolve(config.outputDir)}`);
+    if (config.formats.includes('css')) {
+      log.info(`Would write: ${resolve(config.outputDir)}/colors.css`);
+    }
+    if (config.formats.includes('json')) {
+      log.info(`Would write: ${resolve(config.outputDir)}/colors.json`);
+    }
+    if (config.formats.includes('tailwind')) {
+      log.info(`Would write: ${resolve(config.outputDir)}/tailwind.css`);
+    }
+    if (config.formats.includes('tailwind-v3')) {
+      log.info(`Would write: ${resolve(config.outputDir)}/tailwind.preset.js`);
+    }
+    if (config.formats.includes('radix')) {
+      log.info(`Would write: ${resolve(config.outputDir)}/radix-colors.js`);
+    }
+    if (config.formats.includes('panda')) {
+      log.info(`Would write: ${resolve(config.outputDir)}/panda.preset.ts`);
+    }
+    if (config.formats.includes('shadcn')) {
+      log.info(`Would write: ${resolve(config.outputDir)}/shadcn-colors.css`);
+    }
+    log.info('');
+    log.success('Dry-run complete - no files written');
+    return;
+  }
 
-	// Ensure output directory exists
-	const outputDir = resolve(config.outputDir);
-	if (!existsSync(outputDir)) {
-		await mkdir(outputDir, { recursive: true });
-		log.info(`Created output directory: ${outputDir}`);
-	}
+  // Ensure output directory exists
+  const outputDir = resolve(config.outputDir);
+  if (!existsSync(outputDir)) {
+    await mkdir(outputDir, { recursive: true });
+    log.info(`Created output directory: ${outputDir}`);
+  }
 
-	// Export CSS
-	if (config.formats.includes('css')) {
-		s.start('Exporting CSS');
-		const css = exportCSS(palette, {
-			prefix: config.prefix || undefined
-		});
-		const cssPath = join(outputDir, 'colors.css');
-		await writeFile(cssPath, css, 'utf-8');
-		s.stop(`CSS exported to ${cssPath}`);
-	}
+  // Export CSS
+  if (config.formats.includes('css')) {
+    s.start('Exporting CSS');
+    const css = exportCSS(palette, {
+      prefix: config.prefix || undefined
+    });
+    const cssPath = join(outputDir, 'colors.css');
+    await writeFile(cssPath, css, 'utf-8');
+    s.stop(`CSS exported to ${cssPath}`);
+  }
 
-	// Export JSON
-	if (config.formats.includes('json')) {
-		s.start('Exporting JSON');
-		const json = exportJSON(palette);
-		const jsonPath = join(outputDir, 'colors.json');
-		await writeFile(jsonPath, JSON.stringify(json, null, 2), 'utf-8');
-		s.stop(`JSON exported to ${jsonPath}`);
-	}
+  // Export JSON
+  if (config.formats.includes('json')) {
+    s.start('Exporting JSON');
+    const json = exportJSON(palette);
+    const jsonPath = join(outputDir, 'colors.json');
+    await writeFile(jsonPath, JSON.stringify(json, null, 2), 'utf-8');
+    s.stop(`JSON exported to ${jsonPath}`);
+  }
 
-	// Export Tailwind v4 (default "tailwind" format)
-	if (config.formats.includes('tailwind')) {
-		s.start('Exporting Tailwind v4 CSS');
-		const tailwind = exportTailwindV4CSS(palette);
-		const tailwindPath = join(outputDir, 'tailwind.css');
-		await writeFile(tailwindPath, tailwind, 'utf-8');
-		s.stop(`Tailwind v4 CSS exported to ${tailwindPath}`);
-	}
+  // Export Tailwind v4 (default "tailwind" format)
+  if (config.formats.includes('tailwind')) {
+    s.start('Exporting Tailwind v4 CSS');
+    const tailwind = exportTailwindV4CSS(palette);
+    const tailwindPath = join(outputDir, 'tailwind.css');
+    await writeFile(tailwindPath, tailwind, 'utf-8');
+    s.stop(`Tailwind v4 CSS exported to ${tailwindPath}`);
+  }
 
-	// Export Tailwind v3 (legacy JS preset)
-	if (config.formats.includes('tailwind-v3')) {
-		s.start('Exporting Tailwind v3 preset');
-		const tailwind = exportTailwind(palette, { scale: '50-950' });
-		const tailwindPath = join(outputDir, 'tailwind.preset.js');
-		await writeFile(tailwindPath, tailwind, 'utf-8');
-		s.stop(`Tailwind v3 preset exported to ${tailwindPath}`);
-	}
+  // Export Tailwind v3 (legacy JS preset)
+  if (config.formats.includes('tailwind-v3')) {
+    s.start('Exporting Tailwind v3 preset');
+    const tailwind = exportTailwind(palette, { scale: '50-950' });
+    const tailwindPath = join(outputDir, 'tailwind.preset.js');
+    await writeFile(tailwindPath, tailwind, 'utf-8');
+    s.stop(`Tailwind v3 preset exported to ${tailwindPath}`);
+  }
 
-	// Export Radix
-	if (config.formats.includes('radix')) {
-		s.start('Exporting Radix colors');
-		const radix = exportRadix(palette, { includeAlpha: true, includeP3: true });
-		const radixPath = join(outputDir, 'radix-colors.js');
-		await writeFile(radixPath, radix, 'utf-8');
-		s.stop(`Radix colors exported to ${radixPath}`);
-	}
+  // Export Radix
+  if (config.formats.includes('radix')) {
+    s.start('Exporting Radix colors');
+    const radix = exportRadix(palette, { includeAlpha: true, includeP3: true });
+    const radixPath = join(outputDir, 'radix-colors.js');
+    await writeFile(radixPath, radix, 'utf-8');
+    s.stop(`Radix colors exported to ${radixPath}`);
+  }
 
-	// Export Panda CSS
-	if (config.formats.includes('panda')) {
-		s.start('Exporting Panda CSS preset');
-		const panda = exportPanda(palette, brandColorInfo, { includeSemantic: true });
-		const pandaPath = join(outputDir, 'panda.preset.ts');
-		await writeFile(pandaPath, panda, 'utf-8');
-		s.stop(`Panda CSS preset exported to ${pandaPath}`);
-	}
+  // Export Panda CSS
+  if (config.formats.includes('panda')) {
+    s.start('Exporting Panda CSS preset');
+    const panda = exportPanda(palette, brandColorInfo, { includeSemantic: true });
+    const pandaPath = join(outputDir, 'panda.preset.ts');
+    await writeFile(pandaPath, panda, 'utf-8');
+    s.stop(`Panda CSS preset exported to ${pandaPath}`);
+  }
 
-	// Export shadcn
-	if (config.formats.includes('shadcn')) {
-		s.start('Exporting shadcn CSS');
-		const shadcn = exportShadcn(palette);
-		const shadcnPath = join(outputDir, 'shadcn-colors.css');
-		await writeFile(shadcnPath, shadcn, 'utf-8');
-		s.stop(`shadcn CSS exported to ${shadcnPath}`);
-	}
+  // Export shadcn
+  if (config.formats.includes('shadcn')) {
+    s.start('Exporting shadcn CSS');
+    const shadcn = exportShadcn(palette);
+    const shadcnPath = join(outputDir, 'shadcn-colors.css');
+    await writeFile(shadcnPath, shadcn, 'utf-8');
+    s.stop(`shadcn CSS exported to ${shadcnPath}`);
+  }
 
-	log.success(`Palette generated successfully!`);
-	log.info(`Output: ${outputDir}`);
-	log.info(`Formats: ${config.formats.join(', ')}`);
+  log.success(`Palette generated successfully!`);
+  log.info(`Output: ${outputDir}`);
+  log.info(`Formats: ${config.formats.join(', ')}`);
 }

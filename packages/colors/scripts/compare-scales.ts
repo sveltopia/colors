@@ -13,33 +13,33 @@ import { calcAPCA } from 'apca-w3';
 
 // Radix reference scales
 const RADIX_ORANGE = [
-	'#fefcfb',
-	'#fff7ed',
-	'#ffefd6',
-	'#ffdfb5',
-	'#ffd19a',
-	'#ffc182',
-	'#f5ae73',
-	'#ec9455',
-	'#f76b15',
-	'#ef5f00',
-	'#cc4e00',
-	'#582d1d'
+  '#fefcfb',
+  '#fff7ed',
+  '#ffefd6',
+  '#ffdfb5',
+  '#ffd19a',
+  '#ffc182',
+  '#f5ae73',
+  '#ec9455',
+  '#f76b15',
+  '#ef5f00',
+  '#cc4e00',
+  '#582d1d'
 ];
 
 const RADIX_GREEN = [
-	'#fbfefc',
-	'#f4fbf6',
-	'#e6f6eb',
-	'#d6f1df',
-	'#c4e8d1',
-	'#adddc0',
-	'#8eceaa',
-	'#5bb98b',
-	'#30a46c',
-	'#2b9a66',
-	'#218358',
-	'#193b2d'
+  '#fbfefc',
+  '#f4fbf6',
+  '#e6f6eb',
+  '#d6f1df',
+  '#c4e8d1',
+  '#adddc0',
+  '#8eceaa',
+  '#5bb98b',
+  '#30a46c',
+  '#2b9a66',
+  '#218358',
+  '#193b2d'
 ];
 
 const SVELTOPIA_ORANGE = '#FF6A00';
@@ -58,7 +58,7 @@ const radixGreenScale = generateScale({ parentColor: RADIX_GREEN[8] });
 const WHITE = '#ffffff';
 
 function getAPCA(hex: string): number {
-	return Math.abs(calcAPCA(hex, WHITE));
+  return Math.abs(calcAPCA(hex, WHITE));
 }
 
 // Build HTML
@@ -139,10 +139,10 @@ let html = `<!DOCTYPE html>
 
 // Radix reference
 for (let i = 0; i < 12; i++) {
-	const hex = RADIX_ORANGE[i];
-	const oklch = toOklch(hex);
-	const apca = getAPCA(hex);
-	html += `
+  const hex = RADIX_ORANGE[i];
+  const oklch = toOklch(hex);
+  const apca = getAPCA(hex);
+  html += `
         <div class="step">
           <span class="step-num">${i + 1}</span>
           <div class="swatch" style="background: ${hex}"></div>
@@ -161,7 +161,7 @@ html += `
 
 // Our simple scale
 for (const step of ourScale.steps) {
-	html += `
+  html += `
         <div class="step">
           <span class="step-num">${step.step}</span>
           <div class="swatch" style="background: ${step.hex}"></div>
@@ -180,7 +180,7 @@ html += `
 
 // Our APCA scale
 for (const step of ourScaleAPCA.steps) {
-	html += `
+  html += `
         <div class="step">
           <span class="step-num">${step.step}</span>
           <div class="swatch" style="background: ${step.hex}"></div>
@@ -199,7 +199,7 @@ html += `
 
 // Scale generated from Radix orange
 for (const step of radixOrangeScale.steps) {
-	html += `
+  html += `
         <div class="step">
           <span class="step-num">${step.step}</span>
           <div class="swatch" style="background: ${step.hex}"></div>
@@ -224,20 +224,20 @@ html += `
 `;
 
 for (let i = 0; i < 12; i++) {
-	const target = RADIX_APCA_TARGETS[i];
-	const radix = getAPCA(RADIX_ORANGE[i]);
-	const simple = ourScale.steps[i].apca;
-	const apca = ourScaleAPCA.steps[i].apca;
+  const target = RADIX_APCA_TARGETS[i];
+  const radix = getAPCA(RADIX_ORANGE[i]);
+  const simple = ourScale.steps[i].apca;
+  const apca = ourScaleAPCA.steps[i].apca;
 
-	const getDiffClass = (actual: number, target: number) => {
-		if (target < 5) return ''; // Skip near-zero targets
-		const diff = Math.abs(actual - target);
-		if (diff <= 2) return 'good';
-		if (diff <= 5) return 'warn';
-		return 'bad';
-	};
+  const getDiffClass = (actual: number, target: number) => {
+    if (target < 5) return ''; // Skip near-zero targets
+    const diff = Math.abs(actual - target);
+    if (diff <= 2) return 'good';
+    if (diff <= 5) return 'warn';
+    return 'bad';
+  };
 
-	html += `
+  html += `
     <tr>
       <td>${i + 1}</td>
       <td>${target.toFixed(1)}</td>
@@ -259,10 +259,10 @@ html += `
 
 // Radix green reference
 for (let i = 0; i < 12; i++) {
-	const hex = RADIX_GREEN[i];
-	const oklch = toOklch(hex);
-	const apca = getAPCA(hex);
-	html += `
+  const hex = RADIX_GREEN[i];
+  const oklch = toOklch(hex);
+  const apca = getAPCA(hex);
+  html += `
         <div class="step">
           <span class="step-num">${i + 1}</span>
           <div class="swatch" style="background: ${hex}"></div>
@@ -281,7 +281,7 @@ html += `
 
 // Our simple green scale
 for (const step of ourGreenScale.steps) {
-	html += `
+  html += `
         <div class="step">
           <span class="step-num">${step.step}</span>
           <div class="swatch" style="background: ${step.hex}"></div>
@@ -300,7 +300,7 @@ html += `
 
 // Our APCA green scale
 for (const step of ourGreenScaleAPCA.steps) {
-	html += `
+  html += `
         <div class="step">
           <span class="step-num">${step.step}</span>
           <div class="swatch" style="background: ${step.hex}"></div>
@@ -319,7 +319,7 @@ html += `
 
 // Scale generated from Radix green
 for (const step of radixGreenScale.steps) {
-	html += `
+  html += `
         <div class="step">
           <span class="step-num">${step.step}</span>
           <div class="swatch" style="background: ${step.hex}"></div>
@@ -344,20 +344,20 @@ html += `
 `;
 
 for (let i = 0; i < 12; i++) {
-	const target = RADIX_APCA_TARGETS[i];
-	const radix = getAPCA(RADIX_GREEN[i]);
-	const simple = ourGreenScale.steps[i].apca;
-	const apca = ourGreenScaleAPCA.steps[i].apca;
+  const target = RADIX_APCA_TARGETS[i];
+  const radix = getAPCA(RADIX_GREEN[i]);
+  const simple = ourGreenScale.steps[i].apca;
+  const apca = ourGreenScaleAPCA.steps[i].apca;
 
-	const getDiffClass = (actual: number, target: number) => {
-		if (target < 5) return ''; // Skip near-zero targets
-		const diff = Math.abs(actual - target);
-		if (diff <= 2) return 'good';
-		if (diff <= 5) return 'warn';
-		return 'bad';
-	};
+  const getDiffClass = (actual: number, target: number) => {
+    if (target < 5) return ''; // Skip near-zero targets
+    const diff = Math.abs(actual - target);
+    if (diff <= 2) return 'good';
+    if (diff <= 5) return 'warn';
+    return 'bad';
+  };
 
-	html += `
+  html += `
     <tr>
       <td>${i + 1}</td>
       <td>${target.toFixed(1)}</td>
