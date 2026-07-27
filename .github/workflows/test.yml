@@ -27,6 +27,14 @@ jobs:
           else
             BASE=${{ github.event.before }}
           fi
+          # A force-push (rebasing a branch, restacking after a squash-merge)
+          # leaves github.event.before pointing at a commit that no longer
+          # exists, and the diff below then fails the whole job with
+          # "fatal: bad object". Fall back to the default branch instead.
+          if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "Base $BASE is unreachable (force-push?); falling back to origin/main"
+            BASE=origin/main
+          fi
           CHANGED=$(git diff --name-only "$BASE" HEAD -- packages/colors/ pnpm-lock.yaml .github/workflows/test.yml)
           if [ -n "$CHANGED" ]; then
             echo "should_test=true" >> "$GITHUB_OUTPUT"
