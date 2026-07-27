@@ -1,20 +1,20 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"strict": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"declaration": false,
-		"outDir": "./cli-dist",
-		"rootDir": "./cli",
-		"paths": {
-			"@sveltopia/colors": ["./dist/index.d.ts"]
-		},
-		"baseUrl": "."
-	},
-	"include": ["cli/**/*"],
-	"exclude": ["cli/__tests__/**"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": false,
+    "outDir": "./cli-dist",
+    "rootDir": "./cli",
+    "paths": {
+      "@sveltopia/colors": ["./dist/index.d.ts"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["cli/**/*"],
+  "exclude": ["cli/__tests__/**"]
 }

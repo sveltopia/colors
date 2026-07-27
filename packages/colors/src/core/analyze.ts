@@ -38,7 +38,7 @@ export const CHROMA_RATIO_CEILING = 1.3;
  * - 0.10 catches colors that don't fit well into any step
  * - Combined with semantic check for better detection
  */
-export const LIGHTNESS_GAP_THRESHOLD = 0.10;
+export const LIGHTNESS_GAP_THRESHOLD = 0.1;
 
 /**
  * Minimum chroma for "high chroma" classification.
@@ -63,18 +63,18 @@ export const SEMANTIC_MISMATCH_STEPS = new Set([1, 2, 3, 12]);
  * Light mode: Step 1 is lightest, Step 12 is darkest.
  */
 const RADIX_LIGHTNESS_TARGETS_LIGHT = [
-	0.993, // Step 1
-	0.981, // Step 2
-	0.959, // Step 3
-	0.931, // Step 4
-	0.897, // Step 5
-	0.858, // Step 6
-	0.805, // Step 7
-	0.732, // Step 8
-	0.66, // Step 9 (typical hero position)
-	0.632, // Step 10
-	0.561, // Step 11
-	0.332 // Step 12
+  0.993, // Step 1
+  0.981, // Step 2
+  0.959, // Step 3
+  0.931, // Step 4
+  0.897, // Step 5
+  0.858, // Step 6
+  0.805, // Step 7
+  0.732, // Step 8
+  0.66, // Step 9 (typical hero position)
+  0.632, // Step 10
+  0.561, // Step 11
+  0.332 // Step 12
 ];
 
 /**
@@ -83,18 +83,18 @@ const RADIX_LIGHTNESS_TARGETS_LIGHT = [
  * Extracted from Radix dark mode gray scale.
  */
 const RADIX_LIGHTNESS_TARGETS_DARK = [
-	0.168, // Step 1 (darkest background)
-	0.211, // Step 2
-	0.265, // Step 3
-	0.313, // Step 4
-	0.354, // Step 5
-	0.398, // Step 6
-	0.464, // Step 7
-	0.529, // Step 8
-	0.561, // Step 9 (hero position - similar L to light mode)
-	0.600, // Step 10
-	0.771, // Step 11
-	0.946 // Step 12 (lightest text)
+  0.168, // Step 1 (darkest background)
+  0.211, // Step 2
+  0.265, // Step 3
+  0.313, // Step 4
+  0.354, // Step 5
+  0.398, // Step 6
+  0.464, // Step 7
+  0.529, // Step 8
+  0.561, // Step 9 (hero position - similar L to light mode)
+  0.6, // Step 10
+  0.771, // Step 11
+  0.946 // Step 12 (lightest text)
 ];
 
 /**
@@ -119,33 +119,33 @@ const RADIX_LIGHTNESS_TARGETS_DARK = [
  * @returns Best-fit step number (1-12)
  */
 export function suggestAnchorStep(
-	lightness: number,
-	slot?: string,
-	mode: ColorMode = 'light'
+  lightness: number,
+  slot?: string,
+  mode: ColorMode = 'light'
 ): number {
-	// Select curves based on mode
-	const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
-	const defaultTargets =
-		mode === 'dark' ? RADIX_LIGHTNESS_TARGETS_DARK : RADIX_LIGHTNESS_TARGETS_LIGHT;
+  // Select curves based on mode
+  const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+  const defaultTargets =
+    mode === 'dark' ? RADIX_LIGHTNESS_TARGETS_DARK : RADIX_LIGHTNESS_TARGETS_LIGHT;
 
-	// Use per-hue lightness curve if available, otherwise fall back to generic
-	const lightnessCurve = slot ? lightnessCurves[slot] : null;
-	const targets = lightnessCurve || defaultTargets;
+  // Use per-hue lightness curve if available, otherwise fall back to generic
+  const lightnessCurve = slot ? lightnessCurves[slot] : null;
+  const targets = lightnessCurve || defaultTargets;
 
-	let bestStep = 9;
-	let bestDiff = Infinity;
+  let bestStep = 9;
+  let bestDiff = Infinity;
 
-	for (let i = 0; i < targets.length; i++) {
-		const target = targets[i];
-		const diff = Math.abs(lightness - target);
+  for (let i = 0; i < targets.length; i++) {
+    const target = targets[i];
+    const diff = Math.abs(lightness - target);
 
-		if (diff < bestDiff) {
-			bestDiff = diff;
-			bestStep = i + 1; // Steps are 1-indexed
-		}
-	}
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      bestStep = i + 1; // Steps are 1-indexed
+    }
+  }
 
-	return bestStep;
+  return bestStep;
 }
 
 /**
@@ -158,46 +158,46 @@ export function suggestAnchorStep(
  * @returns Expected OKLCH lightness value
  */
 export function getExpectedLightnessForStep(
-	step: number,
-	hueKey: string,
-	mode: ColorMode = 'light'
+  step: number,
+  hueKey: string,
+  mode: ColorMode = 'light'
 ): number {
-	const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
-	const defaultTargets =
-		mode === 'dark' ? RADIX_LIGHTNESS_TARGETS_DARK : RADIX_LIGHTNESS_TARGETS_LIGHT;
+  const lightnessCurves = mode === 'dark' ? RADIX_LIGHTNESS_CURVES_DARK : RADIX_LIGHTNESS_CURVES;
+  const defaultTargets =
+    mode === 'dark' ? RADIX_LIGHTNESS_TARGETS_DARK : RADIX_LIGHTNESS_TARGETS_LIGHT;
 
-	const curve = lightnessCurves[hueKey];
-	const targets = curve || defaultTargets;
+  const curve = lightnessCurves[hueKey];
+  const targets = curve || defaultTargets;
 
-	// Step is 1-indexed, array is 0-indexed
-	const index = Math.max(0, Math.min(11, step - 1));
-	return targets[index];
+  // Step is 1-indexed, array is 0-indexed
+  const index = Math.max(0, Math.min(11, step - 1));
+  return targets[index];
 }
 
 /** Result of analyzing a single brand color */
 export interface ColorAnalysis {
-	/** Original input hex */
-	input: string;
-	/** Parsed OKLCH values */
-	oklch: OklchColor;
-	/** Closest baseline hue slot */
-	slot: string;
-	/** Distance to slot center in degrees */
-	distance: number;
-	/** Whether color is close enough to snap to slot */
-	snaps: boolean;
-	/** Hue offset from slot center (signed) */
-	hueOffset: number;
-	/** Chroma relative to slot's reference (1.0 = same) */
-	chromaRatio: number;
-	/** Suggested anchor step based on lightness (9 for normal, 12 for dark, 1-3 for light) */
-	suggestedAnchorStep: number;
-	/** Whether color is out of bounds (requires custom row) */
-	isOutOfBounds: boolean;
-	/** Reason for being out of bounds */
-	outOfBoundsReason?: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness';
-	/** Lightness gap from expected step (for extreme-lightness detection) */
-	lightnessGap?: number;
+  /** Original input hex */
+  input: string;
+  /** Parsed OKLCH values */
+  oklch: OklchColor;
+  /** Closest baseline hue slot */
+  slot: string;
+  /** Distance to slot center in degrees */
+  distance: number;
+  /** Whether color is close enough to snap to slot */
+  snaps: boolean;
+  /** Hue offset from slot center (signed) */
+  hueOffset: number;
+  /** Chroma relative to slot's reference (1.0 = same) */
+  chromaRatio: number;
+  /** Suggested anchor step based on lightness (9 for normal, 12 for dark, 1-3 for light) */
+  suggestedAnchorStep: number;
+  /** Whether color is out of bounds (requires custom row) */
+  isOutOfBounds: boolean;
+  /** Reason for being out of bounds */
+  outOfBoundsReason?: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness';
+  /** Lightness gap from expected step (for extreme-lightness detection) */
+  lightnessGap?: number;
 }
 
 /**
@@ -208,82 +208,82 @@ export interface ColorAnalysis {
  * @returns Analysis result or null if color is invalid
  */
 export function analyzeColor(hex: string, mode: ColorMode = 'light'): ColorAnalysis | null {
-	const oklch = toOklch(hex);
-	if (!oklch) return null;
+  const oklch = toOklch(hex);
+  if (!oklch) return null;
 
-	// Find closest baseline hue based on chroma level
-	// Chromatic colors (c > 0.03): search chromatic hues only (exclude neutrals)
-	// Non-chromatic colors (c ≤ 0.03): search neutrals only (prevents near-blacks routing to Ruby)
-	const isChromatic = oklch.c > 0.03;
-	const { slot, distance } = findClosestHueWithDistance(
-		oklch.h,
-		isChromatic ? { excludeNeutrals: true } : { neutralsOnly: true }
-	);
-	const baseline = BASELINE_HUES[slot];
+  // Find closest baseline hue based on chroma level
+  // Chromatic colors (c > 0.03): search chromatic hues only (exclude neutrals)
+  // Non-chromatic colors (c ≤ 0.03): search neutrals only (prevents near-blacks routing to Ruby)
+  const isChromatic = oklch.c > 0.03;
+  const { slot, distance } = findClosestHueWithDistance(
+    oklch.h,
+    isChromatic ? { excludeNeutrals: true } : { neutralsOnly: true }
+  );
+  const baseline = BASELINE_HUES[slot];
 
-	// Determine if we should snap to this slot
-	const snaps = distance <= SNAP_THRESHOLD;
+  // Determine if we should snap to this slot
+  const snaps = distance <= SNAP_THRESHOLD;
 
-	// Calculate hue offset (signed, accounting for wrap-around)
-	let hueOffset = oklch.h - baseline.hue;
-	if (hueOffset > 180) hueOffset -= 360;
-	if (hueOffset < -180) hueOffset += 360;
+  // Calculate hue offset (signed, accounting for wrap-around)
+  let hueOffset = oklch.h - baseline.hue;
+  if (hueOffset > 180) hueOffset -= 360;
+  if (hueOffset < -180) hueOffset += 360;
 
-	// Calculate chroma ratio compared to baseline reference
-	const chromaRatio = baseline.referenceChroma > 0 ? oklch.c / baseline.referenceChroma : 1;
+  // Calculate chroma ratio compared to baseline reference
+  const chromaRatio = baseline.referenceChroma > 0 ? oklch.c / baseline.referenceChroma : 1;
 
-	// Detect out-of-bounds conditions (requires custom row generation)
-	// 1. Chroma out of bounds: < 0.5x or > 1.3x
-	// 2. Hue gap: > 10° from nearest slot (for chromatic colors)
-	// 3. Extreme lightness: too far from any valid step's expected lightness
-	const isChromaOutOfBounds =
-		isChromatic && (chromaRatio < CHROMA_RATIO_FLOOR || chromaRatio > CHROMA_RATIO_CEILING);
-	const isHueGap = isChromatic && !snaps;
+  // Detect out-of-bounds conditions (requires custom row generation)
+  // 1. Chroma out of bounds: < 0.5x or > 1.3x
+  // 2. Hue gap: > 10° from nearest slot (for chromatic colors)
+  // 3. Extreme lightness: too far from any valid step's expected lightness
+  const isChromaOutOfBounds =
+    isChromatic && (chromaRatio < CHROMA_RATIO_FLOOR || chromaRatio > CHROMA_RATIO_CEILING);
+  const isHueGap = isChromatic && !snaps;
 
-	// Calculate anchor step and check lightness gap
-	const suggestedStep = suggestAnchorStep(oklch.l, slot, mode);
-	const expectedLightness = getExpectedLightnessForStep(suggestedStep, slot, mode);
-	const lightnessGap = Math.abs(oklch.l - expectedLightness);
+  // Calculate anchor step and check lightness gap
+  const suggestedStep = suggestAnchorStep(oklch.l, slot, mode);
+  const expectedLightness = getExpectedLightnessForStep(suggestedStep, slot, mode);
+  const lightnessGap = Math.abs(oklch.l - expectedLightness);
 
-	// Extreme lightness detection: two conditions (both require high chroma)
-	// 1. Pure lightness gap: high-chroma color too far from any step's expected lightness
-	// 2. Semantic mismatch: high-chroma color at background/text steps
-	//    - Steps 1-3 (backgrounds) and 12 (high-contrast text) are semantically wrong for high-chroma
-	//    - Steps 4-11 are OK for various chroma levels (UI elements, accents, hero, low-contrast text)
-	// Rationale: muted colors blend in even if lightness is off; vibrant colors at wrong steps are jarring
-	const isHighChroma = isChromatic && oklch.c > HIGH_CHROMA_THRESHOLD;
-	const isPureLightnessGap = isHighChroma && lightnessGap > LIGHTNESS_GAP_THRESHOLD;
-	const isSemanticMismatchStep = SEMANTIC_MISMATCH_STEPS.has(suggestedStep);
-	const isSemanticMismatch = isHighChroma && isSemanticMismatchStep;
-	const isExtremeLightness = isPureLightnessGap || isSemanticMismatch;
+  // Extreme lightness detection: two conditions (both require high chroma)
+  // 1. Pure lightness gap: high-chroma color too far from any step's expected lightness
+  // 2. Semantic mismatch: high-chroma color at background/text steps
+  //    - Steps 1-3 (backgrounds) and 12 (high-contrast text) are semantically wrong for high-chroma
+  //    - Steps 4-11 are OK for various chroma levels (UI elements, accents, hero, low-contrast text)
+  // Rationale: muted colors blend in even if lightness is off; vibrant colors at wrong steps are jarring
+  const isHighChroma = isChromatic && oklch.c > HIGH_CHROMA_THRESHOLD;
+  const isPureLightnessGap = isHighChroma && lightnessGap > LIGHTNESS_GAP_THRESHOLD;
+  const isSemanticMismatchStep = SEMANTIC_MISMATCH_STEPS.has(suggestedStep);
+  const isSemanticMismatch = isHighChroma && isSemanticMismatchStep;
+  const isExtremeLightness = isPureLightnessGap || isSemanticMismatch;
 
-	// Combine all out-of-bounds conditions (chroma and hue-gap take precedence)
-	const isOutOfBounds = isChromaOutOfBounds || isHueGap || isExtremeLightness;
+  // Combine all out-of-bounds conditions (chroma and hue-gap take precedence)
+  const isOutOfBounds = isChromaOutOfBounds || isHueGap || isExtremeLightness;
 
-	let outOfBoundsReason: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness' | undefined;
+  let outOfBoundsReason: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness' | undefined;
 
-	if (isChromaOutOfBounds) {
-		// Chroma takes precedence as the reason
-		outOfBoundsReason = chromaRatio < CHROMA_RATIO_FLOOR ? 'low-chroma' : 'high-chroma';
-	} else if (isHueGap) {
-		outOfBoundsReason = 'hue-gap';
-	} else if (isExtremeLightness) {
-		outOfBoundsReason = 'extreme-lightness';
-	}
+  if (isChromaOutOfBounds) {
+    // Chroma takes precedence as the reason
+    outOfBoundsReason = chromaRatio < CHROMA_RATIO_FLOOR ? 'low-chroma' : 'high-chroma';
+  } else if (isHueGap) {
+    outOfBoundsReason = 'hue-gap';
+  } else if (isExtremeLightness) {
+    outOfBoundsReason = 'extreme-lightness';
+  }
 
-	return {
-		input: hex,
-		oklch,
-		slot,
-		distance,
-		snaps,
-		hueOffset,
-		chromaRatio,
-		suggestedAnchorStep: suggestedStep,
-		isOutOfBounds,
-		outOfBoundsReason,
-		lightnessGap: isExtremeLightness ? lightnessGap : undefined
-	};
+  return {
+    input: hex,
+    oklch,
+    slot,
+    distance,
+    snaps,
+    hueOffset,
+    chromaRatio,
+    suggestedAnchorStep: suggestedStep,
+    isOutOfBounds,
+    outOfBoundsReason,
+    lightnessGap: isExtremeLightness ? lightnessGap : undefined
+  };
 }
 
 /** Maximum number of brand colors we accept */
@@ -306,37 +306,37 @@ export const MAX_BRAND_COLORS = 7;
  * @returns Unique custom row key
  */
 export function generateCustomRowKey(analysis: ColorAnalysis, existingKeys: Set<string>): string {
-	// Determine prefix based on reason
-	let prefix: string;
-	switch (analysis.outOfBoundsReason) {
-		case 'low-chroma':
-			prefix = 'pastel';
-			break;
-		case 'high-chroma':
-			prefix = 'neon';
-			break;
-		case 'hue-gap':
-			prefix = 'custom';
-			break;
-		case 'extreme-lightness':
-			// Use 'bright' for high lightness (L > 0.5), 'dark' for low lightness
-			prefix = analysis.oklch.l > 0.5 ? 'bright' : 'dark';
-			break;
-		default:
-			prefix = 'custom';
-	}
+  // Determine prefix based on reason
+  let prefix: string;
+  switch (analysis.outOfBoundsReason) {
+    case 'low-chroma':
+      prefix = 'pastel';
+      break;
+    case 'high-chroma':
+      prefix = 'neon';
+      break;
+    case 'hue-gap':
+      prefix = 'custom';
+      break;
+    case 'extreme-lightness':
+      // Use 'bright' for high lightness (L > 0.5), 'dark' for low lightness
+      prefix = analysis.oklch.l > 0.5 ? 'bright' : 'dark';
+      break;
+    default:
+      prefix = 'custom';
+  }
 
-	const baseKey = `${prefix}-${analysis.slot}`;
+  const baseKey = `${prefix}-${analysis.slot}`;
 
-	// Find unique suffix if needed
-	let key = baseKey;
-	let suffix = 1;
-	while (existingKeys.has(key)) {
-		key = `${baseKey}-${suffix}`;
-		suffix++;
-	}
+  // Find unique suffix if needed
+  let key = baseKey;
+  let suffix = 1;
+  while (existingKeys.has(key)) {
+    key = `${baseKey}-${suffix}`;
+    suffix++;
+  }
 
-	return key;
+  return key;
 }
 
 /**
@@ -359,108 +359,108 @@ export function generateCustomRowKey(analysis: ColorAnalysis, existingKeys: Set<
  * @returns TuningProfile describing the brand's color preferences
  */
 export function analyzeBrandColors(colors: string[], mode: ColorMode = 'light'): TuningProfile {
-	if (colors.length === 0) {
-		return createDefaultProfile();
-	}
+  if (colors.length === 0) {
+    return createDefaultProfile();
+  }
 
-	// Enforce 7-color limit
-	if (colors.length > MAX_BRAND_COLORS) {
-		colors = colors.slice(0, MAX_BRAND_COLORS);
-	}
+  // Enforce 7-color limit
+  if (colors.length > MAX_BRAND_COLORS) {
+    colors = colors.slice(0, MAX_BRAND_COLORS);
+  }
 
-	// Analyze each color with mode-aware anchor step calculation
-	const analyses = colors
-		.map((hex) => analyzeColor(hex, mode))
-		.filter((a): a is ColorAnalysis => a !== null);
+  // Analyze each color with mode-aware anchor step calculation
+  const analyses = colors
+    .map((hex) => analyzeColor(hex, mode))
+    .filter((a): a is ColorAnalysis => a !== null);
 
-	if (analyses.length === 0) {
-		return createDefaultProfile();
-	}
+  if (analyses.length === 0) {
+    return createDefaultProfile();
+  }
 
-	// Separate standard anchors from out-of-bounds (custom row) candidates
-	const standardAnalyses = analyses.filter((a) => !a.isOutOfBounds);
-	const outOfBoundsAnalyses = analyses.filter((a) => a.isOutOfBounds);
+  // Separate standard anchors from out-of-bounds (custom row) candidates
+  const standardAnalyses = analyses.filter((a) => !a.isOutOfBounds);
+  const outOfBoundsAnalyses = analyses.filter((a) => a.isOutOfBounds);
 
-	// Calculate tuning profile from ALL chromatic colors
-	// Custom rows contribute their clamped chroma ratios to capture brand "feel"
-	// (e.g., neon brand → vivid palette, pastel brand → softer palette)
-	const allChromaticAnalyses = analyses.filter((a) => a.oklch.c > 0.03);
-	const standardChromaticAnalyses = standardAnalyses.filter((a) => a.oklch.c > 0.03);
-	const hasChromatic = allChromaticAnalyses.length > 0;
+  // Calculate tuning profile from ALL chromatic colors
+  // Custom rows contribute their clamped chroma ratios to capture brand "feel"
+  // (e.g., neon brand → vivid palette, pastel brand → softer palette)
+  const allChromaticAnalyses = analyses.filter((a) => a.oklch.c > 0.03);
+  const standardChromaticAnalyses = standardAnalyses.filter((a) => a.oklch.c > 0.03);
+  const hasChromatic = allChromaticAnalyses.length > 0;
 
-	// Calculate average hue shift (only from standard chromatic colors that snap)
-	// Custom rows keep their distinct hue, so exclude from hue shift calculation
-	const snappingAnalyses = standardChromaticAnalyses.filter((a) => a.snaps);
-	const hueShift =
-		snappingAnalyses.length > 0 ? average(snappingAnalyses.map((a) => a.hueOffset)) : 0;
+  // Calculate average hue shift (only from standard chromatic colors that snap)
+  // Custom rows keep their distinct hue, so exclude from hue shift calculation
+  const snappingAnalyses = standardChromaticAnalyses.filter((a) => a.snaps);
+  const hueShift =
+    snappingAnalyses.length > 0 ? average(snappingAnalyses.map((a) => a.hueOffset)) : 0;
 
-	// Calculate chroma multiplier from ALL chromatic colors (including custom rows)
-	// Clamp out-of-bounds ratios to 0.5x-1.3x to prevent extreme skew
-	// This captures the brand's "feel" - neon brands get 1.3x, pastels get 0.5x
-	const chromaMultiplier = hasChromatic
-		? average(
-				allChromaticAnalyses.map((a) =>
-					Math.max(CHROMA_RATIO_FLOOR, Math.min(CHROMA_RATIO_CEILING, a.chromaRatio))
-				)
-			)
-		: 1;
+  // Calculate chroma multiplier from ALL chromatic colors (including custom rows)
+  // Clamp out-of-bounds ratios to 0.5x-1.3x to prevent extreme skew
+  // This captures the brand's "feel" - neon brands get 1.3x, pastels get 0.5x
+  const chromaMultiplier = hasChromatic
+    ? average(
+        allChromaticAnalyses.map((a) =>
+          Math.max(CHROMA_RATIO_FLOOR, Math.min(CHROMA_RATIO_CEILING, a.chromaRatio))
+        )
+      )
+    : 1;
 
-	// Calculate lightness shift (from all colors including out-of-bounds)
-	const expectedMidLightness = 0.65;
-	const actualAvgLightness = average(analyses.map((a) => a.oklch.l));
-	const lightnessShift = actualAvgLightness - expectedMidLightness;
+  // Calculate lightness shift (from all colors including out-of-bounds)
+  const expectedMidLightness = 0.65;
+  const actualAvgLightness = average(analyses.map((a) => a.oklch.l));
+  const lightnessShift = actualAvgLightness - expectedMidLightness;
 
-	// Build anchors map for standard colors
-	const anchors: Record<string, AnchorInfo> = {};
-	for (const analysis of standardAnalyses) {
-		anchors[analysis.input] = {
-			slot: analysis.slot,
-			step: analysis.suggestedAnchorStep,
-			isCustomRow: false
-		};
-	}
+  // Build anchors map for standard colors
+  const anchors: Record<string, AnchorInfo> = {};
+  for (const analysis of standardAnalyses) {
+    anchors[analysis.input] = {
+      slot: analysis.slot,
+      step: analysis.suggestedAnchorStep,
+      isCustomRow: false
+    };
+  }
 
-	// Build custom rows array for out-of-bounds colors
-	const customRows: CustomRowInfo[] = [];
-	const usedKeys = new Set<string>();
+  // Build custom rows array for out-of-bounds colors
+  const customRows: CustomRowInfo[] = [];
+  const usedKeys = new Set<string>();
 
-	for (const analysis of outOfBoundsAnalyses) {
-		const rowKey = generateCustomRowKey(analysis, usedKeys);
-		usedKeys.add(rowKey);
+  for (const analysis of outOfBoundsAnalyses) {
+    const rowKey = generateCustomRowKey(analysis, usedKeys);
+    usedKeys.add(rowKey);
 
-		const customRowInfo: CustomRowInfo = {
-			originalHex: analysis.input,
-			rowKey,
-			oklch: analysis.oklch,
-			chromaRatio: analysis.chromaRatio,
-			reason: analysis.outOfBoundsReason!,
-			nearestSlot: analysis.slot,
-			anchorStep: analysis.suggestedAnchorStep,
-			hueAngle: analysis.oklch.h
-		};
+    const customRowInfo: CustomRowInfo = {
+      originalHex: analysis.input,
+      rowKey,
+      oklch: analysis.oklch,
+      chromaRatio: analysis.chromaRatio,
+      reason: analysis.outOfBoundsReason!,
+      nearestSlot: analysis.slot,
+      anchorStep: analysis.suggestedAnchorStep,
+      hueAngle: analysis.oklch.h
+    };
 
-		// Add hueDistance for hue-gap rows
-		if (analysis.outOfBoundsReason === 'hue-gap') {
-			customRowInfo.hueDistance = analysis.distance;
-		}
+    // Add hueDistance for hue-gap rows
+    if (analysis.outOfBoundsReason === 'hue-gap') {
+      customRowInfo.hueDistance = analysis.distance;
+    }
 
-		customRows.push(customRowInfo);
+    customRows.push(customRowInfo);
 
-		// Also add to anchors map with custom row key
-		anchors[analysis.input] = {
-			slot: rowKey,
-			step: analysis.suggestedAnchorStep,
-			isCustomRow: true
-		};
-	}
+    // Also add to anchors map with custom row key
+    anchors[analysis.input] = {
+      slot: rowKey,
+      step: analysis.suggestedAnchorStep,
+      isCustomRow: true
+    };
+  }
 
-	return {
-		hueShift,
-		chromaMultiplier,
-		lightnessShift,
-		anchors,
-		customRows: customRows.length > 0 ? customRows : undefined
-	};
+  return {
+    hueShift,
+    chromaMultiplier,
+    lightnessShift,
+    anchors,
+    customRows: customRows.length > 0 ? customRows : undefined
+  };
 }
 
 /**
@@ -468,49 +468,49 @@ export function analyzeBrandColors(colors: string[], mode: ColorMode = 'light'):
  * Used when no brand colors are provided.
  */
 export function createDefaultProfile(): TuningProfile {
-	return {
-		hueShift: 0,
-		chromaMultiplier: 1,
-		lightnessShift: 0,
-		anchors: {}
-	};
+  return {
+    hueShift: 0,
+    chromaMultiplier: 1,
+    lightnessShift: 0,
+    anchors: {}
+  };
 }
 
 /**
  * Get a detailed analysis report for debugging/display.
  */
 export function getAnalysisReport(
-	colors: string[],
-	mode: ColorMode = 'light'
+  colors: string[],
+  mode: ColorMode = 'light'
 ): {
-	analyses: ColorAnalysis[];
-	profile: TuningProfile;
-	summary: string;
+  analyses: ColorAnalysis[];
+  profile: TuningProfile;
+  summary: string;
 } {
-	const analyses = colors
-		.map((hex) => analyzeColor(hex, mode))
-		.filter((a): a is ColorAnalysis => a !== null);
+  const analyses = colors
+    .map((hex) => analyzeColor(hex, mode))
+    .filter((a): a is ColorAnalysis => a !== null);
 
-	const profile = analyzeBrandColors(colors, mode);
+  const profile = analyzeBrandColors(colors, mode);
 
-	const summary = [
-		`Analyzed ${analyses.length} colors:`,
-		...analyses.map((a) => {
-			const snapIndicator = a.snaps ? '✓' : '✗';
-			return `  ${a.input} → ${a.slot} (${snapIndicator} ${a.distance.toFixed(1)}°, H${a.hueOffset > 0 ? '+' : ''}${a.hueOffset.toFixed(1)}°, C×${a.chromaRatio.toFixed(2)})`;
-		}),
-		'',
-		'Tuning Profile:',
-		`  Hue Shift: ${profile.hueShift > 0 ? '+' : ''}${profile.hueShift.toFixed(1)}°`,
-		`  Chroma Multiplier: ${profile.chromaMultiplier.toFixed(2)}×`,
-		`  Lightness Shift: ${profile.lightnessShift > 0 ? '+' : ''}${profile.lightnessShift.toFixed(3)}`
-	].join('\n');
+  const summary = [
+    `Analyzed ${analyses.length} colors:`,
+    ...analyses.map((a) => {
+      const snapIndicator = a.snaps ? '✓' : '✗';
+      return `  ${a.input} → ${a.slot} (${snapIndicator} ${a.distance.toFixed(1)}°, H${a.hueOffset > 0 ? '+' : ''}${a.hueOffset.toFixed(1)}°, C×${a.chromaRatio.toFixed(2)})`;
+    }),
+    '',
+    'Tuning Profile:',
+    `  Hue Shift: ${profile.hueShift > 0 ? '+' : ''}${profile.hueShift.toFixed(1)}°`,
+    `  Chroma Multiplier: ${profile.chromaMultiplier.toFixed(2)}×`,
+    `  Lightness Shift: ${profile.lightnessShift > 0 ? '+' : ''}${profile.lightnessShift.toFixed(3)}`
+  ].join('\n');
 
-	return { analyses, profile, summary };
+  return { analyses, profile, summary };
 }
 
 // Utility: calculate average of numbers
 function average(nums: number[]): number {
-	if (nums.length === 0) return 0;
-	return nums.reduce((sum, n) => sum + n, 0) / nums.length;
+  if (nums.length === 0) return 0;
+  return nums.reduce((sum, n) => sum + n, 0) / nums.length;
 }

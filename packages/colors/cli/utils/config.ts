@@ -2,20 +2,27 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 
-export type ExportFormat = 'css' | 'json' | 'tailwind' | 'tailwind-v3' | 'radix' | 'panda' | 'shadcn';
+export type ExportFormat =
+  | 'css'
+  | 'json'
+  | 'tailwind'
+  | 'tailwind-v3'
+  | 'radix'
+  | 'panda'
+  | 'shadcn';
 
 export interface ColorsConfig {
-	brandColors: string[];
-	outputDir: string;
-	formats: ExportFormat[];
-	prefix?: string;
+  brandColors: string[];
+  outputDir: string;
+  formats: ExportFormat[];
+  prefix?: string;
 }
 
 const DEFAULT_CONFIG: ColorsConfig = {
-	brandColors: [],
-	outputDir: './colors',
-	formats: ['css', 'json'],
-	prefix: ''
+  brandColors: [],
+  outputDir: './colors',
+  formats: ['css', 'json'],
+  prefix: ''
 };
 
 const CONFIG_FILENAMES = ['colors.config.json', 'colors.json'];
@@ -24,104 +31,112 @@ const CONFIG_FILENAMES = ['colors.config.json', 'colors.json'];
  * Find config file in current directory or up the tree
  */
 export function findConfigFile(startDir: string = process.cwd()): string | null {
-	let currentDir = resolve(startDir);
-	const root = dirname(currentDir);
+  let currentDir = resolve(startDir);
+  const root = dirname(currentDir);
 
-	while (currentDir !== root) {
-		for (const filename of CONFIG_FILENAMES) {
-			const configPath = resolve(currentDir, filename);
-			if (existsSync(configPath)) {
-				return configPath;
-			}
-		}
-		const parentDir = dirname(currentDir);
-		if (parentDir === currentDir) break;
-		currentDir = parentDir;
-	}
+  while (currentDir !== root) {
+    for (const filename of CONFIG_FILENAMES) {
+      const configPath = resolve(currentDir, filename);
+      if (existsSync(configPath)) {
+        return configPath;
+      }
+    }
+    const parentDir = dirname(currentDir);
+    if (parentDir === currentDir) break;
+    currentDir = parentDir;
+  }
 
-	return null;
+  return null;
 }
 
 /**
  * Load config from file
  */
 export async function loadConfig(configPath?: string): Promise<ColorsConfig> {
-	const resolvedPath = configPath ? resolve(configPath) : findConfigFile();
+  const resolvedPath = configPath ? resolve(configPath) : findConfigFile();
 
-	if (!resolvedPath) {
-		return { ...DEFAULT_CONFIG };
-	}
+  if (!resolvedPath) {
+    return { ...DEFAULT_CONFIG };
+  }
 
-	if (!existsSync(resolvedPath)) {
-		throw new Error(`Config file not found: ${resolvedPath}`);
-	}
+  if (!existsSync(resolvedPath)) {
+    throw new Error(`Config file not found: ${resolvedPath}`);
+  }
 
-	try {
-		const content = await readFile(resolvedPath, 'utf-8');
-		const parsed = JSON.parse(content);
-		return {
-			...DEFAULT_CONFIG,
-			...parsed
-		};
-	} catch (error) {
-		if (error instanceof SyntaxError) {
-			throw new Error(`Invalid JSON in config file: ${resolvedPath}`);
-		}
-		throw error;
-	}
+  try {
+    const content = await readFile(resolvedPath, 'utf-8');
+    const parsed = JSON.parse(content);
+    return {
+      ...DEFAULT_CONFIG,
+      ...parsed
+    };
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`Invalid JSON in config file: ${resolvedPath}`);
+    }
+    throw error;
+  }
 }
 
 /**
  * Merge CLI options with config file
  */
 export function mergeOptions(
-	config: ColorsConfig,
-	cliOptions: {
-		colors?: string;
-		output?: string;
-		format?: string;
-		prefix?: string;
-	}
+  config: ColorsConfig,
+  cliOptions: {
+    colors?: string;
+    output?: string;
+    format?: string;
+    prefix?: string;
+  }
 ): ColorsConfig {
-	const merged = { ...config };
+  const merged = { ...config };
 
-	// CLI --colors overrides config brandColors
-	if (cliOptions.colors) {
-		merged.brandColors = cliOptions.colors
-			.split(',')
-			.map((c) => c.trim())
-			.filter(Boolean);
-	}
+  // CLI --colors overrides config brandColors
+  if (cliOptions.colors) {
+    merged.brandColors = cliOptions.colors
+      .split(',')
+      .map((c) => c.trim())
+      .filter(Boolean);
+  }
 
-	// CLI --output overrides config outputDir
-	if (cliOptions.output) {
-		merged.outputDir = cliOptions.output;
-	}
+  // CLI --output overrides config outputDir
+  if (cliOptions.output) {
+    merged.outputDir = cliOptions.output;
+  }
 
-	// CLI --prefix overrides config prefix
-	if (cliOptions.prefix !== undefined) {
-		merged.prefix = cliOptions.prefix;
-	}
+  // CLI --prefix overrides config prefix
+  if (cliOptions.prefix !== undefined) {
+    merged.prefix = cliOptions.prefix;
+  }
 
-	// CLI --format overrides config formats
-	if (cliOptions.format) {
-		const validFormats: ExportFormat[] = ['css', 'json', 'tailwind', 'tailwind-v3', 'radix', 'panda', 'shadcn'];
-		const requestedFormats = cliOptions.format.split(',').map((f) => f.trim().toLowerCase());
+  // CLI --format overrides config formats
+  if (cliOptions.format) {
+    const validFormats: ExportFormat[] = [
+      'css',
+      'json',
+      'tailwind',
+      'tailwind-v3',
+      'radix',
+      'panda',
+      'shadcn'
+    ];
+    const requestedFormats = cliOptions.format.split(',').map((f) => f.trim().toLowerCase());
 
-		// Handle 'all' shorthand
-		if (requestedFormats.includes('all')) {
-			merged.formats = validFormats;
-		} else {
-			merged.formats = requestedFormats.filter((f): f is ExportFormat =>
-				validFormats.includes(f as ExportFormat)
-			);
-		}
+    // Handle 'all' shorthand
+    if (requestedFormats.includes('all')) {
+      merged.formats = validFormats;
+    } else {
+      merged.formats = requestedFormats.filter((f): f is ExportFormat =>
+        validFormats.includes(f as ExportFormat)
+      );
+    }
 
-		// Default to css,json if no valid formats
-		if (merged.formats.length === 0) {
-			merged.formats = ['css', 'json'];
-		}
-	}
+    // Default to css,json if no valid formats
+    if (merged.formats.length === 0) {
+      merged.formats = ['css', 'json'];
+    }
+  }
 
-	return merged;
+  return merged;
 }

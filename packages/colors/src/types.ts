@@ -9,10 +9,10 @@
  * H: Hue (0-360 degrees)
  */
 export interface OklchColor {
-	l: number;
-	c: number;
-	h: number;
-	alpha?: number;
+  l: number;
+  c: number;
+  h: number;
+  alpha?: number;
 }
 
 /**
@@ -21,18 +21,18 @@ export interface OklchColor {
  * Using 1-indexed keys to match designer conventions (Radix, Tailwind)
  */
 export interface Scale {
-	1: string; // lightest (backgrounds)
-	2: string;
-	3: string;
-	4: string;
-	5: string;
-	6: string;
-	7: string;
-	8: string;
-	9: string; // solid/primary
-	10: string;
-	11: string;
-	12: string; // darkest (text)
+  1: string; // lightest (backgrounds)
+  2: string;
+  3: string;
+  4: string;
+  5: string;
+  6: string;
+  7: string;
+  8: string;
+  9: string; // solid/primary
+  10: string;
+  11: string;
+  12: string; // darkest (text)
 }
 
 /** Valid step indices for a Scale (1-12) */
@@ -42,36 +42,36 @@ export type ScaleStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
  * Information about an anchored brand color
  */
 export interface AnchorInfo {
-	/** Baseline hue slot this color anchors to (or custom row key) */
-	slot: string;
-	/** Which step in the scale this color should anchor (1-12) */
-	step: number;
-	/** True if this anchor requires a custom row (out-of-bounds chroma) */
-	isCustomRow?: boolean;
+  /** Baseline hue slot this color anchors to (or custom row key) */
+  slot: string;
+  /** Which step in the scale this color should anchor (1-12) */
+  step: number;
+  /** True if this anchor requires a custom row (out-of-bounds chroma) */
+  isCustomRow?: boolean;
 }
 
 /**
  * Information about an out-of-bounds brand color requiring a custom row
  */
 export interface CustomRowInfo {
-	/** Original brand color hex */
-	originalHex: string;
-	/** Generated custom row key (e.g., "pastel-pink", "neon-lime") */
-	rowKey: string;
-	/** OKLCH values of the brand color */
-	oklch: OklchColor;
-	/** Chroma ratio relative to nearest Radix slot */
-	chromaRatio: number;
-	/** Reason for custom row */
-	reason: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness';
-	/** Distance from nearest slot in degrees (for hue-gap) */
-	hueDistance?: number;
-	/** Nearest baseline hue slot (for curve reference) */
-	nearestSlot: string;
-	/** Anchor step determined by lightness (1-12) */
-	anchorStep: number;
-	/** Hue wheel position for ordering (0-360) */
-	hueAngle: number;
+  /** Original brand color hex */
+  originalHex: string;
+  /** Generated custom row key (e.g., "pastel-pink", "neon-lime") */
+  rowKey: string;
+  /** OKLCH values of the brand color */
+  oklch: OklchColor;
+  /** Chroma ratio relative to nearest Radix slot */
+  chromaRatio: number;
+  /** Reason for custom row */
+  reason: 'low-chroma' | 'high-chroma' | 'hue-gap' | 'extreme-lightness';
+  /** Distance from nearest slot in degrees (for hue-gap) */
+  hueDistance?: number;
+  /** Nearest baseline hue slot (for curve reference) */
+  nearestSlot: string;
+  /** Anchor step determined by lightness (1-12) */
+  anchorStep: number;
+  /** Hue wheel position for ordering (0-360) */
+  hueAngle: number;
 }
 
 /**
@@ -79,88 +79,88 @@ export interface CustomRowInfo {
  * Describes how the brand's colors deviate from baseline
  */
 export interface TuningProfile {
-	/** Average hue shift from baseline positions */
-	hueShift: number;
-	/** Brand chroma relative to baseline (1.0 = same) */
-	chromaMultiplier: number;
-	/** Brand lightness preference shift */
-	lightnessShift: number;
-	/** Mapping of brand input colors (hex) to anchor info */
-	anchors: Record<string, AnchorInfo>;
-	/** Custom rows for out-of-bounds chroma colors */
-	customRows?: CustomRowInfo[];
+  /** Average hue shift from baseline positions */
+  hueShift: number;
+  /** Brand chroma relative to baseline (1.0 = same) */
+  chromaMultiplier: number;
+  /** Brand lightness preference shift */
+  lightnessShift: number;
+  /** Mapping of brand input colors (hex) to anchor info */
+  anchors: Record<string, AnchorInfo>;
+  /** Custom rows for out-of-bounds chroma colors */
+  customRows?: CustomRowInfo[];
 }
 
 /**
  * Complete generated palette
  */
 export interface Palette {
-	/** Light mode scales for all 30 hues */
-	light: Record<string, Scale>;
-	/** Dark mode scales for all 30 hues */
-	dark: Record<string, Scale>;
-	/** Metadata about generation */
-	_meta: {
-		tuningProfile: TuningProfile;
-		inputColors: string[];
-		generatedAt: string;
-	};
+  /** Light mode scales for all 30 hues */
+  light: Record<string, Scale>;
+  /** Dark mode scales for all 30 hues */
+  dark: Record<string, Scale>;
+  /** Metadata about generation */
+  _meta: {
+    tuningProfile: TuningProfile;
+    inputColors: string[];
+    generatedAt: string;
+  };
 }
 
 /**
  * APCA contrast validation result
  */
 export interface ContrastResult {
-	/** The calculated APCA Lc value */
-	contrast: number;
-	/** Whether it passes the minimum threshold */
-	passes: boolean;
-	/** The threshold used for validation */
-	threshold: number;
-	/** Usage context (body text, large text, decorative) */
-	usage: 'body' | 'large' | 'decorative';
+  /** The calculated APCA Lc value */
+  contrast: number;
+  /** Whether it passes the minimum threshold */
+  passes: boolean;
+  /** The threshold used for validation */
+  threshold: number;
+  /** Usage context (body text, large text, decorative) */
+  usage: 'body' | 'large' | 'decorative';
 }
 
 /**
  * Validation report for a palette
  */
 export interface ValidationReport {
-	/** Overall pass/fail */
-	valid: boolean;
-	/** Individual contrast checks */
-	checks: Array<{
-		foreground: string;
-		background: string;
-		result: ContrastResult;
-	}>;
-	/** Any issues found */
-	issues: string[];
+  /** Overall pass/fail */
+  valid: boolean;
+  /** Individual contrast checks */
+  checks: Array<{
+    foreground: string;
+    background: string;
+    result: ContrastResult;
+  }>;
+  /** Any issues found */
+  issues: string[];
 }
 
 /**
  * A single step in a generated scale with full OKLCH data
  */
 export interface GeneratedScaleStep {
-	/** Step number (1-12) */
-	step: number;
-	/** OKLCH color values */
-	oklch: OklchColor;
-	/** Hex color string */
-	hex: string;
-	/** Actual APCA contrast against white */
-	apca: number;
-	/** Target APCA contrast */
-	targetApca: number;
+  /** Step number (1-12) */
+  step: number;
+  /** OKLCH color values */
+  oklch: OklchColor;
+  /** Hex color string */
+  hex: string;
+  /** Actual APCA contrast against white */
+  apca: number;
+  /** Target APCA contrast */
+  targetApca: number;
 }
 
 /**
  * A generated 12-step scale with full metadata
  */
 export interface GeneratedScale {
-	/** Original parent color hex */
-	parent: string;
-	/** Parent color in OKLCH */
-	parentOklch: OklchColor;
-	/** All 12 steps with OKLCH and contrast data */
-	steps: GeneratedScaleStep[];
+  /** Original parent color hex */
+  parent: string;
+  /** Parent color in OKLCH */
+  parentOklch: OklchColor;
+  /** All 12 steps with OKLCH and contrast data */
+  steps: GeneratedScaleStep[];
 }

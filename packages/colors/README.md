@@ -146,10 +146,10 @@ Drop-in Tailwind preset with 50-950 scale:
 
 ```js
 // tailwind.config.js
-import sveltopiaColors from "./colors/tailwind.preset.js";
+import sveltopiaColors from './colors/tailwind.preset.js';
 
 export default {
-  presets: [sveltopiaColors],
+  presets: [sveltopiaColors]
   // ...
 };
 ```
@@ -166,10 +166,10 @@ Drop-in replacement for `@radix-ui/colors`:
 
 ```js
 // Replace this:
-import { red, redA, redDark, redDarkA } from "@radix-ui/colors";
+import { red, redA, redDark, redDarkA } from '@radix-ui/colors';
 
 // With this:
-import { red, redA, redDark, redDarkA } from "./colors/radix-colors.js";
+import { red, redA, redDark, redDarkA } from './colors/radix-colors.js';
 ```
 
 Includes all 8 variants per hue: base, alpha, P3, P3Alpha × light/dark.
@@ -180,10 +180,10 @@ Panda CSS preset with semantic tokens:
 
 ```ts
 // panda.config.ts
-import { sveltopiaColors } from "./colors/panda.preset";
+import { sveltopiaColors } from './colors/panda.preset';
 
 export default defineConfig({
-  presets: [sveltopiaColors],
+  presets: [sveltopiaColors]
   // ...
 });
 ```
@@ -195,16 +195,11 @@ Automatic dark mode via semantic tokens — just use `colors.red.9` and it switc
 Use the API directly for dynamic palette generation — perfect for theme builders, multi-tenant SaaS, or design tools.
 
 ```typescript
-import {
-  generatePalette,
-  exportCSS,
-  exportTailwind,
-  exportRadix,
-} from "@sveltopia/colors";
+import { generatePalette, exportCSS, exportTailwind, exportRadix } from '@sveltopia/colors';
 
 // Generate a palette from brand colors
 const result = generatePalette({
-  brandColors: ["#FF4F00"],
+  brandColors: ['#FF4F00']
 });
 
 console.log(result.scales.red[9]); // '#e5484d'
@@ -212,7 +207,7 @@ console.log(result.meta.anchoredSlots); // ['tomato']
 
 // Export to different formats
 const css = exportCSS(result);
-const tailwind = exportTailwind(result, { scale: "50-950" });
+const tailwind = exportTailwind(result, { scale: '50-950' });
 ```
 
 ### Key Exports

@@ -6,75 +6,75 @@
  */
 
 import {
-	generatePalette,
-	getPaletteStats,
-	BASELINE_HUES,
-	RADIX_SCALES,
-	RADIX_SCALES_DARK,
-	type LightPalette
+  generatePalette,
+  getPaletteStats,
+  BASELINE_HUES,
+  RADIX_SCALES,
+  RADIX_SCALES_DARK,
+  type LightPalette
 } from '@sveltopia/colors';
 
 export interface GenerateHtmlOptions {
-	brandColors: string[];
-	title?: string;
+  brandColors: string[];
+  title?: string;
 }
 
 interface SerializedPalette {
-	brandColors: string[];
-	scales: Record<string, Record<number, string>>;
-	scalesDark: Record<string, Record<number, string>>;
-	anchoredSlots: string[];
-	anchoredSlotsDark: string[];
-	customSlots: string[];
-	customSlotsDark: string[];
-	anchorStepMap: Record<string, number>;
-	anchorStepMapDark: Record<string, number>;
-	tuningProfile: {
-		hueShift: number;
-		chromaMultiplier: number;
-		lightnessShift: number;
-	};
-	stats: {
-		totalHues: number;
-		totalColors: number;
-		anchoredHues: number;
-		customHues: number;
-	};
+  brandColors: string[];
+  scales: Record<string, Record<number, string>>;
+  scalesDark: Record<string, Record<number, string>>;
+  anchoredSlots: string[];
+  anchoredSlotsDark: string[];
+  customSlots: string[];
+  customSlotsDark: string[];
+  anchorStepMap: Record<string, number>;
+  anchorStepMapDark: Record<string, number>;
+  tuningProfile: {
+    hueShift: number;
+    chromaMultiplier: number;
+    lightnessShift: number;
+  };
+  stats: {
+    totalHues: number;
+    totalColors: number;
+    anchoredHues: number;
+    customHues: number;
+  };
 }
 
 // Radix-style hue ordering
 const HUE_ORDER = [
-	'gray',
-	'mauve',
-	'slate',
-	'sage',
-	'olive',
-	'sand',
-	'tomato',
-	'red',
-	'ruby',
-	'crimson',
-	'pink',
-	'plum',
-	'purple',
-	'violet',
-	'iris',
-	'indigo',
-	'blue',
-	'cyan',
-	'teal',
-	'jade',
-	'green',
-	'grass',
-	'bronze',
-	'gold',
-	'brown',
-	'orange',
-	'amber',
-	'yellow',
-	'lime',
-	'mint',
-	'sky'
+  'gray',
+  'mauve',
+  'slate',
+  'sage',
+  'olive',
+  'sand',
+  'tomato',
+  'red',
+  'ruby',
+  'crimson',
+  'pink',
+  'plum',
+  'purple',
+  'violet',
+  'iris',
+  'indigo',
+  'blue',
+  'cyan',
+  'teal',
+  'jade',
+  'green',
+  'grass',
+  'bronze',
+  'gold',
+  'brown',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'mint',
+  'sky'
 ];
 
 const NEUTRALS = ['gray', 'mauve', 'slate', 'sage', 'olive', 'sand'];
@@ -83,74 +83,72 @@ const NEUTRALS = ['gray', 'mauve', 'slate', 'sage', 'olive', 'sand'];
  * Generate HTML visualization for brand colors
  */
 export function generateHtml(options: GenerateHtmlOptions): string {
-	const { brandColors, title = 'Sveltopia Colors' } = options;
+  const { brandColors, title = 'Sveltopia Colors' } = options;
 
-	// Generate light and dark palettes
-	const paletteLight = generatePalette({ brandColors, mode: 'light' });
-	const paletteDark = generatePalette({ brandColors, mode: 'dark' });
-	const stats = getPaletteStats(paletteLight);
+  // Generate light and dark palettes
+  const paletteLight = generatePalette({ brandColors, mode: 'light' });
+  const paletteDark = generatePalette({ brandColors, mode: 'dark' });
+  const stats = getPaletteStats(paletteLight);
 
-	// Build anchor step maps
-	const anchorStepMap: Record<string, number> = {};
-	for (const [, info] of Object.entries(paletteLight.meta.tuningProfile.anchors)) {
-		anchorStepMap[info.slot] = info.step;
-	}
+  // Build anchor step maps
+  const anchorStepMap: Record<string, number> = {};
+  for (const [, info] of Object.entries(paletteLight.meta.tuningProfile.anchors)) {
+    anchorStepMap[info.slot] = info.step;
+  }
 
-	const anchorStepMapDark: Record<string, number> = {};
-	for (const [, info] of Object.entries(paletteDark.meta.tuningProfile.anchors)) {
-		anchorStepMapDark[info.slot] = info.step;
-	}
+  const anchorStepMapDark: Record<string, number> = {};
+  for (const [, info] of Object.entries(paletteDark.meta.tuningProfile.anchors)) {
+    anchorStepMapDark[info.slot] = info.step;
+  }
 
-	const palette: SerializedPalette = {
-		brandColors,
-		scales: paletteLight.scales as unknown as Record<string, Record<number, string>>,
-		scalesDark: paletteDark.scales as unknown as Record<string, Record<number, string>>,
-		anchoredSlots: paletteLight.meta.anchoredSlots,
-		anchoredSlotsDark: paletteDark.meta.anchoredSlots,
-		customSlots: paletteLight.meta.customSlots,
-		customSlotsDark: paletteDark.meta.customSlots,
-		anchorStepMap,
-		anchorStepMapDark,
-		tuningProfile: {
-			hueShift: paletteLight.meta.tuningProfile.hueShift,
-			chromaMultiplier: paletteLight.meta.tuningProfile.chromaMultiplier,
-			lightnessShift: paletteLight.meta.tuningProfile.lightnessShift
-		},
-		stats: {
-			totalHues: stats.totalHues,
-			totalColors: stats.totalColors,
-			anchoredHues: stats.anchoredHues,
-			customHues: stats.customHues
-		}
-	};
+  const palette: SerializedPalette = {
+    brandColors,
+    scales: paletteLight.scales as unknown as Record<string, Record<number, string>>,
+    scalesDark: paletteDark.scales as unknown as Record<string, Record<number, string>>,
+    anchoredSlots: paletteLight.meta.anchoredSlots,
+    anchoredSlotsDark: paletteDark.meta.anchoredSlots,
+    customSlots: paletteLight.meta.customSlots,
+    customSlotsDark: paletteDark.meta.customSlots,
+    anchorStepMap,
+    anchorStepMapDark,
+    tuningProfile: {
+      hueShift: paletteLight.meta.tuningProfile.hueShift,
+      chromaMultiplier: paletteLight.meta.tuningProfile.chromaMultiplier,
+      lightnessShift: paletteLight.meta.tuningProfile.lightnessShift
+    },
+    stats: {
+      totalHues: stats.totalHues,
+      totalColors: stats.totalColors,
+      anchoredHues: stats.anchoredHues,
+      customHues: stats.customHues
+    }
+  };
 
-	// Get ordered hue keys that exist in the palette
-	const orderedHueKeys = HUE_ORDER.filter((key) => paletteLight.scales[key]);
+  // Get ordered hue keys that exist in the palette
+  const orderedHueKeys = HUE_ORDER.filter((key) => paletteLight.scales[key]);
 
-	// Build hue definitions for client
-	const hueDefs = Object.fromEntries(
-		orderedHueKeys.map((key) => [key, BASELINE_HUES[key]])
-	);
+  // Build hue definitions for client
+  const hueDefs = Object.fromEntries(orderedHueKeys.map((key) => [key, BASELINE_HUES[key]]));
 
-	return buildHtml(
-		palette,
-		orderedHueKeys,
-		hueDefs,
-		title,
-		RADIX_SCALES as unknown as Record<string, Record<number, string>>,
-		RADIX_SCALES_DARK as unknown as Record<string, Record<number, string>>
-	);
+  return buildHtml(
+    palette,
+    orderedHueKeys,
+    hueDefs,
+    title,
+    RADIX_SCALES as unknown as Record<string, Record<number, string>>,
+    RADIX_SCALES_DARK as unknown as Record<string, Record<number, string>>
+  );
 }
 
 function buildHtml(
-	palette: SerializedPalette,
-	orderedHueKeys: string[],
-	hueDefs: Record<string, { name: string; hue: number }>,
-	title: string,
-	radixScales: Record<string, Record<number, string>>,
-	radixScalesDark: Record<string, Record<number, string>>
+  palette: SerializedPalette,
+  orderedHueKeys: string[],
+  hueDefs: Record<string, { name: string; hue: number }>,
+  title: string,
+  radixScales: Record<string, Record<number, string>>,
+  radixScalesDark: Record<string, Record<number, string>>
 ): string {
-	return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html>
 <head>
   <title>${title}</title>

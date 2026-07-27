@@ -24,7 +24,7 @@ console.log('   Slot:', coral?.slot);
 console.log('   Distance:', coral?.distance.toFixed(1) + '°');
 console.log('   Snaps:', coral?.snaps);
 if (!coral?.snaps) {
-	console.log('   → Would need CUSTOM SLOT (future feature)');
+  console.log('   → Would need CUSTOM SLOT (future feature)');
 }
 
 // 4. Tests pass

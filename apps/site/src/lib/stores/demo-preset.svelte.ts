@@ -12,33 +12,36 @@ let currentPresetId = $state('sveltopia');
  * Get the current preset ID
  */
 export function getPresetId(): string {
-	return currentPresetId;
+  return currentPresetId;
 }
 
 /**
  * Set the current preset ID
  */
 export function setPresetId(presetId: string): void {
-	currentPresetId = presetId;
+  currentPresetId = presetId;
 }
 
 /**
  * Get the stylesheet URL for a preset
  */
-export function getPresetStylesheetUrl(presetId: string, framework: 'tailwind' | 'shadcn' = 'tailwind'): string {
-	return `/presets/${framework}/${presetId}.css`;
+export function getPresetStylesheetUrl(
+  presetId: string,
+  framework: 'tailwind' | 'shadcn' = 'tailwind'
+): string {
+  return `/presets/${framework}/${presetId}.css`;
 }
 
 /**
  * Reactive getter for use in components
  */
 export function usePresetId() {
-	return {
-		get current() {
-			return currentPresetId;
-		},
-		set current(value: string) {
-			currentPresetId = value;
-		}
-	};
+  return {
+    get current() {
+      return currentPresetId;
+    },
+    set current(value: string) {
+      currentPresetId = value;
+    }
+  };
 }

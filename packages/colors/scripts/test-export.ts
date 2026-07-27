@@ -19,13 +19,13 @@ const light = generatePalette({ brandColors });
 const dark = generatePalette({ brandColors, mode: 'dark' });
 
 const palette: Palette = {
-	light: light.scales,
-	dark: dark.scales,
-	_meta: {
-		tuningProfile: light.meta.tuningProfile,
-		inputColors: brandColors,
-		generatedAt: new Date().toISOString()
-	}
+  light: light.scales,
+  dark: dark.scales,
+  _meta: {
+    tuningProfile: light.meta.tuningProfile,
+    inputColors: brandColors,
+    generatedAt: new Date().toISOString()
+  }
 };
 
 // Export full CSS
@@ -35,8 +35,8 @@ console.log('✓ Wrote test-output.css (full palette)');
 
 // Export just accent scale (for quick inspection)
 const cssAccent = exportCSS(palette, {
-	scales: ['orange'],
-	mode: 'both'
+  scales: ['orange'],
+  mode: 'both'
 });
 writeFileSync('test-output-accent.css', cssAccent);
 console.log('✓ Wrote test-output-accent.css (orange scale only)');

@@ -11,39 +11,39 @@
  * - Semantic aliases: --color-primary-*, --color-secondary-*
  */
 
-import { generatePalette, type Palette, type Scale } from "@sveltopia/colors";
+import { generatePalette, type Palette, type Scale } from '@sveltopia/colors';
 // @ts-expect-error - culori types
-import { formatCss, parse } from "culori";
+import { formatCss, parse } from 'culori';
 
 // Default brand colors (Sveltopia)
-const DEFAULT_BRAND_COLORS = ["#FF6A00", "#43A047", "#1A1A1A"];
+const DEFAULT_BRAND_COLORS = ['#FF6A00', '#43A047', '#1A1A1A'];
 
 // Current brand colors (module-level state, not reactive)
 let currentBrandColors: string[] = [...DEFAULT_BRAND_COLORS];
 
 // Style element ID for cleanup
-const STYLE_ELEMENT_ID = "demo-theme-css";
+const STYLE_ELEMENT_ID = 'demo-theme-css';
 
 // Semantic role names for brand colors
-const SEMANTIC_ROLES = ["primary", "secondary", "tertiary"] as const;
+const SEMANTIC_ROLES = ['primary', 'secondary', 'tertiary'] as const;
 
 /**
  * Radix 1-12 to Tailwind 50-950 mapping
  * Includes non-standard 850 to preserve all 12 Radix steps
  */
 const RADIX_TO_TAILWIND: Record<number, string> = {
-  1: "50",
-  2: "100",
-  3: "200",
-  4: "300",
-  5: "400",
-  6: "500",
-  7: "600",
-  8: "700",
-  9: "800",
-  10: "850",
-  11: "900",
-  12: "950",
+  1: '50',
+  2: '100',
+  3: '200',
+  4: '300',
+  5: '400',
+  6: '500',
+  7: '600',
+  8: '700',
+  9: '800',
+  10: '850',
+  11: '900',
+  12: '950'
 };
 
 /**
@@ -52,7 +52,7 @@ const RADIX_TO_TAILWIND: Record<number, string> = {
 function hexToOklch(hex: string): string {
   const color = parse(hex);
   if (!color) return hex;
-  const oklch = formatCss(color, "oklch");
+  const oklch = formatCss(color, 'oklch');
   return oklch || hex;
 }
 
@@ -60,8 +60,8 @@ function hexToOklch(hex: string): string {
  * Generate a full Palette from brand colors (both light and dark modes)
  */
 function generateFullPalette(colors: string[]): Palette {
-  const lightPalette = generatePalette({ brandColors: colors, mode: "light" });
-  const darkPalette = generatePalette({ brandColors: colors, mode: "dark" });
+  const lightPalette = generatePalette({ brandColors: colors, mode: 'light' });
+  const darkPalette = generatePalette({ brandColors: colors, mode: 'dark' });
 
   return {
     light: lightPalette.scales,
@@ -69,8 +69,8 @@ function generateFullPalette(colors: string[]): Palette {
     _meta: {
       tuningProfile: lightPalette.meta.tuningProfile,
       inputColors: colors,
-      generatedAt: lightPalette.meta.generatedAt,
-    },
+      generatedAt: lightPalette.meta.generatedAt
+    }
   };
 }
 
@@ -78,10 +78,7 @@ function generateFullPalette(colors: string[]): Palette {
  * Generate Tailwind-compatible CSS variables for all scales
  * Uses --color-{hue}-{step} naming with OKLCH values
  */
-function generateTailwindVars(
-  scales: Record<string, Scale>,
-  selector: string,
-): string {
+function generateTailwindVars(scales: Record<string, Scale>, selector: string): string {
   const lines: string[] = [];
   lines.push(`${selector} {`);
 
@@ -94,8 +91,8 @@ function generateTailwindVars(
     }
   }
 
-  lines.push("}");
-  return lines.join("\n");
+  lines.push('}');
+  return lines.join('\n');
 }
 
 /**
@@ -121,15 +118,13 @@ function generateSemanticAliases(palette: Palette, selector: string): string {
     // Generate Tailwind-style semantic aliases
     for (let radixStep = 1; radixStep <= 12; radixStep++) {
       const tailwindStep = RADIX_TO_TAILWIND[radixStep];
-      lines.push(
-        `  --color-${role}-${tailwindStep}: var(--color-${hue}-${tailwindStep});`,
-      );
+      lines.push(`  --color-${role}-${tailwindStep}: var(--color-${hue}-${tailwindStep});`);
     }
-    lines.push("");
+    lines.push('');
   });
 
-  lines.push("}");
-  return lines.join("\n");
+  lines.push('}');
+  return lines.join('\n');
 }
 
 /**
@@ -137,14 +132,12 @@ function generateSemanticAliases(palette: Palette, selector: string): string {
  * Uses body instead of head to ensure it loads after bundled CSS.
  */
 function injectCSS(css: string): void {
-  if (typeof document === "undefined") return;
+  if (typeof document === 'undefined') return;
 
-  let styleEl = document.getElementById(
-    STYLE_ELEMENT_ID,
-  ) as HTMLStyleElement | null;
+  let styleEl = document.getElementById(STYLE_ELEMENT_ID) as HTMLStyleElement | null;
 
   if (!styleEl) {
-    styleEl = document.createElement("style");
+    styleEl = document.createElement('style');
     styleEl.id = STYLE_ELEMENT_ID;
     document.body.appendChild(styleEl);
   }
@@ -166,17 +159,17 @@ function updateTheme(colors: string[]): void {
     const palette = generateFullPalette(colors);
 
     // Generate Tailwind-compatible variables for light and dark modes
-    const lightVars = generateTailwindVars(palette.light, "html .demo-theme");
+    const lightVars = generateTailwindVars(palette.light, 'html .demo-theme');
     const darkVars = generateTailwindVars(
       palette.dark,
-      "html .demo-theme.dark, html .dark .demo-theme",
+      'html .demo-theme.dark, html .dark .demo-theme'
     );
 
     // Generate semantic aliases for light and dark modes
-    const lightAliases = generateSemanticAliases(palette, "html .demo-theme");
+    const lightAliases = generateSemanticAliases(palette, 'html .demo-theme');
     const darkAliases = generateSemanticAliases(
       palette,
-      "html .demo-theme.dark, html .dark .demo-theme",
+      'html .demo-theme.dark, html .dark .demo-theme'
     );
 
     // Combine all CSS
@@ -192,7 +185,7 @@ ${darkAliases}`;
 
     injectCSS(fullCSS);
   } catch (error) {
-    console.error("Failed to generate theme:", error);
+    console.error('Failed to generate theme:', error);
   }
 }
 
@@ -230,7 +223,7 @@ export function initDemoTheme(): void {
  * Cleanup theme on unmount
  */
 export function cleanupDemoTheme(): void {
-  if (typeof document === "undefined") return;
+  if (typeof document === 'undefined') return;
 
   const styleEl = document.getElementById(STYLE_ELEMENT_ID);
   if (styleEl) {

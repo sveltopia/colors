@@ -21,36 +21,36 @@ import * as path from 'path';
 
 // Types for serialized palette data
 interface SerializedPalette {
-	id: string;
-	name: string;
-	category: TestPalette['category'];
-	notes?: string;
-	brandColors: string[];
-	scales: Record<string, Record<number, string>>; // Light mode
-	scalesDark: Record<string, Record<number, string>>; // Dark mode
-	anchoredSlots: string[];
-	anchoredSlotsDark: string[];
-	customSlots: string[];
-	customSlotsDark: string[];
-	anchorStepMap: Record<string, number>; // Light mode
-	anchorStepMapDark: Record<string, number>; // Dark mode
-	customRowInfo: Array<{
-		rowKey: string;
-		reason: 'low-chroma' | 'high-chroma';
-		chromaRatio: number;
-		nearestSlot: string;
-	}>;
-	tuningProfile: {
-		hueShift: number;
-		chromaMultiplier: number;
-		lightnessShift: number;
-	};
-	stats: {
-		totalHues: number;
-		totalColors: number;
-		anchoredHues: number;
-		customHues: number;
-	};
+  id: string;
+  name: string;
+  category: TestPalette['category'];
+  notes?: string;
+  brandColors: string[];
+  scales: Record<string, Record<number, string>>; // Light mode
+  scalesDark: Record<string, Record<number, string>>; // Dark mode
+  anchoredSlots: string[];
+  anchoredSlotsDark: string[];
+  customSlots: string[];
+  customSlotsDark: string[];
+  anchorStepMap: Record<string, number>; // Light mode
+  anchorStepMapDark: Record<string, number>; // Dark mode
+  customRowInfo: Array<{
+    rowKey: string;
+    reason: 'low-chroma' | 'high-chroma';
+    chromaRatio: number;
+    nearestSlot: string;
+  }>;
+  tuningProfile: {
+    hueShift: number;
+    chromaMultiplier: number;
+    lightnessShift: number;
+  };
+  stats: {
+    totalHues: number;
+    totalColors: number;
+    anchoredHues: number;
+    customHues: number;
+  };
 }
 
 // Generate all test palettes
@@ -58,112 +58,112 @@ console.log('Generating all test palettes...');
 const allPalettes: SerializedPalette[] = [];
 
 for (const testPalette of TEST_PALETTES) {
-	try {
-		// Generate both light and dark mode palettes
-		const paletteLight = generatePalette({ brandColors: testPalette.colors, mode: 'light' });
-		const paletteDark = generatePalette({ brandColors: testPalette.colors, mode: 'dark' });
-		const stats = getPaletteStats(paletteLight);
+  try {
+    // Generate both light and dark mode palettes
+    const paletteLight = generatePalette({ brandColors: testPalette.colors, mode: 'light' });
+    const paletteDark = generatePalette({ brandColors: testPalette.colors, mode: 'dark' });
+    const stats = getPaletteStats(paletteLight);
 
-		// Build anchor step maps for both modes
-		const anchorStepMap: Record<string, number> = {};
-		for (const [hex, info] of Object.entries(paletteLight.meta.tuningProfile.anchors)) {
-			anchorStepMap[info.slot] = info.step;
-		}
+    // Build anchor step maps for both modes
+    const anchorStepMap: Record<string, number> = {};
+    for (const [hex, info] of Object.entries(paletteLight.meta.tuningProfile.anchors)) {
+      anchorStepMap[info.slot] = info.step;
+    }
 
-		const anchorStepMapDark: Record<string, number> = {};
-		for (const [hex, info] of Object.entries(paletteDark.meta.tuningProfile.anchors)) {
-			anchorStepMapDark[info.slot] = info.step;
-		}
+    const anchorStepMapDark: Record<string, number> = {};
+    for (const [hex, info] of Object.entries(paletteDark.meta.tuningProfile.anchors)) {
+      anchorStepMapDark[info.slot] = info.step;
+    }
 
-		// Build custom row info
-		const customRowInfo = (paletteLight.meta.tuningProfile.customRows || []).map((cr) => ({
-			rowKey: cr.rowKey,
-			reason: cr.reason,
-			chromaRatio: cr.chromaRatio,
-			nearestSlot: cr.nearestSlot,
-			oklch: cr.oklch
-		}));
+    // Build custom row info
+    const customRowInfo = (paletteLight.meta.tuningProfile.customRows || []).map((cr) => ({
+      rowKey: cr.rowKey,
+      reason: cr.reason,
+      chromaRatio: cr.chromaRatio,
+      nearestSlot: cr.nearestSlot,
+      oklch: cr.oklch
+    }));
 
-		allPalettes.push({
-			id: testPalette.id,
-			name: testPalette.name,
-			category: testPalette.category,
-			notes: testPalette.notes,
-			brandColors: testPalette.colors,
-			scales: paletteLight.scales as Record<string, Record<number, string>>,
-			scalesDark: paletteDark.scales as Record<string, Record<number, string>>,
-			anchoredSlots: paletteLight.meta.anchoredSlots,
-			anchoredSlotsDark: paletteDark.meta.anchoredSlots,
-			customSlots: paletteLight.meta.customSlots,
-			customSlotsDark: paletteDark.meta.customSlots,
-			anchorStepMap,
-			anchorStepMapDark,
-			customRowInfo,
-			tuningProfile: {
-				hueShift: paletteLight.meta.tuningProfile.hueShift,
-				chromaMultiplier: paletteLight.meta.tuningProfile.chromaMultiplier,
-				lightnessShift: paletteLight.meta.tuningProfile.lightnessShift
-			},
-			stats: {
-				totalHues: stats.totalHues,
-				totalColors: stats.totalColors,
-				anchoredHues: stats.anchoredHues,
-				customHues: stats.customHues
-			}
-		});
-		const customInfo = stats.customHues > 0 ? `, ${stats.customHues} custom` : '';
-		console.log(`  ${testPalette.id}: ${stats.anchoredHues} anchored${customInfo}`);
-	} catch (e) {
-		console.error(`  ERROR generating ${testPalette.id}:`, e);
-	}
+    allPalettes.push({
+      id: testPalette.id,
+      name: testPalette.name,
+      category: testPalette.category,
+      notes: testPalette.notes,
+      brandColors: testPalette.colors,
+      scales: paletteLight.scales as Record<string, Record<number, string>>,
+      scalesDark: paletteDark.scales as Record<string, Record<number, string>>,
+      anchoredSlots: paletteLight.meta.anchoredSlots,
+      anchoredSlotsDark: paletteDark.meta.anchoredSlots,
+      customSlots: paletteLight.meta.customSlots,
+      customSlotsDark: paletteDark.meta.customSlots,
+      anchorStepMap,
+      anchorStepMapDark,
+      customRowInfo,
+      tuningProfile: {
+        hueShift: paletteLight.meta.tuningProfile.hueShift,
+        chromaMultiplier: paletteLight.meta.tuningProfile.chromaMultiplier,
+        lightnessShift: paletteLight.meta.tuningProfile.lightnessShift
+      },
+      stats: {
+        totalHues: stats.totalHues,
+        totalColors: stats.totalColors,
+        anchoredHues: stats.anchoredHues,
+        customHues: stats.customHues
+      }
+    });
+    const customInfo = stats.customHues > 0 ? `, ${stats.customHues} custom` : '';
+    console.log(`  ${testPalette.id}: ${stats.anchoredHues} anchored${customInfo}`);
+  } catch (e) {
+    console.error(`  ERROR generating ${testPalette.id}:`, e);
+  }
 }
 
 console.log(`Generated ${allPalettes.length} palettes`);
 
 // Build ordered hue list (use first palette as reference for structure)
 const orderedHueKeys = RADIX_SCALE_ORDER.filter(
-	(key) => allPalettes[0]?.scales[key] && RADIX_SCALES[key]
+  (key) => allPalettes[0]?.scales[key] && RADIX_SCALES[key]
 );
 
 // Serialize Radix scales for client-side use
 const radixScalesJson = JSON.stringify(RADIX_SCALES);
 const radixScalesDarkJson = JSON.stringify(RADIX_SCALES_DARK);
 const hueDefs = JSON.stringify(
-	Object.fromEntries(orderedHueKeys.map((key) => [key, BASELINE_HUES[key]]))
+  Object.fromEntries(orderedHueKeys.map((key) => [key, BASELINE_HUES[key]]))
 );
 
 // Build selector options HTML grouped by category
 function buildSelectorOptions(): string {
-	const categories: Record<TestPalette['category'], TestPalette[]> = {
-		'real-brand': [],
-		'edge-case': [],
-		nightmare: []
-	};
+  const categories: Record<TestPalette['category'], TestPalette[]> = {
+    'real-brand': [],
+    'edge-case': [],
+    nightmare: []
+  };
 
-	for (const p of TEST_PALETTES) {
-		categories[p.category].push(p);
-	}
+  for (const p of TEST_PALETTES) {
+    categories[p.category].push(p);
+  }
 
-	const categoryLabels: Record<TestPalette['category'], string> = {
-		'real-brand': 'Real Brands',
-		'edge-case': 'Edge Cases',
-		nightmare: 'Nightmare Scenarios'
-	};
+  const categoryLabels: Record<TestPalette['category'], string> = {
+    'real-brand': 'Real Brands',
+    'edge-case': 'Edge Cases',
+    nightmare: 'Nightmare Scenarios'
+  };
 
-	let html = '';
-	for (const [cat, palettes] of Object.entries(categories) as [
-		TestPalette['category'],
-		TestPalette[]
-	][]) {
-		html += `    <optgroup label="${categoryLabels[cat]}">\n`;
-		for (const p of palettes) {
-			const colorIndicator = p.colors.map(() => '\u25A0').join('');
-			const selected = p.id === 'sveltopia' ? ' selected' : '';
-			html += `      <option value="${p.id}"${selected}>${colorIndicator} ${p.name}</option>\n`;
-		}
-		html += '    </optgroup>\n';
-	}
-	return html;
+  let html = '';
+  for (const [cat, palettes] of Object.entries(categories) as [
+    TestPalette['category'],
+    TestPalette[]
+  ][]) {
+    html += `    <optgroup label="${categoryLabels[cat]}">\n`;
+    for (const p of palettes) {
+      const colorIndicator = p.colors.map(() => '\u25A0').join('');
+      const selected = p.id === 'sveltopia' ? ' selected' : '';
+      html += `      <option value="${p.id}"${selected}>${colorIndicator} ${p.name}</option>\n`;
+    }
+    html += '    </optgroup>\n';
+  }
+  return html;
 }
 
 // Build HTML

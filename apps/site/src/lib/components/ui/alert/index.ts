@@ -5,10 +5,10 @@ import Description from './alert-description.svelte';
 export type AlertVariant = 'default' | 'destructive';
 
 export {
-	Root,
-	Title,
-	Description,
-	Root as Alert,
-	Title as AlertTitle,
-	Description as AlertDescription,
+  Root,
+  Title,
+  Description,
+  Root as Alert,
+  Title as AlertTitle,
+  Description as AlertDescription
 };

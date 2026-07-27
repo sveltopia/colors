@@ -16,18 +16,18 @@ import type { OklchColor } from '../src/types.js';
 
 // Sveltopia brand colors
 const BRAND_COLORS = [
-	{ name: 'Orange (Primary)', hex: '#FF6A00' },
-	{ name: 'Green (Accent)', hex: '#43A047' },
-	{ name: 'Near Black', hex: '#1A1A1A' }
+  { name: 'Orange (Primary)', hex: '#FF6A00' },
+  { name: 'Green (Accent)', hex: '#43A047' },
+  { name: 'Near Black', hex: '#1A1A1A' }
 ];
 
 // Helper to create a color swatch with OKLCH applied
 function createSwatch(oklch: OklchColor, label?: string): string {
-	const hex = toHex(oklch);
-	const css = toCss(oklch);
-	const textColor = oklch.l > 0.6 ? '#000' : '#fff';
+  const hex = toHex(oklch);
+  const css = toCss(oklch);
+  const textColor = oklch.l > 0.6 ? '#000' : '#fff';
 
-	return `
+  return `
     <div class="swatch" style="background: ${hex}; color: ${textColor};">
       ${label ? `<span class="label">${label}</span>` : ''}
       <span class="hex">${hex}</span>
@@ -37,11 +37,11 @@ function createSwatch(oklch: OklchColor, label?: string): string {
 
 // Generate input breakdown section
 function generateInputSection(): string {
-	const swatches = BRAND_COLORS.map((color) => {
-		const oklch = toOklch(color.hex);
-		if (!oklch) return `<div class="error">Invalid: ${color.hex}</div>`;
+  const swatches = BRAND_COLORS.map((color) => {
+    const oklch = toOklch(color.hex);
+    if (!oklch) return `<div class="error">Invalid: ${color.hex}</div>`;
 
-		return `
+    return `
       <div class="color-card">
         <div class="color-preview" style="background: ${color.hex};"></div>
         <div class="color-info">
@@ -53,9 +53,9 @@ function generateInputSection(): string {
         </div>
       </div>
     `;
-	}).join('');
+  }).join('');
 
-	return `
+  return `
     <section>
       <h2>1. Input Breakdown</h2>
       <p class="section-desc">Sveltopia's brand colors converted to OKLCH</p>
@@ -66,33 +66,39 @@ function generateInputSection(): string {
 
 // Generate L/C/H manipulation demos
 function generateManipulationSection(): string {
-	const orange = toOklch('#FF6A00');
-	if (!orange) return '<div class="error">Failed to parse orange</div>';
+  const orange = toOklch('#FF6A00');
+  if (!orange) return '<div class="error">Failed to parse orange</div>';
 
-	// Lightness demo
-	const lightnessValues = [0.3, 0.5, 0.7, 0.9];
-	const lightnessSwatches = lightnessValues.map((l) => {
-		const modified: OklchColor = { ...orange, l };
-		return createSwatch(modified, `L=${l}`);
-	}).join('');
+  // Lightness demo
+  const lightnessValues = [0.3, 0.5, 0.7, 0.9];
+  const lightnessSwatches = lightnessValues
+    .map((l) => {
+      const modified: OklchColor = { ...orange, l };
+      return createSwatch(modified, `L=${l}`);
+    })
+    .join('');
 
-	// Chroma demo
-	const chromaValues = [0.05, 0.10, 0.15, 0.20, 0.25];
-	const chromaSwatches = chromaValues.map((c) => {
-		const modified: OklchColor = { ...orange, c };
-		return createSwatch(modified, `C=${c.toFixed(2)}`);
-	}).join('');
+  // Chroma demo
+  const chromaValues = [0.05, 0.1, 0.15, 0.2, 0.25];
+  const chromaSwatches = chromaValues
+    .map((c) => {
+      const modified: OklchColor = { ...orange, c };
+      return createSwatch(modified, `C=${c.toFixed(2)}`);
+    })
+    .join('');
 
-	// Hue demo
-	const hueOffsets = [-60, -30, 0, 30, 60];
-	const hueSwatches = hueOffsets.map((offset) => {
-		const h = ((orange.h + offset) % 360 + 360) % 360;
-		const modified: OklchColor = { ...orange, h };
-		const label = offset === 0 ? 'Original' : `H${offset > 0 ? '+' : ''}${offset}°`;
-		return createSwatch(modified, label);
-	}).join('');
+  // Hue demo
+  const hueOffsets = [-60, -30, 0, 30, 60];
+  const hueSwatches = hueOffsets
+    .map((offset) => {
+      const h = (((orange.h + offset) % 360) + 360) % 360;
+      const modified: OklchColor = { ...orange, h };
+      const label = offset === 0 ? 'Original' : `H${offset > 0 ? '+' : ''}${offset}°`;
+      return createSwatch(modified, label);
+    })
+    .join('');
 
-	return `
+  return `
     <section>
       <h2>2. L/C/H Manipulation</h2>
       <p class="section-desc">See how changing each OKLCH component affects the orange</p>
@@ -120,33 +126,33 @@ function generateManipulationSection(): string {
 
 // Generate naive 12-step scale
 function generateScaleSection(): string {
-	const orange = toOklch('#FF6A00');
-	const green = toOklch('#43A047');
+  const orange = toOklch('#FF6A00');
+  const green = toOklch('#43A047');
 
-	if (!orange || !green) return '<div class="error">Failed to parse colors</div>';
+  if (!orange || !green) return '<div class="error">Failed to parse colors</div>';
 
-	// Naive linear lightness interpolation from 0.97 (step 1) to 0.25 (step 12)
-	const steps = 12;
-	const lStart = 0.97;
-	const lEnd = 0.25;
+  // Naive linear lightness interpolation from 0.97 (step 1) to 0.25 (step 12)
+  const steps = 12;
+  const lStart = 0.97;
+  const lEnd = 0.25;
 
-	function generateScale(baseColor: OklchColor, name: string): string {
-		const swatches = Array.from({ length: steps }, (_, i) => {
-			const step = i + 1;
-			const l = lStart - (lStart - lEnd) * (i / (steps - 1));
-			const modified: OklchColor = { ...baseColor, l };
-			return createSwatch(modified, `${step}`);
-		}).join('');
+  function generateScale(baseColor: OklchColor, name: string): string {
+    const swatches = Array.from({ length: steps }, (_, i) => {
+      const step = i + 1;
+      const l = lStart - (lStart - lEnd) * (i / (steps - 1));
+      const modified: OklchColor = { ...baseColor, l };
+      return createSwatch(modified, `${step}`);
+    }).join('');
 
-		return `
+    return `
       <div class="scale-group">
         <h4>${name}</h4>
         <div class="swatch-row scale-row">${swatches}</div>
       </div>
     `;
-	}
+  }
 
-	return `
+  return `
     <section>
       <h2>3. Naive 12-Step Scale</h2>
       <p class="section-desc">
@@ -173,7 +179,7 @@ function generateScaleSection(): string {
 
 // Generate complete HTML
 function generateHtml(): string {
-	return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">

@@ -8,7 +8,7 @@
 
 ## The Guitar Analogy
 
-Tailwind gives you a guitar. Radix gives you a guitar. We give you a guitar *tuned to your brand's key* - every string, every fret, harmonized to your specific frequency.
+Tailwind gives you a guitar. Radix gives you a guitar. We give you a guitar _tuned to your brand's key_ - every string, every fret, harmonized to your specific frequency.
 
 Use 5 chords or 50, they all resonate together.
 
@@ -22,9 +22,9 @@ Bon Iver tunes his guitar differently than standard tuning, but it's **internall
 
 Our palettes work the same way: each brand gets a unique "tuning" (hue shift, chroma multiplier, lightness adjustment), but the **structure is consistent**:
 
-* Step 9 is always your solid button color
-* Step 12 is always your text color
-* Developers can rely on the patterns while the brand personality comes through
+- Step 9 is always your solid button color
+- Step 12 is always your text color
+- Developers can rely on the patterns while the brand personality comes through
 
 ---
 
@@ -32,13 +32,13 @@ Our palettes work the same way: each brand gets a unique "tuning" (hue shift, ch
 
 ### The "Waste" Concern - Solved by Tree-Shaking
 
-Modern build tools only bundle what's used. The 700 colors you *don't* use cost nothing in production. But they're there when you need them.
+Modern build tools only bundle what's used. The 700 colors you _don't_ use cost nothing in production. But they're there when you need them.
 
 ### Future-Proof by Design
 
-* **Year 1:** Blue and gold design
-* **Year 3:** Introduce that green from the logo
-* No regeneration needed - the green was always there, already tuned to your brand's signature
+- **Year 1:** Blue and gold design
+- **Year 3:** Introduce that green from the logo
+- No regeneration needed - the green was always there, already tuned to your brand's signature
 
 ### Rebrand Without Refactoring
 
@@ -79,15 +79,15 @@ This gives users **agency over the tradeoff** rather than us making an opinionat
 
 ## Output Structure
 
-| Input | Process | Output |
-| -- | -- | -- |
+| Input            | Process                                                                                                        | Output                                        |
+| ---------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
 | 1-7 brand colors | Analyze -> Calculate tuning profile -> Apply to 30 baseline hues -> Generate 12 tints each -> Derive dark mode | **720 colors** (30 hues x 12 tints x 2 modes) |
 
 Plus:
 
-* **Semantic aliases** (success, warning, error, info)
-* **Component presets** (button.primary, text.muted, etc.) - Phase 2
-* **Documentation** so thorough that AI agents can use it instantly
+- **Semantic aliases** (success, warning, error, info)
+- **Component presets** (button.primary, text.muted, etc.) - Phase 2
+- **Documentation** so thorough that AI agents can use it instantly
 
 ---
 
@@ -97,11 +97,11 @@ Harmonizer is **tool-first** - it shows you the machinery (APCA values, chroma d
 
 We are **outcome-first**:
 
-* Input simplicity: 1-7 color pickers, paste hex/oklch, done
-* Output clarity: "Here's your palette" with copy-to-clipboard tokens
-* Svelte-first: Native Panda CSS export
-* Non-technical friendly: Church CMS customers can provide brand colors and get a working system
+- Input simplicity: 1-7 color pickers, paste hex/oklch, done
+- Output clarity: "Here's your palette" with copy-to-clipboard tokens
+- Svelte-first: Native Panda CSS export
+- Non-technical friendly: Church CMS customers can provide brand colors and get a working system
 
 ---
 
-*This document captures the foundational thinking. Implementation details live in the POC issues and `dev-docs/ALGORITHMIC-COLOR-SYSTEM.md`.*
+_This document captures the foundational thinking. Implementation details live in the POC issues and `dev-docs/ALGORITHMIC-COLOR-SYSTEM.md`._
