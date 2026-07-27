@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { toOklch, toHex, toCss, parseColor, isValidColor, clampOklch } from '../utils/oklch.js';
+import {
+  toOklch,
+  toHex,
+  toCss,
+  parseColor,
+  isValidColor,
+  clampOklch,
+  inGamut,
+  gamutMapOklch
+} from '../utils/oklch.js';
 
 describe('OKLCH utilities', () => {
   describe('toOklch', () => {
@@ -166,6 +175,96 @@ describe('OKLCH utilities', () => {
     it('clamps alpha to 0-1 when present', () => {
       expect(clampOklch({ l: 0.5, c: 0.1, h: 50, alpha: 1.5 }).alpha).toBe(1);
       expect(clampOklch({ l: 0.5, c: 0.1, h: 50, alpha: -0.5 }).alpha).toBe(0);
+    });
+  });
+
+  describe('inGamut', () => {
+    it('accepts a color sRGB can actually show', () => {
+      expect(inGamut(toOklch('#3E63DD')!)).toBe(true);
+    });
+
+    it('rejects a color beyond sRGB', () => {
+      // oklch(0.7 0.3 145) -- a vivid green well past what sRGB reaches
+      expect(inGamut({ l: 0.7, c: 0.3, h: 145 })).toBe(false);
+    });
+
+    it('defaults to sRGB', () => {
+      expect(inGamut({ l: 0.7, c: 0.25, h: 145 })).toBe(
+        inGamut({ l: 0.7, c: 0.25, h: 145 }, 'srgb')
+      );
+    });
+
+    it('display-p3 reaches colors sRGB cannot', () => {
+      const wide = { l: 0.7, c: 0.25, h: 145 };
+      expect(inGamut(wide, 'srgb')).toBe(false);
+      expect(inGamut(wide, 'display-p3')).toBe(true);
+    });
+  });
+
+  describe('gamutMapOklch', () => {
+    // The whole reason this exists instead of toHex's channel clipping.
+    it('preserves lightness and hue while reducing chroma', () => {
+      const input = { l: 0.7, c: 0.3, h: 145 };
+      const { color, mapped } = gamutMapOklch(input);
+
+      expect(mapped).toBe(true);
+      expect(color.l).toBeCloseTo(input.l, 10);
+      expect(color.h).toBeCloseTo(input.h, 4);
+      expect(color.c).toBeLessThan(input.c);
+    });
+
+    it('returns a color that is genuinely displayable', () => {
+      const { color } = gamutMapOklch({ l: 0.7, c: 0.3, h: 145 });
+      expect(inGamut(color)).toBe(true);
+    });
+
+    it('leaves an in-gamut color untouched and reports mapped: false', () => {
+      const input = toOklch('#3E63DD')!;
+      const { color, mapped } = gamutMapOklch(input);
+
+      expect(mapped).toBe(false);
+      expect(color).toEqual(input);
+    });
+
+    it('maps into display-p3 when asked, keeping more chroma than sRGB', () => {
+      const input = { l: 0.7, c: 0.3, h: 145 };
+      const srgb = gamutMapOklch(input, 'srgb');
+      const p3 = gamutMapOklch(input, 'display-p3');
+
+      expect(inGamut(p3.color, 'display-p3')).toBe(true);
+      expect(p3.color.c).toBeGreaterThan(srgb.color.c);
+    });
+
+    it('rescues a lightness outside 0-1', () => {
+      // Chroma reduction alone cannot fix this: culori bottoms out at c = 0
+      // and still returns L = 1.0000000000000002, which is out of gamut.
+      const { color, mapped } = gamutMapOklch({ l: 1.5, c: 0.1, h: 200 });
+
+      expect(mapped).toBe(true);
+      expect(color.l).toBe(1);
+      expect(inGamut(color)).toBe(true);
+    });
+
+    it('keeps the hue even when the result lands achromatic', () => {
+      const { color } = gamutMapOklch({ l: 1, c: 0.4, h: 200 });
+      expect(color.c).toBe(0);
+      expect(color.h).toBe(200);
+    });
+
+    it('preserves alpha', () => {
+      const { color } = gamutMapOklch({ l: 0.7, c: 0.3, h: 145, alpha: 0.4 });
+      expect(color.alpha).toBe(0.4);
+    });
+
+    it('does not change toHex, which still clips', () => {
+      // Guard on the constraint: toHex must keep its clipping behaviour,
+      // because palette generation runs through it.
+      const input = { l: 0.7, c: 0.3, h: 145 };
+      const clipped = toOklch(toHex(input))!;
+      const { color: gamutMapped } = gamutMapOklch(input);
+
+      // Clipping distorts hue; chroma reduction does not.
+      expect(Math.abs(clipped.h - input.h)).toBeGreaterThan(Math.abs(gamutMapped.h - input.h));
     });
   });
 });
