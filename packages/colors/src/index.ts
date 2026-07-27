@@ -26,9 +26,11 @@ export {
   parseColor,
   isValidColor,
   validateColor,
-  clampOklch
+  clampOklch,
+  inGamut,
+  gamutMapOklch
 } from './utils/oklch.js';
-export type { ColorValidationResult } from './utils/oklch.js';
+export type { ColorValidationResult, Gamut, GamutMapResult } from './utils/oklch.js';
 
 // Baseline hues (extracted from Radix Colors)
 export {
