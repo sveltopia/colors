@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-27
+
+### Added
+
+- `gamutMapOklch(color, gamut)` — map a color into a displayable gamut by reducing chroma while
+  holding lightness and hue, so the fallback reads as the same hue at the same lightness rather than
+  a shifted one. Returns `{ color, mapped }`, where `mapped` reports whether the input was actually
+  out of gamut.
+- `inGamut(color, gamut)` — whether a color is reachable in the target gamut. OKLCH describes far
+  more colors than any screen can show, so a valid OKLCH triplet is often not renderable.
+- Both take a target gamut of `'srgb'` (default, safe everywhere) or `'display-p3'`.
+- `Gamut` and `GamutMapResult` types.
+
+### Changed
+
+- The package now declares `"sideEffects": false`, so bundlers can drop it entirely from
+  applications that import none of its exports.
+
+`toHex()` is deliberately unchanged and still clips RGB channels, which distorts hue and lightness
+at the gamut edge; palette generation depends on that behaviour. Reach for `gamutMapOklch()` when
+you want the perceptually correct fallback instead.
+
+## [0.2.0] - 2026-04-08
+
+### Added
+
+- `exportSveltopiaUI(palette, options)` — export a generated palette as structured data for
+  @sveltopia/ui: every hue in both light and dark, as OKLCH and hex, plus brand role assignments
+  (which hue row each role resolves to) and generation metadata. Takes a `neutralHue` option
+  (default `gray`) for the surface, border, and text families. The @sveltopia/ui CLI consumes this
+  to build Panda presets.
+
 ## [0.1.0] - 2026-02-17
 
 ### Added
@@ -27,5 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Near-hue gradient harmony via adjacent hue computation
 - Tuning profiles for fine-grained palette control
 
-[Unreleased]: https://github.com/sveltopia/colors/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/sveltopia/colors/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/sveltopia/colors/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/sveltopia/colors/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/sveltopia/colors/releases/tag/v0.1.0
